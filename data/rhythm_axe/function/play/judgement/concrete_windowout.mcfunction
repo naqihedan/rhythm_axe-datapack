@@ -1,0 +1,12 @@
+# 混凝土出窗（@s = 混凝土交互实体）：寿命 ≤ -(dur+ext) → 静默清除
+# ext = 末段过短（末段长 < 3x）时的延长量 3x（音符.md 长条过短保护）；否则 0
+# ★ 必须在单实体上下文中计算共享变量（as @e 循环里 *= -1 会对全局重复取反，M2-F 大坑）
+scoreboard players operation #x3 play_state = #judgement_scale play_state
+scoreboard players operation #x3 play_state *= 3 const
+scoreboard players operation #ll play_state = @s note_c_dur
+scoreboard players operation #ll play_state %= @s note_c_density
+execute if score #ll play_state matches 0 run scoreboard players operation #ll play_state = @s note_c_density
+scoreboard players operation #neg_dur play_state = @s note_c_dur
+execute if score #ll play_state < #x3 play_state run scoreboard players operation #neg_dur play_state += #x3 play_state
+scoreboard players operation #neg_dur play_state *= -1 const
+execute if score @s note_life <= #neg_dur play_state run function rhythm_axe:play/judgement/clear_note

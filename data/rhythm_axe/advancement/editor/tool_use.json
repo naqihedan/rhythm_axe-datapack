@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "right_click": {
+      "trigger": "consume_item",
+      "conditions": {
+        "item": {
+            "predicates": {
+              "custom_data":{ 
+                "editor_tool":true
+              }
+            }
+          }
+      }
+    }
+  },
+  "rewards": {
+    "function": "rhythm_axe:editor/tool/use"
+  }
+}

@@ -1,0 +1,20 @@
+# ========== 动画调试输出（在 main 中调用，仅一次）==========
+# 输出全局动画参数到聊天栏（lv.1）
+
+tellraw @a ["",{"text":"[调试.lv1] ","color":"gold","bold":true},{"text":"=== 动画调试 ===","color":"gold","bold":true}]
+tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  时长: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DURATION"},"color":"white"},{"text":" tick","color":"gray"},{"text":"  缓动: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_EASING"},"color":"white"},{"text":"  幂次: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_POWER"},"color":"white"},{"text":"  位置补偿: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_APPLY_POSITION"},"color":"white"}]
+
+tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  平移增量: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_PX"},"color":"green"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_PY"},"color":"green"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_PZ"},"color":"green"}]
+
+tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  旋转增量: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_RX"},"color":"green"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_RY"},"color":"green"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_RZ"},"color":"green"}]
+
+tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  缩放增量: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_SX"},"color":"green"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_SY"},"color":"green"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_DELTA_SZ"},"color":"green"}]
+
+execute if score #ANIM_START_PX display_calc matches 1.. run tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  起平移: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_PX"},"color":"yellow"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_PY"},"color":"yellow"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_PZ"},"color":"yellow"},{"text":" (已覆盖)","color":"yellow"}]
+execute if score #ANIM_START_PX display_calc matches 0 if score #ANIM_START_PY display_calc matches 0 if score #ANIM_START_PZ display_calc matches 0 run tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  起平移: 从实体读取 (未覆盖)","color":"dark_gray"}]
+
+execute if score #ANIM_START_RX display_calc matches 1.. run tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  起旋转: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_RX"},"color":"yellow"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_RY"},"color":"yellow"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_RZ"},"color":"yellow"},{"text":" (已覆盖)","color":"yellow"}]
+execute if score #ANIM_START_RX display_calc matches 0 if score #ANIM_START_RY display_calc matches 0 if score #ANIM_START_RZ display_calc matches 0 run tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  起旋转: 从实体四元数转换 (未覆盖)","color":"dark_gray"}]
+
+execute if score #ANIM_START_SX display_calc matches 1.. run tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  起缩放: ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_SX"},"color":"yellow"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_SY"},"color":"yellow"},{"text":" ","color":"gray"},{"score":{"objective":"display_calc","name":"#ANIM_START_SZ"},"color":"yellow"},{"text":" (已覆盖)","color":"yellow"}]
+execute if score #ANIM_START_SX display_calc matches 0 if score #ANIM_START_SY display_calc matches 0 if score #ANIM_START_SZ display_calc matches 0 run tellraw @a ["",{"text":"[调试.lv1] ","color":"gold"},{"text":"  起缩放: 从实体读取 (未覆盖)","color":"dark_gray"}]

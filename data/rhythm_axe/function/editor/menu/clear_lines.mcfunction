@@ -1,0 +1,11 @@
+# 清屏：输出十行换行（聊天栏面板打开/刷新前调用）
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]
+tellraw @s [{"text":""}]

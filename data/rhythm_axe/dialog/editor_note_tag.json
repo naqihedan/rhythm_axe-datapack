@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "设置音符标签"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入音符标签文本（空则无标签；含引号用 \\\" 转义）"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "note_tag",
+      "width": 300,
+      "label": {
+        "text": "标签"
+      },
+      "max_length": 100
+    }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+  "actions": [
+    {
+      "label": {
+        "text": "确认"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/note/dialog/dialog_submit_note_tag {\"value\":\"$(note_tag)\"}"
+      }
+    }
+  ]
+}

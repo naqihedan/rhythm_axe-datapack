@@ -1,0 +1,16 @@
+{
+  "criteria": {
+    "left_click": {
+      "trigger": "minecraft:player_hurt_entity",
+      "conditions": {
+        "entity":{
+              "type": "minecraft:interaction"
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "rhythm_axe:editor/tool/note_click"
+  }
+}
+

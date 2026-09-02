@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:multi_action",
+  "title": "文本输入测试（转义 / 长度上限）",
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "raw",
+      "width": 300,
+      "label": "输入任意文本（试试引号/反斜杠/换行，以及长文本）",
+      "max_length": 100000,
+      "multiline": {
+        "height": 100
+      }
+    }
+  ],
+  "pause": false,
+  "can_close_with_escape": true,
+  "actions": [
+    {
+      "label": "提交",
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:test/dialog_receive {\"value\":\"$(raw)\"}"
+      }
+    }
+  ]
+}

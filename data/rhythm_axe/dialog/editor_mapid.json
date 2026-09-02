@@ -1,0 +1,48 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "编辑谱面 id"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入新谱面 id（重名会被拒绝；修改后原谱面整体改名）"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "mapid_value",
+      "width": 200,
+      "label": {
+        "text": "新谱面 id"
+      },
+      "max_length": 64
+    }
+  ],
+    "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+
+  "can_close_with_escape": true,
+  "pause": false,
+  "actions": [
+    {
+      "label": {
+        "text": "确认"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/dialog/dialog_submit_mapid {\"value\":\"$(mapid_value)\"}"
+      }
+    }
+  ]
+}

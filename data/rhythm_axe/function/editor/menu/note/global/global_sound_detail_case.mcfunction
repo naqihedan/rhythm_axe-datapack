@@ -1,0 +1,2 @@
+#arg:group,label,case,edit,color
+$execute if score #group editor matches $(group) run tellraw @s [{"text":"$(label): ","color":"$(color)"},{"nbt":"sounds[$(group)].$(case)","storage":"rhythm_axe:feedback","color":"$(color)"},{"text":"  【编辑】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set $(edit)"},"hover_event":{"action":"show_text","value":"编辑 $(label)"}}]

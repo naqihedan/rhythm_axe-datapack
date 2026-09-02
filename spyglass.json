@@ -1,0 +1,31 @@
+{
+    "env": {
+        "gameVersion": "26.1.2",
+        "permissionLevel": 4,
+        "plugins": [],
+        "exclude": [
+            ".venv/**",
+            "_backup_*/**",
+            "**/*.md",
+            "**/editor/playback/pause.mcfunction",
+            "**/play/start_of_game/mod_test.mcfunction",
+            "**/test/music_*.mcfunction",
+            "**/function/editor_old/**",
+            "**/*.java",
+            "**/*.class",
+            "**/build/**",
+            "**/.gradle/**",
+            "**/gradle/**",
+            "**/loom-cache/**",
+            "**/processIncludeJars/**",
+            "**/extract_client/**",
+            "**/generated/**",
+            "**/net/minecraft/**",
+            "**/bin/**",
+            "**/rhythm_axe_mod/**",
+            "**/dp_devtools/**",
+            "**/节奏地图 节奏地图资源包/**",
+            "**/SmoothColorTransition_中文版/**"
+        ]
+    }
+}

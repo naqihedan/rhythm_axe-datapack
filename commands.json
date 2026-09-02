@@ -1,0 +1,21 @@
+{
+  "type": "root",
+  "children": {
+    "gamerule": {
+      "type": "literal",
+      "children": {
+        "rhythm_axe_mod:confirm_command": {
+          "type": "literal",
+          "children": {
+            "value": {
+              "type": "argument",
+              "executable": true,
+              "parser": "brigadier:bool"
+            }
+          },
+          "executable": true
+        }
+      }
+    }
+  }
+}

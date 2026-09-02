@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "编辑全局击打视效"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入各情况的完整 particle 指令（如 particle minecraft:note ~ ~0.5 ~ 0 0 0 1 0 force @a；空=无）。含引号用 \\\" 转义。"
+      }
+    }
+  ],
+  "inputs": [
+    { "type": "minecraft:text", "key": "spawn", "width": 300, "label": { "text": "spawn" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "tick", "width": 300, "label": { "text": "tick" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "bad", "width": 300, "label": { "text": "bad" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "good_early", "width": 300, "label": { "text": "good_early" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "perfect_early", "width": 300, "label": { "text": "perfect_early" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "perfect", "width": 300, "label": { "text": "perfect" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "perfect_late", "width": 300, "label": { "text": "perfect_late" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "good_late", "width": 300, "label": { "text": "good_late" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "miss", "width": 300, "label": { "text": "miss" }, "max_length": 200 },
+    { "type": "minecraft:text", "key": "damage", "width": 300, "label": { "text": "damage" }, "max_length": 200 }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": { "text": "取消" },
+    "action": { "type": "run_command", "command": "/function rhythm_axe:editor/menu/note/global/global_particle_panel" }
+  },
+  "actions": [
+    {
+      "label": { "text": "确认" },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/note/dialog/dialog_submit_global_particle {\"spawn\":\"$(spawn)\",\"tick\":\"$(tick)\",\"bad\":\"$(bad)\",\"good_early\":\"$(good_early)\",\"perfect_early\":\"$(perfect_early)\",\"perfect\":\"$(perfect)\",\"perfect_late\":\"$(perfect_late)\",\"good_late\":\"$(good_late)\",\"miss\":\"$(miss)\",\"damage\":\"$(damage)\"}"
+      }
+    }
+  ]
+}

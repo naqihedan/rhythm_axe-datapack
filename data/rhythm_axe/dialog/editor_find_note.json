@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "查找音符"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入要查找的音符 id，结果输出到聊天栏"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "find_value",
+      "width": 150,
+      "label": {
+        "text": "音符 id"
+      },
+      "max_length": 16
+    }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+  "actions": [
+    {
+      "label": {
+        "text": "查找"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/find/dialog_submit_find_note {\"value\":\"$(find_value)\"}"
+      }
+    }
+  ]
+}

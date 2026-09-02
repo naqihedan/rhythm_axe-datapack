@@ -1,0 +1,1 @@
+建议把所有谱面中要用到的function存在maps/<mapid>目录下

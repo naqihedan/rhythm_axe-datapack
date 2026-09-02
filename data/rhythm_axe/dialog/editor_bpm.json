@@ -1,0 +1,48 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "编辑 BPM"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入 BPM 小数（如 175.000），原封不动存储为 Float"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "bpm_value",
+      "width": 150,
+      "label": {
+        "text": "BPM"
+      },
+      "max_length": 16
+    }
+  ],
+    "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+
+  "can_close_with_escape": true,
+  "pause": false,
+  "actions": [
+    {
+      "label": {
+        "text": "确认"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/dialog/dialog_submit_bpm {\"value\":\"$(bpm_value)\"}"
+      }
+    }
+  ]
+}

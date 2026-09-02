@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "查找时间点/事件点"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入要查找的时间（刻），结果输出到聊天栏"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "find_value",
+      "width": 150,
+      "label": {
+        "text": "时间（刻）"
+      },
+      "max_length": 16
+    }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+  "actions": [
+    {
+      "label": {
+        "text": "查找"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/find/dialog_submit_find_time {\"value\":\"$(find_value)\"}"
+      }
+    }
+  ]
+}

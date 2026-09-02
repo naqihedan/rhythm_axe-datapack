@@ -1,0 +1,48 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "编辑预览音频"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入声音事件 id（当前值见聊天栏面板）"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "preview_value",
+      "width": 300,
+      "label": {
+        "text": "预览音频"
+      },
+      "max_length": 128
+    }
+  ],
+    "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+
+  "can_close_with_escape": true,
+  "pause": false,
+  "actions": [
+    {
+      "label": {
+        "text": "确认"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/dialog/dialog_submit_preview {\"value\":\"$(preview_value)\"}"
+      }
+    }
+  ]
+}

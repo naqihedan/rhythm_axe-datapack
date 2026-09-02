@@ -1,0 +1,15 @@
+# vscode
+.vscode/
+
+# python dev tools (scripts/)
+__pycache__/
+*.pyc
+
+# backups
+_backup*/
+
+# generated logs
+*.log
+
+# local development docs (private design notes)
+节奏地图开发文档/

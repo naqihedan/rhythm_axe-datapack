@@ -1,0 +1,57 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "编辑击打特效指令"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入要执行的指令字符串，并勾选触发的判定情况（spawn=开始移动时一次 / tick=移动中每刻 / bad~good_late=判定时 / damage=玻璃撞墙扣血）"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "he_cmd",
+      "width": 300,
+      "label": {
+        "text": "指令"
+      },
+      "max_length": 200
+    },
+    { "type": "minecraft:boolean", "key": "spawn", "label": { "text": "spawn" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "tick", "label": { "text": "tick" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "bad", "label": { "text": "bad" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "good_early", "label": { "text": "good_early" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "perfect_early", "label": { "text": "perfect_early" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "perfect", "label": { "text": "PERFECT" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "perfect_late", "label": { "text": "perfect_late" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "good_late", "label": { "text": "good_late" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "miss", "label": { "text": "miss" }, "on_true": "1b", "on_false": "0b" },
+    { "type": "minecraft:boolean", "key": "damage", "label": { "text": "damage" }, "on_true": "1b", "on_false": "0b" }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/note/hit_events/note_hit_events_panel"
+    }
+  },
+  "actions": [
+    {
+      "label": {
+        "text": "确认"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "/function rhythm_axe:editor/menu/note/dialog/dialog_submit_note_he_cmd {\"value\":\"$(he_cmd)\",\"spawn\":\"$(spawn)\",\"tick\":\"$(tick)\",\"bad\":\"$(bad)\",\"good_early\":\"$(good_early)\",\"perfect_early\":\"$(perfect_early)\",\"perfect\":\"$(perfect)\",\"perfect_late\":\"$(perfect_late)\",\"good_late\":\"$(good_late)\",\"miss\":\"$(miss)\",\"damage\":\"$(damage)\"}"
+      }
+    }
+  ]
+}

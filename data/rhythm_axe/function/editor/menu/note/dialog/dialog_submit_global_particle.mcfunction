@@ -1,0 +1,14 @@
+#arg:spawn,tick,bad,good_early,perfect_early,perfect,perfect_late,good_late,miss,damage
+# 写入 feedback.particles[组]（组号读 prop.particle_group，7 分支 merge）
+execute store result score #group editor run data get storage rhythm_axe:prop particle_group
+$execute if score #group editor matches 0 run data modify storage rhythm_axe:feedback particles[0] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
+$execute if score #group editor matches 1 run data modify storage rhythm_axe:feedback particles[1] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
+$execute if score #group editor matches 2 run data modify storage rhythm_axe:feedback particles[2] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
+$execute if score #group editor matches 3 run data modify storage rhythm_axe:feedback particles[3] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
+$execute if score #group editor matches 4 run data modify storage rhythm_axe:feedback particles[4] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
+$execute if score #group editor matches 5 run data modify storage rhythm_axe:feedback particles[5] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
+$execute if score #group editor matches 6 run data modify storage rhythm_axe:feedback particles[6] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
+data remove storage rhythm_axe:prop particle_group
+data modify storage rhythm_axe:maps.editor feedback set value "已更新全局击打视效"
+data modify storage rhythm_axe:maps.editor no_undo set value 1b
+function rhythm_axe:editor/menu/note/global/global_particle_panel
