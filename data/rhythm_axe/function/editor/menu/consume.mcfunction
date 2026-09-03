@@ -74,8 +74,8 @@ execute if score #panel_id editor matches 9 unless score #click_value editor mat
 execute if score #panel_id editor matches 9 unless score #click_value editor matches 40..42 run return fail
 execute if score #panel_id editor matches 10 unless score #click_value editor matches 1 unless score #click_value editor matches 600..759 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
 execute if score #panel_id editor matches 10 unless score #click_value editor matches 1 unless score #click_value editor matches 600..759 run return fail
-execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
-execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 run return fail
+execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 unless score #click_value editor matches 890 unless score #click_value editor matches 891..893 unless score #click_value editor matches 894..895 unless score #click_value editor matches 896..899 unless score #click_value editor matches 904..908 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
+execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 unless score #click_value editor matches 890 unless score #click_value editor matches 891..893 unless score #click_value editor matches 894..895 unless score #click_value editor matches 896..899 unless score #click_value editor matches 904..908 run return fail
 execute if score #panel_id editor matches 12 unless score #click_value editor matches 806..827 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
 execute if score #panel_id editor matches 12 unless score #click_value editor matches 806..827 run return fail
 execute if score #panel_id editor matches 13 unless score #click_value editor matches 830..851 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
@@ -91,8 +91,8 @@ execute if score #panel_id editor matches 16 unless score #click_value editor ma
 execute if score #panel_id editor matches 17 unless score #click_value editor matches 1 unless score #click_value editor matches 1370..1373 unless score #click_value editor matches 1380..1389 unless score #click_value editor matches 1390..1399 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
 execute if score #panel_id editor matches 17 unless score #click_value editor matches 1 unless score #click_value editor matches 1370..1373 unless score #click_value editor matches 1380..1389 unless score #click_value editor matches 1390..1399 run return fail
 # 面板 18（已选定音符列表）：1560 返回 + 1561 清空选中 + 1400-1559（编辑/复制/粘贴/删除）
-execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1561 unless score #click_value editor matches 1400..1559 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
-execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1561 unless score #click_value editor matches 1400..1559 run return fail
+execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1562 unless score #click_value editor matches 1400..1559 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
+execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1562 unless score #click_value editor matches 1400..1559 run return fail
 
 # 按点击值分发
 execute if score #click_value editor matches 1 run function rhythm_axe:editor/menu/main
@@ -163,6 +163,8 @@ execute if score #click_value editor matches 1561 run scoreboard players set #se
 execute if score #click_value editor matches 1561 run execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
 execute if score #click_value editor matches 1561 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
 execute if score #click_value editor matches 1561 run function rhythm_axe:editor/menu/main
+# 【批量编辑】1562：对当前 selection 批量编辑（进批量面板）
+execute if score #click_value editor matches 1562 run function rhythm_axe:editor/menu/note/batch/batch_open
 execute if score #click_value editor matches 1400..1439 run scoreboard players operation #temp editor = #click_value editor
 execute if score #click_value editor matches 1400..1439 run scoreboard players remove #temp editor 1400
 execute if score #click_value editor matches 1400..1439 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
@@ -363,8 +365,108 @@ execute if score #click_value editor matches 789 run scoreboard players set #rel
 execute if score #click_value editor matches 790 run scoreboard players set #rel_field editor 4
 execute if score #click_value editor matches 787..790 run function rhythm_axe:editor/menu/note/panel/note_panel_rel_toggle
 execute if score #click_value editor matches 805 run function rhythm_axe:editor/menu/note/dialog/dialog_open_note_tag
+# 相对字段【x】重置：增量归 0（单音符相对模式也可用；仅相对模式行显示）。单/批量都刷新面板并拦截
+execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.time
+execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
+execute store result score #rel_sp editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
+execute if score #click_value editor matches 792 run data modify storage rhythm_axe:maps.editor editing.rel.delta.time set value 0
+execute if score #click_value editor matches 793 run data modify storage rhythm_axe:maps.editor editing.rel.delta.size set value 0
+execute if score #click_value editor matches 796 run data modify storage rhythm_axe:maps.editor editing.rel.delta.position set value [0,0,0]
+execute if score #click_value editor matches 797 run data modify storage rhythm_axe:maps.editor editing.rel.delta.start_pos set value [0,0,0]
+# 单音符绝对模式【x】重置：还原为打开时的值（editing.temp from editing.orig）
+execute if score #click_value editor matches 792 if score #rel_on editor matches 0 unless data storage rhythm_axe:maps.editor editing.batch if data storage rhythm_axe:maps.editor editing.orig.time run data modify storage rhythm_axe:maps.editor editing.temp.time set from storage rhythm_axe:maps.editor editing.orig.time
+execute if score #click_value editor matches 793 if score #rel_on editor matches 0 unless data storage rhythm_axe:maps.editor editing.batch if data storage rhythm_axe:maps.editor editing.orig.size run data modify storage rhythm_axe:maps.editor editing.temp.size set from storage rhythm_axe:maps.editor editing.orig.size
+execute if score #click_value editor matches 796 if score #rel_pos editor matches 0 unless data storage rhythm_axe:maps.editor editing.batch if data storage rhythm_axe:maps.editor editing.orig.position run data modify storage rhythm_axe:maps.editor editing.temp.position set from storage rhythm_axe:maps.editor editing.orig.position
+execute if score #click_value editor matches 797 if score #rel_sp editor matches 0 unless data storage rhythm_axe:maps.editor editing.batch if data storage rhythm_axe:maps.editor editing.orig.start_pos run data modify storage rhythm_axe:maps.editor editing.temp.start_pos set from storage rhythm_axe:maps.editor editing.orig.start_pos
+execute if score #click_value editor matches 792..793 run function rhythm_axe:editor/menu/note/panel/note_panel
+execute if score #click_value editor matches 792..793 run return 0
+execute if score #click_value editor matches 796..797 run function rhythm_axe:editor/menu/note/panel/note_panel
+execute if score #click_value editor matches 796..797 run return 0
+# 批量确认/取消（editing.batch 时拦截 763/764；用 #batch_do 标志，因 batch_confirm 会移除 editing.batch，不能靠它再 return）
+scoreboard players set #batch_do editor 0
+execute if score #click_value editor matches 763 if data storage rhythm_axe:maps.editor editing.batch run scoreboard players set #batch_do editor 1
+execute if score #click_value editor matches 764 if data storage rhythm_axe:maps.editor editing.batch run scoreboard players set #batch_do editor 1
+execute if score #batch_do editor matches 1 if score #click_value editor matches 763 run function rhythm_axe:editor/menu/note/batch/batch_confirm
+execute if score #batch_do editor matches 1 if score #click_value editor matches 764 run function rhythm_axe:editor/menu/note/batch/batch_cancel
+execute if score #batch_do editor matches 1 run return fail
 execute if score #click_value editor matches 794 run function rhythm_axe:editor/menu/note/panel/note_toggle_following_point
 execute if score #click_value editor matches 795 run function rhythm_axe:editor/menu/note/panel/note_toggle_ignore_speed
+# 【x】基础寿命重置：批量=清除 batch_set.base_life + temp 恢复默认 24；单音符=temp 恢复 orig.note_base_life
+execute if score #click_value editor matches 890 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.base_life
+execute if score #click_value editor matches 890 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.note_base_life set value 24
+execute if score #click_value editor matches 890 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.note_base_life set from storage rhythm_axe:maps.editor editing.orig.note_base_life
+execute if score #click_value editor matches 890 run data remove storage rhythm_axe:maps.editor editing.changed.base_life
+execute if score #click_value editor matches 890 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】持续重置：批量=清除 batch_set.duration + temp 恢复默认 8；单音符=temp 恢复 orig.duration
+execute if score #click_value editor matches 891 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.duration
+execute if score #click_value editor matches 891 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.duration set value 8
+execute if score #click_value editor matches 891 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.duration set from storage rhythm_axe:maps.editor editing.orig.duration
+execute if score #click_value editor matches 891 run data remove storage rhythm_axe:maps.editor editing.changed.duration
+execute if score #click_value editor matches 891 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】密度重置：批量=清除 batch_set.density + temp 恢复默认 8；单音符=temp 恢复 orig.density
+execute if score #click_value editor matches 892 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.density
+execute if score #click_value editor matches 892 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.density set value 8
+execute if score #click_value editor matches 892 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.density set from storage rhythm_axe:maps.editor editing.orig.density
+execute if score #click_value editor matches 892 run data remove storage rhythm_axe:maps.editor editing.changed.density
+execute if score #click_value editor matches 892 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】类型重置：批量=清除 batch_set.type + temp 恢复默认 0（音符盒）；单音符=temp 恢复 orig.type
+execute if score #click_value editor matches 893 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.type
+execute if score #click_value editor matches 893 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.type set value 0
+execute if score #click_value editor matches 893 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.type set from storage rhythm_axe:maps.editor editing.orig.type
+execute if score #click_value editor matches 893 run data remove storage rhythm_axe:maps.editor editing.changed.type
+execute if score #click_value editor matches 893 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】动画重置（899，缓动+强度一行一次重置）
+execute if score #click_value editor matches 899 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.anim_easing
+execute if score #click_value editor matches 899 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.anim_power
+execute if score #click_value editor matches 899 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.anim_easing set value 1
+execute if score #click_value editor matches 899 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.anim_power set value 1
+execute if score #click_value editor matches 899 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.anim_easing set from storage rhythm_axe:maps.editor editing.orig.anim_easing
+execute if score #click_value editor matches 899 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.anim_power set from storage rhythm_axe:maps.editor editing.orig.anim_power
+execute if score #click_value editor matches 899 run data remove storage rhythm_axe:maps.editor editing.changed.anim_easing
+execute if score #click_value editor matches 899 run data remove storage rhythm_axe:maps.editor editing.changed.anim_power
+execute if score #click_value editor matches 899 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】击打音效重置（904）
+execute if score #click_value editor matches 904 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.hitsound
+execute if score #click_value editor matches 904 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.hitsound set value 0
+execute if score #click_value editor matches 904 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.hitsound set from storage rhythm_axe:maps.editor editing.orig.hitsound
+execute if score #click_value editor matches 904 run data remove storage rhythm_axe:maps.editor editing.changed.hitsound
+execute if score #click_value editor matches 904 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】击打视效重置（905）
+execute if score #click_value editor matches 905 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.hit_particles
+execute if score #click_value editor matches 905 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.hit_particles set value 0
+execute if score #click_value editor matches 905 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.hit_particles set from storage rhythm_axe:maps.editor editing.orig.hit_particles
+execute if score #click_value editor matches 905 run data remove storage rhythm_axe:maps.editor editing.changed.hit_particles
+execute if score #click_value editor matches 905 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】击打事件重置（906）
+execute if score #click_value editor matches 906 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.hit_events
+execute if score #click_value editor matches 906 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.hit_events set value []
+execute if score #click_value editor matches 906 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.hit_events set from storage rhythm_axe:maps.editor editing.orig.hit_events
+execute if score #click_value editor matches 906 run data remove storage rhythm_axe:maps.editor editing.changed.hit_events
+execute if score #click_value editor matches 906 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】标签重置（907）
+execute if score #click_value editor matches 907 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.custom_tag
+execute if score #click_value editor matches 907 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.custom_tag set value ""
+execute if score #click_value editor matches 907 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.custom_tag set from storage rhythm_axe:maps.editor editing.orig.custom_tag
+execute if score #click_value editor matches 907 run data remove storage rhythm_axe:maps.editor editing.changed.custom_tag
+execute if score #click_value editor matches 907 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】颜色重置（908）
+execute if score #click_value editor matches 908 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.color
+execute if score #click_value editor matches 908 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.color set value 1b
+execute if score #click_value editor matches 908 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.color set from storage rhythm_axe:maps.editor editing.orig.color
+execute if score #click_value editor matches 908 run data remove storage rhythm_axe:maps.editor editing.changed.color
+execute if score #click_value editor matches 908 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】引导线重置：清除 batch_set/changed.following_point，temp 恢复默认 0b（单音符恢复 orig.following_point）
+execute if score #click_value editor matches 894 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.following_point
+execute if score #click_value editor matches 894 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.following_point set value 0b
+execute if score #click_value editor matches 894 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.following_point set from storage rhythm_axe:maps.editor editing.orig.following_point
+execute if score #click_value editor matches 894 run data remove storage rhythm_axe:maps.editor editing.changed.following_point
+execute if score #click_value editor matches 894 run function rhythm_axe:editor/menu/note/panel/note_panel
+# 【x】无视流速重置：清除 batch_set/changed.ignore_note_speed，temp 恢复默认 0b（单音符恢复 orig.ignore_note_speed）
+execute if score #click_value editor matches 895 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.ignore_note_speed
+execute if score #click_value editor matches 895 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.ignore_note_speed set value 0b
+execute if score #click_value editor matches 895 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.ignore_note_speed set from storage rhythm_axe:maps.editor editing.orig.ignore_note_speed
+execute if score #click_value editor matches 895 run data remove storage rhythm_axe:maps.editor editing.changed.ignore_note_speed
+execute if score #click_value editor matches 895 run function rhythm_axe:editor/menu/note/panel/note_panel
 execute if score #click_value editor matches 763 run function rhythm_axe:editor/menu/note/panel/note_panel_confirm
 execute if score #click_value editor matches 764 run function rhythm_axe:editor/menu/note/panel/note_panel_cancel
 execute if score #click_value editor matches 765 run function rhythm_axe:editor/menu/note/panel/note_panel_delete_arm

@@ -13,6 +13,6 @@ data remove storage rhythm_axe:prop rm_idx
 execute store result storage rhythm_axe:prop nid int 1 run scoreboard players get #nc_id editor
 data modify storage rhythm_axe:maps.editor selection append from storage rhythm_axe:prop nid
 data remove storage rhythm_axe:prop nid
-# 同步维护选中数量（与选择工具 select_inter 一致）
-scoreboard players add #sel_count editor 1
+# 同步维护选中数量（与选择工具 select_inter 一致；从 selection 长度重算，避免重复点击漂移）
+execute store result score #sel_count editor run data get storage rhythm_axe:maps.editor selection
 tellraw @s [{"text":"[编辑器] 已选中音符 ","color":"yellow"},{"score":{"name":"#nc_id","objective":"editor"},"color":"aqua"},{"text":"（再次点击打开编辑面板）","color":"gray"}]

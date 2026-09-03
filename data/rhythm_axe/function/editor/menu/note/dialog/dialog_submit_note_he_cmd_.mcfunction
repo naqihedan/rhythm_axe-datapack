@@ -14,6 +14,6 @@ data remove storage rhythm_axe:prop he_good_late
 data remove storage rhythm_axe:prop he_miss
 data remove storage rhythm_axe:prop he_damage
 data remove storage rhythm_axe:maps.editor editing.he_cur
-data modify storage rhythm_axe:maps.editor feedback set value "已修改击打特效指令（确认后生效）"
+data modify storage rhythm_axe:maps.editor feedback set value "已修改击打事件指令（确认后生效）"
 data modify storage rhythm_axe:maps.editor no_undo set value 1b
 function rhythm_axe:editor/menu/note/hit_events/note_hit_events_panel

@@ -18,7 +18,7 @@ scoreboard players set song_progress_color options 0
 scoreboard players set editor_history_limit options 50
 # 可视化时间轴（mod 屏幕覆盖层）开关：编辑器进入自动置 1、退出置 0；0=关 1=开
 scoreboard players set editor_timeline_gui options 0
-# 编辑器试听：播放中经过音符判定时间时是否执行击打特效（hit_events 自定义指令）；0=只播音效/粒子 1=同时执行指令
+# 编辑器试听：播放中经过音符判定时间时是否执行击打事件（hit_events 自定义指令）；0=只播音效/粒子 1=同时执行指令
 scoreboard players set editor_note_hitevents options 0
 # 编辑器试听：播放中经过事件点时是否执行谱面事件（events[]）指令；0=不执行 1=执行
 scoreboard players set editor_play_events options 0

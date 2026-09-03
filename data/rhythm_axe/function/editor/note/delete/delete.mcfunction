@@ -15,6 +15,16 @@ function rhythm_axe:editor/file/commit
 function rhythm_axe:editor/refresh
 tellraw @s [{"text":"[编辑器] 已删除音符 ","color":"green"},{"nbt":"note_id","storage":"rhythm_axe:prop","color":"aqua"}]
 
+# 从 selection 移除已删除音符的 id（已选中列表/批量计数不再包含删除的音符）
+execute if data storage rhythm_axe:maps.editor selection run execute store result score #rm_id editor run data get storage rhythm_axe:prop note_id
+execute if data storage rhythm_axe:maps.editor selection run data modify storage rhythm_axe:prop rm_out set value []
+execute if data storage rhythm_axe:maps.editor selection run data modify storage rhythm_axe:prop rm_idx set value 0
+execute if data storage rhythm_axe:maps.editor selection run function rhythm_axe:editor/menu/note/selected/sel_remove_drive
+execute if data storage rhythm_axe:maps.editor selection run data remove storage rhythm_axe:prop rm_out
+execute if data storage rhythm_axe:maps.editor selection run data remove storage rhythm_axe:prop rm_idx
+# 同步 #sel_count（从 selection 长度重算）
+execute store result score #sel_count editor run data get storage rhythm_axe:maps.editor selection
+
 data remove storage rhythm_axe:prop note_id
 data remove storage rhythm_axe:prop found_index
 data remove storage rhythm_axe:prop index

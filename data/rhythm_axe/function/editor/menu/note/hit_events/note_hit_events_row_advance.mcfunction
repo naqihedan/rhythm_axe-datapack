@@ -1,5 +1,5 @@
 #arg:idx
-# 击打特效列表递归推进：算下一行按钮值（10000+(idx+1)*10+off）写入 prop 并调 row
+# 击打事件列表递归推进：算下一行按钮值（10000+(idx+1)*10+off）写入 prop 并调 row
 $scoreboard players set #he_next editor $(idx)
 scoreboard players add #he_next editor 1
 execute store result storage rhythm_axe:prop idx int 1 run scoreboard players get #he_next editor

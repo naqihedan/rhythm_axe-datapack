@@ -1,5 +1,5 @@
 #arg:idx, he_edit, he_copy, he_paste, he_del
-# 渲染一条击打特效指令（一行：指令文本 + 编辑/复制/粘贴/删除）+ 递归下一条
+# 渲染一条击打事件指令（一行：指令文本 + 编辑/复制/粘贴/删除）+ 递归下一条
 # 按钮值由 panel / row_advance 算好传入 prop（he_edit/he_copy/he_paste/he_del）
 $execute unless data storage rhythm_axe:maps.editor editing.he_events[$(idx)] run return 0
 # 算指令文本长度（空/缺失=0；26.x 的 .command[0] 存在性判断不可靠，改用 data get 长度）

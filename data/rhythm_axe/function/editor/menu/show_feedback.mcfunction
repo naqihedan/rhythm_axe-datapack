@@ -24,6 +24,9 @@ execute if data storage rhythm_axe:maps.editor feedback run data remove storage 
 execute if data storage rhythm_axe:maps.editor feedback run data remove storage rhythm_axe:prop btn_val
 execute if data storage rhythm_axe:maps.editor feedback run data remove storage rhythm_axe:maps.editor feedback
 execute if data storage rhythm_axe:maps.editor feedback run data remove storage rhythm_axe:maps.editor no_undo
+# 清理可选计数标志（批量编辑数量反馈）
+data remove storage rhythm_axe:prop fb_count
+scoreboard players reset #fb_count editor
 # 保险：清残留 no_undo / fb_redo（防异常路径残留影响下一次）
 data remove storage rhythm_axe:maps.editor no_undo
 data remove storage rhythm_axe:maps.editor fb_redo

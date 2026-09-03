@@ -13,5 +13,5 @@ execute if data storage rhythm_axe:runtime cur_sound run function rhythm_axe:pla
 # 查粒子表：feedback.particles[组].(情况) → cur_particle → 播放
 $execute if data storage rhythm_axe:feedback particles[$(fb_particles)].$(case_name) run data modify storage rhythm_axe:runtime cur_particle set from storage rhythm_axe:feedback particles[$(fb_particles)].$(case_name)
 execute if data storage rhythm_axe:runtime cur_particle run function rhythm_axe:play/feedback/play_particle with storage rhythm_axe:runtime
-# hit_events：按情况 enabled 过滤后宏执行（该音符的击打特效）
+# hit_events：按情况 enabled 过滤后宏执行（该音符的击打事件）
 $execute if data storage rhythm_axe:runtime hit_events.$(fb_nid) run function rhythm_axe:play/feedback/run_hit_events with storage rhythm_axe:runtime

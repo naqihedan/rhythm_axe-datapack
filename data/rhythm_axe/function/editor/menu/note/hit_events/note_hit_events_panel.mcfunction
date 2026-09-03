@@ -1,4 +1,4 @@
-# 击打特效二级菜单面板：标题 + 所属音符（时间/类型/id）+ 指令列表（每指令一行）+ 操作按钮
+# 击打事件二级菜单面板：标题 + 所属音符（时间/类型/id）+ 指令列表（每指令一行）+ 操作按钮
 function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
 data modify storage rhythm_axe:maps.editor current_panel set value 14
@@ -33,4 +33,4 @@ data remove storage rhythm_axe:prop he_paste
 data remove storage rhythm_axe:prop he_del
 tellraw @s [{"text":"","color":"gray"}]
 # 操作按钮
-tellraw @s [{"text":"【添加指令】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 857"},"hover_event":{"action":"show_text","value":"在列表末尾追加一条空指令"}},{"text":"  【取消】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 858"},"hover_event":{"action":"show_text","value":"丢弃修改并返回音符面板"}},{"text":"  【确认】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 859"},"hover_event":{"action":"show_text","value":"把修改写回音符的击打特效（可撤销）"}}]
+tellraw @s [{"text":"【添加指令】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 857"},"hover_event":{"action":"show_text","value":"在列表末尾追加一条空指令"}},{"text":"  【取消】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 858"},"hover_event":{"action":"show_text","value":"丢弃修改并返回音符面板"}},{"text":"  【确认】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 859"},"hover_event":{"action":"show_text","value":"把修改写回音符的击打事件（可撤销）"}}]

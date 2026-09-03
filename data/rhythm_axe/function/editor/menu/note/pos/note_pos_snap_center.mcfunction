@@ -1,20 +1,39 @@
-# 判定位置 = 玩家所在方块中心（floor(Pos)+0.5；【对齐方块中心】）
-# 正数区：score=int 截断 = floor；(2*floor+1)*0.5 = floor+0.5
-execute store result score #px editor run data get entity @s Pos[0]
-execute store result score #py editor run data get entity @s Pos[1]
-execute store result score #pz editor run data get entity @s Pos[2]
-scoreboard players operation #px2 editor = #px editor
-scoreboard players operation #px2 editor *= 2 const
-scoreboard players add #px2 editor 1
-execute store result storage rhythm_axe:maps.editor editing.temp.position[0] double 0.5 run scoreboard players get #px2 editor
-scoreboard players operation #py2 editor = #py editor
-scoreboard players operation #py2 editor *= 2 const
-scoreboard players add #py2 editor 1
-execute store result storage rhythm_axe:maps.editor editing.temp.position[1] double 0.5 run scoreboard players get #py2 editor
-scoreboard players operation #pz2 editor = #pz editor
-scoreboard players operation #pz2 editor *= 2 const
-scoreboard players add #pz2 editor 1
-execute store result storage rhythm_axe:maps.editor editing.temp.position[2] double 0.5 run scoreboard players get #pz2 editor
-data modify storage rhythm_axe:maps.editor feedback set value "判定位置已对齐方块中心（确认后生效）"
+# 判定位置对齐方块中心：把面板"判定位置"当前坐标对齐到方块中心 floor(x)+0.5（与玩家位置无关）
+#   绝对（rel.on.position=0）：editing.temp.position[i]；相对（=1）：editing.rel.delta.position[i]（×100 整数）
+#   统一算法：floor(x)+0.5 → 相对用 ×100 整数（x/100*100+50），绝对用 data get *100 取 floor(×100)/100+0.5
+scoreboard players set #relp editor 0
+execute store result score #relp editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
+# 相对：增量对齐（×100 整数；floor(delta/100)*100 + 50）
+execute if score #relp editor matches 1 run execute store result score #p editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[0]
+execute if score #relp editor matches 1 run scoreboard players operation #p editor /= 100 const
+execute if score #relp editor matches 1 run scoreboard players operation #p editor *= 100 const
+execute if score #relp editor matches 1 run scoreboard players add #p editor 50
+execute if score #relp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.position[0] int 1 run scoreboard players get #p editor
+execute if score #relp editor matches 1 run execute store result score #p editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[1]
+execute if score #relp editor matches 1 run scoreboard players operation #p editor /= 100 const
+execute if score #relp editor matches 1 run scoreboard players operation #p editor *= 100 const
+execute if score #relp editor matches 1 run scoreboard players add #p editor 50
+execute if score #relp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.position[1] int 1 run scoreboard players get #p editor
+execute if score #relp editor matches 1 run execute store result score #p editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[2]
+execute if score #relp editor matches 1 run scoreboard players operation #p editor /= 100 const
+execute if score #relp editor matches 1 run scoreboard players operation #p editor *= 100 const
+execute if score #relp editor matches 1 run scoreboard players add #p editor 50
+execute if score #relp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.position[2] int 1 run scoreboard players get #p editor
+# 绝对：editing.temp.position[i] → floor(x)+0.5（data get *100 取 floor(×100)，再 /100*100+50，存回 double 0.01）
+execute unless score #relp editor matches 1 run execute store result score #p editor run data get storage rhythm_axe:maps.editor editing.temp.position[0] 100
+execute unless score #relp editor matches 1 run scoreboard players operation #p editor /= 100 const
+execute unless score #relp editor matches 1 run scoreboard players operation #p editor *= 100 const
+execute unless score #relp editor matches 1 run scoreboard players add #p editor 50
+execute unless score #relp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.position[0] double 0.01 run scoreboard players get #p editor
+execute unless score #relp editor matches 1 run execute store result score #p editor run data get storage rhythm_axe:maps.editor editing.temp.position[1] 100
+execute unless score #relp editor matches 1 run scoreboard players operation #p editor /= 100 const
+execute unless score #relp editor matches 1 run scoreboard players operation #p editor *= 100 const
+execute unless score #relp editor matches 1 run scoreboard players add #p editor 50
+execute unless score #relp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.position[1] double 0.01 run scoreboard players get #p editor
+execute unless score #relp editor matches 1 run execute store result score #p editor run data get storage rhythm_axe:maps.editor editing.temp.position[2] 100
+execute unless score #relp editor matches 1 run scoreboard players operation #p editor /= 100 const
+execute unless score #relp editor matches 1 run scoreboard players operation #p editor *= 100 const
+execute unless score #relp editor matches 1 run scoreboard players add #p editor 50
+execute unless score #relp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.position[2] double 0.01 run scoreboard players get #p editor
 data modify storage rhythm_axe:maps.editor no_undo set value 1b
 function rhythm_axe:editor/menu/note/panel/note_panel

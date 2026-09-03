@@ -33,12 +33,17 @@ execute if score #click_value editor matches 768..769 if score #temp editor matc
 execute if score #click_value editor matches 785..786 if score #temp editor matches ..-1 run scoreboard players set #temp editor 0
 execute if score #click_value editor matches 768..769 run execute store result storage rhythm_axe:maps.editor editing.temp.duration int 1 run scoreboard players get #temp editor
 execute if score #click_value editor matches 785..786 run execute store result storage rhythm_axe:maps.editor editing.temp.duration int 1 run scoreboard players get #temp editor
+# 批量：判定时间被改时打 batch_set.time 标记（供【x】状态判断）
+execute if score #click_value editor matches 760..761 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.time set value 1b
+execute if score #click_value editor matches 774..775 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.size set value 1b
+execute if score #click_value editor matches 774..775 run data modify storage rhythm_axe:maps.editor editing.changed.size set value 1b
+execute if score #click_value editor matches 783..784 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.time set value 1b
 # 颜色 color（770/771，循环 0-16；0=无 1-16=16 色）
 execute if score #click_value editor matches 770..771 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.color
 execute if score #click_value editor matches 770 run scoreboard players remove #temp editor 1
 execute if score #click_value editor matches 771 run scoreboard players add #temp editor 1
-execute if score #click_value editor matches 770..771 if score #temp editor matches ..-1 run scoreboard players set #temp editor 16
-execute if score #click_value editor matches 770..771 if score #temp editor matches 17.. run scoreboard players set #temp editor 0
+execute if score #click_value editor matches 770..771 if score #temp editor matches ..0 run scoreboard players set #temp editor 16
+execute if score #click_value editor matches 770..771 if score #temp editor matches 17.. run scoreboard players set #temp editor 1
 execute if score #click_value editor matches 770..771 run execute store result storage rhythm_axe:maps.editor editing.temp.color byte 1 run scoreboard players get #temp editor
 # 密度 density（772/773，下界 1；混凝土用）
 execute if score #click_value editor matches 772..773 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.density
@@ -90,4 +95,24 @@ execute if score #click_value editor matches 803 run scoreboard players add #tem
 execute if score #click_value editor matches 802..803 if score #temp editor matches ..-1 run scoreboard players set #temp editor 6
 execute if score #click_value editor matches 802..803 if score #temp editor matches 7.. run scoreboard players set #temp editor 0
 execute if score #click_value editor matches 802..803 run execute store result storage rhythm_axe:maps.editor editing.temp.hit_particles int 1 run scoreboard players get #temp editor
+# 批量：标记被改动的同值字段（确认时对全部选中应用同值；@x 撤销=清除标记）
+execute if score #click_value editor matches 762 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.type set value 1b
+execute if score #click_value editor matches 762 run data modify storage rhythm_axe:maps.editor editing.changed.type set value 1b
+execute if score #click_value editor matches 768..769 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.duration set value 1b
+execute if score #click_value editor matches 785..786 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.duration set value 1b
+execute if score #click_value editor matches 768..769 run data modify storage rhythm_axe:maps.editor editing.changed.duration set value 1b
+execute if score #click_value editor matches 785..786 run data modify storage rhythm_axe:maps.editor editing.changed.duration set value 1b
+execute if score #click_value editor matches 770..771 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.color set value 1b
+execute if score #click_value editor matches 772..773 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.density set value 1b
+execute if score #click_value editor matches 772..773 run data modify storage rhythm_axe:maps.editor editing.changed.density set value 1b
+execute if score #click_value editor matches 776..777 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.base_life set value 1b
+execute if score #click_value editor matches 776..777 run data modify storage rhythm_axe:maps.editor editing.changed.base_life set value 1b
+execute if score #click_value editor matches 778..779 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.anim_easing set value 1b
+execute if score #click_value editor matches 780..781 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.anim_power set value 1b
+execute if score #click_value editor matches 778..779 run data modify storage rhythm_axe:maps.editor editing.changed.anim_easing set value 1b
+execute if score #click_value editor matches 780..781 run data modify storage rhythm_axe:maps.editor editing.changed.anim_power set value 1b
+execute if score #click_value editor matches 799..800 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.hitsound set value 1b
+execute if score #click_value editor matches 802..803 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.hit_particles set value 1b
+execute if score #click_value editor matches 799..800 run data modify storage rhythm_axe:maps.editor editing.changed.hitsound set value 1b
+execute if score #click_value editor matches 802..803 run data modify storage rhythm_axe:maps.editor editing.changed.hit_particles set value 1b
 function rhythm_axe:editor/menu/note/panel/note_panel

@@ -1,7 +1,7 @@
 {
   "type": "minecraft:multi_action",
   "title": {
-    "text": "编辑击打特效指令"
+    "text": "编辑击打事件指令"
   },
   "body": [
     {
