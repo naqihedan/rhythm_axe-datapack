@@ -16,6 +16,10 @@ data remove storage rhythm_axe:prop edit_val
 data remove storage rhythm_axe:prop copy_val
 data remove storage rhythm_axe:prop paste_val
 data remove storage rhythm_axe:prop delete_val
+data remove storage rhythm_axe:prop sel_val
+data remove storage rhythm_axe:prop checkbox
 tellraw @s [{"text":"【批量编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1562"},"hover_event":{"action":"show_text","value":"对选中的音符批量编辑（相对增量）"}}]
+tellraw @s [{"text":"【批量复制】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 1563"},"hover_event":{"action":"show_text","value":"把选中音符的字段存入剪贴板"}}]
+tellraw @s [{"text":"【批量粘贴】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 1564"},"hover_event":{"action":"show_text","value":"把剪贴板音符粘贴到播放头"}}]
 tellraw @s [{"text":"【清空选中并返回】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 1561"},"hover_event":{"action":"show_text","value":"清空 selection 与音符高亮并返回主菜单"}}]
 tellraw @s [{"text":"【返回】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 1560"},"hover_event":{"action":"show_text","value":"返回主菜单（保留选择）"}}]

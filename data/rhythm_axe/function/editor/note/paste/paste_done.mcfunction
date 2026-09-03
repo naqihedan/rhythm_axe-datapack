@@ -1,6 +1,8 @@
-# 全部粘贴完成：提示已粘贴数量并清理
+# 全部粘贴完成：提示已粘贴数量（走反馈系统，附撤销按钮）并清理
 execute store result score #paste_count editor run data get storage rhythm_axe:maps.editor clipboard.notes
-tellraw @s [{"text":"[编辑器] 已粘贴 ","color":"green"},{"score":{"name":"#paste_count","objective":"editor"},"color":"aqua"},{"text":" 个音符","color":"green"}]
+data modify storage rhythm_axe:maps.editor feedback set value "已粘贴"
+scoreboard players operation #fb_count editor = #paste_count editor
+data modify storage rhythm_axe:prop fb_count set value 1b
 data remove storage rhythm_axe:prop time
 data remove storage rhythm_axe:prop time_offset
 data remove storage rhythm_axe:prop paste_index

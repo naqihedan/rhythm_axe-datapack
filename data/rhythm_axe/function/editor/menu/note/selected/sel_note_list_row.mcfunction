@@ -20,6 +20,14 @@ execute if data storage rhythm_axe:prop found_index run execute store result sto
 execute if data storage rhythm_axe:prop found_index run scoreboard players operation #temp editor = #sel_i editor
 execute if data storage rhythm_axe:prop found_index run scoreboard players add #temp editor 1520
 execute if data storage rhythm_axe:prop found_index run execute store result storage rhythm_axe:prop delete_val int 1 run scoreboard players get #temp editor
+# 复选框：已选定列表里这些音符都已选中（#sel_on=1），点击值 = 1643+行序（面板18去选/重开）
+execute if data storage rhythm_axe:prop found_index run scoreboard players set #sel_on editor 1
+execute if data storage rhythm_axe:prop found_index run scoreboard players operation #temp editor = #sel_i editor
+execute if data storage rhythm_axe:prop found_index run scoreboard players add #temp editor 1643
+execute if data storage rhythm_axe:prop found_index run execute store result storage rhythm_axe:prop sel_val int 1 run scoreboard players get #temp editor
+execute if data storage rhythm_axe:prop found_index run function rhythm_axe:editor/menu/note/list/note_checkbox_write with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop found_index run function rhythm_axe:editor/menu/note/list/note_list_line with storage rhythm_axe:prop
+execute if data storage rhythm_axe:prop found_index run data remove storage rhythm_axe:prop checkbox
+execute if data storage rhythm_axe:prop found_index run data remove storage rhythm_axe:prop sel_val
 data remove storage rhythm_axe:prop note_id
 data remove storage rhythm_axe:prop found_index
