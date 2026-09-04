@@ -1,15 +1,23 @@
 # vscode
 .vscode/
 
-# python dev tools (scripts/)
+# python dev tools / scripts (personal debug tools)
+scripts/
 __pycache__/
 *.pyc
 
-# backups
+# backups & temp files
 _backup*/
+*.tmp
+*~
+*.bak
 
 # generated logs
 *.log
+
+# os files
+Thumbs.db
+.DS_Store
 
 # local development docs (private design notes)
 # 节奏地图开发文档/
