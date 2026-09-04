@@ -7,6 +7,8 @@ execute as @e[scores={anim_status=1}] run function rhythm_axe:utilization/displa
 # 玩家点击聊天文本（/trigger editor_click set N）→ 本行检测后分发到菜单处理
 execute as @a[scores={editor_click=1..}] run function rhythm_axe:editor/menu/consume
 
+# （已选定音符列表改为同步高效渲染，无需此处异步驱动）
+
 # ========== 编辑器：播放推进 ==========
 # 播放中每 tick 播放头 +1、更新 bossbar、到尾自动停
 execute if data storage rhythm_axe:maps.editor active run function rhythm_axe:editor/playback/advance

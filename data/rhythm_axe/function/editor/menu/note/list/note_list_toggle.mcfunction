@@ -1,7 +1,11 @@
 # 复选框 toggle 前置：点击值 1600+存活序 → 按存活序找数组索引 → toggle 选中（效果同左键点选/右键取消）
 # 与 note_list_copy_prep 同款：prop.target = click-1600（0 基存活序），note_find_alive_advance 找 found_index
-execute store result score #temp editor run scoreboard players get #click_value editor
-scoreboard players remove #temp editor 1600
+execute store result score #temp editor run data get storage rhythm_axe:maps.editor notes_page
+scoreboard players set #temp_cursor editor 40
+scoreboard players operation #temp editor *= #temp_cursor editor
+scoreboard players operation #temp_cursor editor = #click_value editor
+scoreboard players remove #temp_cursor editor 1600
+scoreboard players operation #temp editor += #temp_cursor editor
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 data modify storage rhythm_axe:prop index set value 0
 data modify storage rhythm_axe:prop count set value 0

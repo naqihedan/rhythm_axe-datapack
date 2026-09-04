@@ -7,11 +7,18 @@
 # brightness 全 15：音符不受环境光照影响，始终满亮度显示
 # 展示实体：先 summon 到原点 (0,0,0)，再用 data modify 从 cur_note 精确写 Pos
 # ★ 修复 spawn 错位：宏展开 $(pos_x) 会把 double 1.0 展开成整数 "1"，summon 命令对整数坐标自动对齐方块中心（1→1.5、0→0.5）；
+# 先让展示实体生成在该生成的位置附近确保能加载，再写入精确数据确保位置正确。forceload试过了没用
 #   transformation.translation 是 NBT 数据不经 summon 坐标解析，start_x/z 用宏无碍
-$summon item_display 0.0 0.0 0.0 {item:{id:"minecraft:note_block",count:1},Tags:["note","note_display","$(mapid)_n$(id)","map_$(mapid)"],brightness:{block:15,sky:15},transformation:{translation:[$(start_x),$(start_y),$(start_z)],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
-$data modify entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Pos[0] set from storage rhythm_axe:runtime cur_note.pos_x
-$data modify entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Pos[1] set from storage rhythm_axe:runtime cur_note.pos_y
-$data modify entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Pos[2] set from storage rhythm_axe:runtime cur_note.pos_z
+$summon item_display $(pos_x) $(pos_y) $(pos_z) {item:{id:"minecraft:note_block",count:1},Tags:["note","note_display","$(mapid)_n$(id)","map_$(mapid)"],brightness:{block:15,sky:15},transformation:{translation:[$(start_x),$(start_y),$(start_z)],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
+# ★ 2026-09-04 修复：data modify entity Pos 写入失效（Pos 留 0,0,0 → 展示实体停在原点）。
+#   summon 用宏坐标在判别位置生成（即使对齐方块中心也"能加载"）；精确位置由下方 store result 覆写。
+#   展示实体 Pos = 判定位置（锚点）；运动偏移走 transformation.translation，故固定不随帧变。
+execute store result score #dspx play_state run data get storage rhythm_axe:runtime cur_note.pos_x 100
+execute store result score #dspy play_state run data get storage rhythm_axe:runtime cur_note.pos_y 100
+execute store result score #dspz play_state run data get storage rhythm_axe:runtime cur_note.pos_z 100
+$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Pos[0] double 0.01 run scoreboard players get #dspx play_state
+$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Pos[1] double 0.01 run scoreboard players get #dspy play_state
+$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Pos[2] double 0.01 run scoreboard players get #dspz play_state
 # 按类型设置展示物品与类型 tag（混凝土/玻璃颜色映射里程碑2）
 # 类型读取到计分板再匹配（execute if data storage 不支持 NBT 匹配）
 # 类型 tag 同时加到展示实体与交互实体（判定在交互实体上跑，用 tag=note_{type} 筛选）
@@ -181,9 +188,12 @@ $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_sy *= -1 const
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_sz = #dir_z play_state
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_sz *= -1 const
+# ★ 2026-09-04 修复：按值判断 ignore_note_speed（存在但为 0b 也算不忽略，随流速缩放）
+scoreboard players set #ig_on play_state 0
+execute store result score #ig_on play_state run data get storage rhythm_axe:runtime cur_note.ignore_note_speed
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_lt run data get storage rhythm_axe:runtime cur_note.note_base_life
-$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_c_lt *= 16 const
-$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_c_lt /= note_speed options
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_c_lt *= 16 const
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_c_lt /= note_speed options
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_dist run scoreboard players get #sqrt_out display_calc
 # note_c_size = size×100（concrete_move 批量写 scale[0]/[1] 用）
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
@@ -211,8 +221,8 @@ $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_sz = #dir_z play_state
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_sz *= -1 const
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_lt run data get storage rhythm_axe:runtime cur_note.note_base_life
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_c_lt *= 16 const
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_c_lt /= note_speed options
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_c_lt *= 16 const
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_c_lt /= note_speed options
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_dist run scoreboard players get #note_dist display_calc
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_easing run data get storage rhythm_axe:runtime cur_note.anim_easing
@@ -221,8 +231,8 @@ $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score @s note_c_power matches 0 run scoreboard players set @s note_c_power 1
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_glass_dur = #dur display_calc
 # ★ 2026-09-01 玻璃 duration 缩放：note_glass_dur = duration×16/note_speed（与前半段 note_c_lt 缩放一致，保持前后段速度相同；endpoint dist×dur/lt 因 note_c_lt 同步缩放而不变）
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_glass_dur *= 16 const
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_glass_dur /= note_speed options
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_glass_dur *= 16 const
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_glass_dur /= note_speed options
 # 染色玻璃缓动参数（混凝土缓动参数在上面已统一；玻璃 note_c_easing/power 已在上面设置）# 混凝土缓动参数（concrete_move 每 tick 应用 anim_easing/anim_power；默认 1=线性）
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_easing run data get storage rhythm_axe:runtime cur_note.anim_easing
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_power run data get storage rhythm_axe:runtime cur_note.anim_power
@@ -322,13 +332,13 @@ $execute if score #note_type play_state matches 4 run tag @e[tag=$(mapid)_n$(id)
 
 # 染色玻璃交互实体记录持续时长（M2-G 出窗用：寿命 + duration <= 0 → 清除；#dur 已统一读取）
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players operation @s note_glass_dur = #dur display_calc
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_glass_dur *= 16 const
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_glass_dur /= note_speed options
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_glass_dur *= 16 const
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_glass_dur /= note_speed options
 # 记录交互实体初始寿命（= 基础寿命，每 tick 递减，M2-B）
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run execute store result score @s note_life run data get storage rhythm_axe:runtime cur_note.note_base_life
 # ★ 2026-09-01 流速缩放：note_life = base_life×16/note_speed（流速16恒等；ignore_note_speed 不缩放）
-$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_life *= 16 const
-$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_life /= note_speed options
+$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life *= 16 const
+$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life /= note_speed options
 # 记录判定反馈组号（note_hitsound / note_hit_particles，M2-H 查表；缺省 0）
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players operation @s note_hitsound = #note_type play_state
 $execute if data storage rhythm_axe:runtime cur_note.hitsound run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run execute store result score @s note_hitsound run data get storage rhythm_axe:runtime cur_note.hitsound
@@ -380,9 +390,10 @@ execute if score #note_type play_state matches 3 run function rhythm_axe:utiliza
 # ★ 同展示实体：宏整数坐标会对齐方块中心 → summon 到原点后 data modify 写精确 Pos
 $execute if score #note_type play_state matches 3 if score #sqrt_out display_calc matches 101.. run summon marker 0.0 0.0 0.0 {Tags:["note","note_c_zone","$(mapid)_n$(id)_zone","map_$(mapid)"],Rotation:[0f,0f]}
 $execute if score #note_type play_state matches 3 if score #sqrt_out display_calc matches ..100 run summon marker 0.0 0.0 0.0 {Tags:["note","note_c_zone_near","$(mapid)_n$(id)_zone","map_$(mapid)"],Rotation:[0f,0f]}
-$execute if score #note_type play_state matches 3 run data modify entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[0] set from storage rhythm_axe:runtime cur_note.pos_x
-$execute if score #note_type play_state matches 3 run data modify entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[1] set from storage rhythm_axe:runtime cur_note.pos_y
-$execute if score #note_type play_state matches 3 run data modify entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[2] set from storage rhythm_axe:runtime cur_note.pos_z
+# ★ 2026-09-04 修复：同展示实体，data modify entity Pos 写入失效 → 改 store result entity Pos（复用 #dspx/y/z 判定位置）
+$execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[0] double 0.01 run scoreboard players get #dspx play_state
+$execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[1] double 0.01 run scoreboard players get #dspy play_state
+$execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[2] double 0.01 run scoreboard players get #dspz play_state
 # marker 设置 yaw（Rotation[0]，度×100 → float 0.01）与 note_id（配对检测/删除）
 $execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Rotation[0] float 0.01 run scoreboard players get #atan_deg100 display_calc
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] run scoreboard players set @s note_id $(id)
@@ -393,12 +404,12 @@ $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_active 0
 # 混凝土/染色玻璃展示实体也记录寿命（与交互同步递减，concrete/tick、glass/tick 用）与 note_active
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_life run data get storage rhythm_axe:runtime cur_note.note_base_life
-$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_life *= 16 const
-$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_life /= note_speed options
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life *= 16 const
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life /= note_speed options
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_active 0
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_life run data get storage rhythm_axe:runtime cur_note.note_base_life
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_life *= 16 const
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless data storage rhythm_axe:runtime cur_note.ignore_note_speed run scoreboard players operation @s note_life /= note_speed options
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life *= 16 const
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life /= note_speed options
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_active 0
 # 混凝土/染色玻璃展示实体：interpolation_duration=1（持续值；display_animation/start 每次启动也会设，
 #   但这里先设保证出生首帧/段间衔接也平滑）
@@ -470,12 +481,18 @@ scoreboard players set #ANIM_APPLY_POSITION display_calc 0
 $execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players add @s note_life 4
 $execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players add @s note_life 4
 # ---- 统一线性参数 #m_dur（D）/ #m_end（end×100）----
-# 普通（0/1/2）：D=lt（★ 2026-08-29：出生提前 4 刻→移动起始=判定前 lt 刻，插值时长=lt，速度=dist/lt）、end=0
+# 普通（0/1/2）：D=lt×16/note_speed（★ 2026-09-04 修正流速：出生 _birth 已×16/note_speed，D 须同步，
+#   否则低流速下音符提前到达判定位置 -> 到判定时刻才到位；end=0）、速度=dist/(lt×16/speed)
 #   ★ 服务器交互同步用 note_lin_dur=D → 客户端与服务器速度一致（消除"速度不一致"担忧）
 scoreboard players operation #m_dur display_calc = #ANIM_DURATION display_calc
 execute if score #m_dur display_calc matches ..0 run scoreboard players set #m_dur display_calc 1
 scoreboard players set #m_end display_calc 0
 scoreboard players set #m_sz_end display_calc 0
+# ★ 2026-09-04 普通线性 D 流速缩放：#m_dur = lt×16/note_speed（与 _birth/note_life 一致；ignore_note_speed 不缩放）
+#   玻璃区段稍后会用 #ANIM_DURATION 重新覆盖 #m_dur，此处的缩放不影响玻璃。
+execute if score #ig_on play_state matches 0 run scoreboard players operation #m_dur display_calc *= 16 const
+execute if score #ig_on play_state matches 0 run scoreboard players operation #m_dur display_calc /= note_speed options
+execute if score #m_dur display_calc matches ..0 run scoreboard players set #m_dur display_calc 1
 # 玻璃（4，幂次 1 dur≥1）：D=lt+dur（★ 2026-08-29：出生提前 4 刻、寿命+4，可见移动占满 lt+dur，基速=dist/lt）、end=dist×dur/lt
 execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run scoreboard players operation #m_dur display_calc = #ANIM_DURATION display_calc
 execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run scoreboard players operation #m_dur display_calc += #dur display_calc
@@ -487,18 +504,27 @@ execute if score #note_type play_state matches 4 if score #ANIM_POWER display_ca
 execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run scoreboard players operation #m_end display_calc *= #dur display_calc
 execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run scoreboard players operation #m_end display_calc /= #ANIM_DURATION display_calc
 # ===== 线性音符出生隐藏（★ 2026-08-29）：出生 scale=0（不可见，避免延迟期停在出生位置），motion/start 恢复 size =====
-#   先存 note_c_size = size×100（普通 0/1/2 原本不存，motion/start 恢复 scale 用；玻璃 4 已有，重复存无害）
+#   先存 note_c_size = size×100（普通 0/1/2 原本不存；玻璃 4 已有，重复存无害）
 $execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
 $execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
-#   隐藏：scale 归零（note_half_size 已在上方从 size 快照，不受影响）
-$execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run data modify entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale set value [0.0,0.0,0.0]
-$execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run data modify entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale set value [0.0,0.0,0.0]
+# ★ 2026-09-04 改「item=air 隐藏」（scale 保持 size）：旧「scale=0 隐藏→active=3 恢复」在客户端一帧跨两 tick
+#   时会把 scale 从 0 插值到 size → 音符「从小到大」放大 bug。改为出生时把实际 item 暂存到 note_show，item 设 air（不可见），
+#   motion/start（active=4）时恢复 item=方块 → scale 恒定不插值，音符在出生位置隐藏、4 刻后瞬间出现。
+$execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run data modify entity @s data.note_show set from entity @s item
+$execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run data modify entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] item set value {id:"minecraft:air",Count:1b}
+$execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run data modify entity @s data.note_show set from entity @s item
+$execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run data modify entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] item set value {id:"minecraft:air",Count:1b}
 # ---- 调用统一初始化（motion/init：记录 D/end/scale 终点/进度 + 打 pending；参数改由 motion/start 与终点同刻下发）----
 # 普通 0/1/2 纯线性（幂次 1）→ 客户端插值
 $execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run function rhythm_axe:play/note/motion/init
 # 玻璃 4 纯线性且 dur≥1 → 客户端插值（dur=0 = 无后段 → 走 glass/init display_animation 两段）
 $execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run function rhythm_axe:play/note/motion/init
 # ---- 非线性分支：原 display_animation 路径（逐帧驱动，兜底；混凝土/玻璃不在此）----
+# ★ 2026-09-04 非线性普通音符 D 流速缩放：#ANIM_DURATION ×16/note_speed（与 _birth/note_life 一致，保持到位在判定时刻；
+#   混凝土 init / 玻璃 init 已各自用 note_c_lt 缩放，不经此分支）
+execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 unless score #ANIM_POWER display_calc matches 1 if score #ig_on play_state matches 0 run scoreboard players operation #ANIM_DURATION display_calc *= 16 const
+execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 unless score #ANIM_POWER display_calc matches 1 if score #ig_on play_state matches 0 run scoreboard players operation #ANIM_DURATION display_calc /= note_speed options
+execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 unless score #ANIM_POWER display_calc matches 1 if score #ANIM_DURATION display_calc matches ..0 run scoreboard players set #ANIM_DURATION display_calc 1
 $execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 unless score #ANIM_POWER display_calc matches 1 run tag @e[tag=$(mapid)_n$(id),type=item_display,limit=1] add anim_task
 execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 unless score #ANIM_POWER display_calc matches 1 run function rhythm_axe:utilization/display_animation/display_animation
 

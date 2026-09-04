@@ -10,21 +10,23 @@ scoreboard players set #n_dur editor 0
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].duration run execute store result score #n_dur editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].duration
 $execute if score #n_type editor matches 3 unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].duration run scoreboard players set #n_dur editor 1
 $execute if score #n_type editor matches 4 unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].duration run scoreboard players set #n_dur editor 3
-# 出生虚拟时刻（同 spawn_one_）
+# 出生虚拟时刻（同 spawn_one_；按值判断 ignore_note_speed）
+scoreboard players set #ig_on editor 0
+$execute store result score #ig_on editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].ignore_note_speed
 scoreboard players operation #n_birth editor = #n_time editor
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].ignore_note_speed run scoreboard players operation #n_birth editor -= #n_lt editor
+execute if score #ig_on editor matches 1 run scoreboard players operation #n_birth editor -= #n_lt editor
 scoreboard players operation #tmp_vis editor = #n_lt editor
 scoreboard players operation #tmp_vis editor *= 16 const
 scoreboard players operation #tmp_vis editor /= note_speed options
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].ignore_note_speed run scoreboard players operation #n_birth editor -= #tmp_vis editor
+execute if score #ig_on editor matches 0 run scoreboard players operation #n_birth editor -= #tmp_vis editor
 # 结束虚拟时刻（判定发光那一刻的下一刻出窗）：普通 = time；玻璃 = time+dur×16/流速+1（静默，随流速缩放）；混凝土 = time+dur（但音符只活跃到 time+dur-1，长度=dur）
 scoreboard players operation #n_end editor = #n_time editor
 execute if score #n_type editor matches 3 run scoreboard players operation #n_end editor += #n_dur editor
 execute if score #n_type editor matches 3 run scoreboard players remove #n_end editor 1
 # 玻璃穿过后段时长随流速缩放（ignore 除外；与游玩 note_glass_dur 一致）
 scoreboard players operation #glass_end editor = #n_dur editor
-$execute if score #n_type editor matches 4 unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].ignore_note_speed run scoreboard players operation #glass_end editor *= 16 const
-$execute if score #n_type editor matches 4 unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].ignore_note_speed run scoreboard players operation #glass_end editor /= note_speed options
+execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor *= 16 const
+execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor /= note_speed options
 execute if score #n_type editor matches 4 run scoreboard players operation #n_end editor += #glass_end editor
 execute if score #n_type editor matches 4 run scoreboard players add #n_end editor 1
 # density（混凝土判定密度；缺省 8）

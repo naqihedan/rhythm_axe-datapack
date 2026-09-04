@@ -4,6 +4,11 @@
 # tag 与游玩隔离：editor_note（统一清理）+ editor_n_<nid>（唯一定位）
 #arg: nid,pos_x,pos_y,pos_z,start_x,start_y,start_z,size,type,color,lt,dur,prog1000,easing,power,density,hitsound,hit_particles,idx
 
+# ★ 2026-09-04 防"原点幽灵"：播放路径（tick_birth_go_ 宏递归）可能重复 summon 同一音符，导致未配置的重复副本堆积
+#   （副本没有 editor_n_type/Pos，停在原点、默认音符盒贴图）。生成前先清掉同名旧实体，保证每个 note_id 只有一份且被正确配置。
+$kill @e[tag=editor_n_$(nid),type=item_display]
+$kill @e[tag=editor_n_$(nid),type=interaction]
+
 # ===== 朝向：dir = -start_pos（运动方向 = 出生→判定）=====
 execute store result score #dir_x play_state run data get storage rhythm_axe:prop start_x 100
 scoreboard players operation #dir_x play_state *= -1 const
@@ -49,12 +54,16 @@ scoreboard players operation #sqrt_sq display_calc = #d2 display_calc
 function rhythm_axe:utilization/math/sqrt
 scoreboard players operation #note_dist display_calc = #sqrt_out display_calc
 
-# ===== 展示实体（先 summon 到原点，再精确写 Pos/translation）=====
-$summon item_display 0.0 0.0 0.0 {item:{id:"minecraft:note_block",count:1},Tags:["editor_note","editor_n_$(nid)"],brightness:{block:15,sky:15},transformation:{translation:[0.0,0.0,0.0],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
-# ★ 2026-08-25 用 data modify set from 写 Pos（26.x 对实体 Pos 的 store result 写入实测失效，Pos 留在 0）
-$data modify entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Pos[0] set from storage rhythm_axe:prop pos_x
-$data modify entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Pos[1] set from storage rhythm_axe:prop pos_y
-$data modify entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Pos[2] set from storage rhythm_axe:prop pos_z
+# ===== 展示实体（summon 用宏坐标在判别位置生成，再 store result 覆写精确 Pos）=====
+# ★ 2026-09-04：summon 用宏参数（即使被对齐方块中心也"能加载"）；精确位置由下方 store result 覆写
+#   （data modify set from 写实体 Pos 实测失效，Pos 留 0,0,0 → 远处音符展示实体停在原点）
+$summon item_display $(pos_x) $(pos_y) $(pos_z) {item:{id:"minecraft:note_block",count:1},Tags:["editor_note","editor_n_$(nid)"],brightness:{block:15,sky:15},transformation:{translation:[0.0,0.0,0.0],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
+execute store result score #dspx editor run data get storage rhythm_axe:prop pos_x 100
+execute store result score #dspy editor run data get storage rhythm_axe:prop pos_y 100
+execute store result score #dspz editor run data get storage rhythm_axe:prop pos_z 100
+$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Pos[0] double 0.01 run scoreboard players get #dspx editor
+$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Pos[1] double 0.01 run scoreboard players get #dspy editor
+$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Pos[2] double 0.01 run scoreboard players get #dspz editor
 # 朝向写实体 Rotation（不入 transformation，不受插值影响）
 $execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Rotation[0] float 0.01 run scoreboard players get #c_yaw display_calc
 $execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] Rotation[1] float 0.01 run scoreboard players get #c_pitch display_calc

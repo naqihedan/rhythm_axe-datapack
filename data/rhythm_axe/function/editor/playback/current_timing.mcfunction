@@ -3,6 +3,7 @@
 execute unless data storage rhythm_axe:prop cursor run data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 execute unless data storage rhythm_axe:prop playhead run data modify storage rhythm_axe:prop playhead set from storage rhythm_axe:maps.editor playhead
 data modify storage rhythm_axe:prop index set value 0
+scoreboard players set #index editor 0
 data modify storage rhythm_axe:prop time set value 0
 data modify storage rhythm_axe:prop bpm set value 0.0f
 data modify storage rhythm_axe:prop tpb set value 8

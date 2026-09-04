@@ -18,10 +18,10 @@ scoreboard players set is_running play_state 1
         scoreboard players set #dbg play_state 8
 
     # 按出生时刻升序排序音符（保证游标生成正确：同 time 不同 note_base_life 时出生顺序可能与数组顺序不一致）
-        # ★ 2026-08-09 临时跳过排序链（200000 崩溃，根因已定位，见 todo「修复桶排序」）。
-        #   当前测试谱面音符/事件/时间点已手动按出生时刻升序排好（note_base_life 全相同 → _birth=time-16 递增），跳过不影响生成。
+        # ★ 2026-09-05 启用排序：改为跨多刻 schedule 驱动（sort_notes 内部启动链），
+        #   意在解决桶排序 range=954 时单刻命令数爆 200000。排序完成后由 finish 启动 main_loop。
         scoreboard players set #dbg play_state 9
-        # function rhythm_axe:play/start_of_game/sort_notes
+        function rhythm_axe:play/start_of_game/sort_notes
         scoreboard players set #dbg play_state 10
 
     # ★ 2026-08-14 修复"没有音符生成"：earliest ≤ 0（如 -16）时 time 之前只减 1（=-1），

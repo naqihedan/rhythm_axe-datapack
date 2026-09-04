@@ -13,3 +13,4 @@ data remove storage rhythm_axe:prop index
 data remove storage rhythm_axe:prop insert_mode
 data remove storage rhythm_axe:prop insert_index
 data remove storage rhythm_axe:prop cursor
+data remove storage rhythm_axe:prop paste_find

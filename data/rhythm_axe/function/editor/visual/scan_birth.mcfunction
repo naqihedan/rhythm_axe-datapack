@@ -5,12 +5,14 @@ $execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(i
 $execute store result score #n_time editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time
 scoreboard players set #n_lt editor 32
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life run execute store result score #n_lt editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life
+scoreboard players set #ig_on editor 0
+$execute store result score #ig_on editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed
 scoreboard players operation #birth editor = #n_time editor
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #birth editor -= #n_lt editor
+execute if score #ig_on editor matches 1 run scoreboard players operation #birth editor -= #n_lt editor
 scoreboard players operation #tmp editor = #n_lt editor
 scoreboard players operation #tmp editor *= 16 const
 scoreboard players operation #tmp editor /= note_speed options
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #birth editor -= #tmp editor
+execute if score #ig_on editor matches 0 run scoreboard players operation #birth editor -= #tmp editor
 execute if score #birth editor < #earliest_birth editor run scoreboard players operation #earliest_birth editor = #birth editor
 # 继续遍历
 execute store result score #index editor run data get storage rhythm_axe:prop index

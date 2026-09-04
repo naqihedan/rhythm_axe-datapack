@@ -1,5 +1,5 @@
 # 混凝土段①（短/长通用）：头动尾停拉伸。尾端恒 = -s/2-d；len = len_target×easing；中心 = 尾端+len/2
-# 时长 = seg1_end - birth = min(dur,lt)；#half_sz/#seg1_end 由 place_concrete 传入
+# 时长 = seg1_end - birth = min(dur,有效寿命)；#half_sz/#seg1_end/#L100 由 place_concrete 传入（#L100 已修正流速）
 scoreboard players operation #n display_calc = #playhead editor
 scoreboard players operation #n display_calc -= @s editor_n_birth
 scoreboard players operation #total display_calc = #seg1_end editor
@@ -8,8 +8,7 @@ execute if score #total display_calc matches ..0 run scoreboard players set #tot
 scoreboard players operation #power display_calc = @s editor_n_power
 scoreboard players operation #easing_type display_calc = @s editor_n_easing
 function rhythm_axe:utilization/display_animation/easing/power
-# len = len_target×ratio（×100）
-scoreboard players operation #L100 editor = @s editor_n_len
+# len = len_target×ratio（×100）；#L100 已由 place_concrete 预置为正确全长（修正流速）
 scoreboard players operation #L100 editor *= #ratio display_calc
 scoreboard players operation #L100 editor /= 10000 const
 # 中心 = (-s/2-d) + len/2（尾端起点往回退 size/2 = -s/2-d）

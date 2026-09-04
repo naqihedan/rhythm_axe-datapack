@@ -11,4 +11,6 @@ data modify storage rhythm_axe:maps.editor clipboard set value {}
 execute unless data storage rhythm_axe:prop clip_action run data modify storage rhythm_axe:prop clip_action set value "copy"
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 data modify storage rhythm_axe:prop note_index set value 0
+# ★ 顺序游标：copy_cursor=上次命中下标+1，find_by_id 从这里继续，避免对每个 id 全扫 O(n²)
+data modify storage rhythm_axe:prop copy_cursor set value 0
 function rhythm_axe:editor/note/copy/copy_one with storage rhythm_axe:prop

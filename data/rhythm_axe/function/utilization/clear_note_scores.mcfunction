@@ -29,8 +29,6 @@ scoreboard players reset * note_half_size
 scoreboard players reset * note_cur_tz
 # ============ 交互/点击 ============
 scoreboard players reset * interacted
-scoreboard players reset * note_last_right
-scoreboard players reset * note_last_attack
 # ============ 阶段C 线性客户端插值 ============
 scoreboard players reset * note_lin_dur
 scoreboard players reset * note_lin_t

@@ -32,6 +32,22 @@ scoreboard players set 1000 const 1000
 scoreboard players set 860 const 860
 scoreboard players set 360 const 360
 scoreboard players set 3600 const 3600
+# 玻璃扫掠 CCD 采样步数阈值（(N×50)² = (N×0.5 格 ×100)²；glass_sweep 查表定 N，避免每玻璃每刻调 sqrt）
+scoreboard players set 2500 const 2500
+scoreboard players set 10000 const 10000
+scoreboard players set 22500 const 22500
+scoreboard players set 40000 const 40000
+scoreboard players set 62500 const 62500
+scoreboard players set 90000 const 90000
+scoreboard players set 122500 const 122500
+scoreboard players set 160000 const 160000
+scoreboard players set 202500 const 202500
+scoreboard players set 250000 const 250000
+scoreboard players set 302500 const 302500
+scoreboard players set 360000 const 360000
+scoreboard players set 422500 const 422500
+scoreboard players set 490000 const 490000
+scoreboard players set 562500 const 562500
 scoreboard players set 5000 const 5000
 scoreboard players set 10000 const 10000
 scoreboard players set 2812 const 2812
@@ -94,11 +110,8 @@ scoreboard objectives add note_active dummy
 scoreboard objectives add note_prev_x dummy
 scoreboard objectives add note_prev_y dummy
 scoreboard objectives add note_prev_z dummy
-# 通用实体点击标记（交互实体存储，左右键点击 advancement 时 +1；唱片机判定等消费，M2-E）
+# 通用实体点击标记（交互实体存储，advancement 触发 + UUID 匹配后 +1；唱片机判定等消费，M2-E）
 scoreboard objectives add interacted dummy
-# 交互实体左右键时间戳记录（M2-E：NBT 时间戳点击检测，每实体存储上次交互的游戏 tick）
-scoreboard objectives add note_last_right dummy
-scoreboard objectives add note_last_attack dummy
 # 混凝土长条移动参数（展示实体存储；交互实体 note_c_m 仅保留信息，出窗已改用 -note_c_dur。M2-F：concrete_move 每 tick 驱动）
 #   note_c_sx/sy/sz = 起始偏移×100；note_c_lt = note_base_life；note_c_m = duration（尾开始移动时刻）；note_c_dist = |start_pos|×100
 scoreboard objectives add note_c_sx dummy
@@ -149,6 +162,10 @@ scoreboard objectives add note_c_seg2_s dummy
 scoreboard objectives add note_c_seg1_s dummy
 # 混凝土段①客户端插值时长（展示实体存储，seg1_client 按模型算；concrete/tick 段②触发阈值 + 交互段①进度用）
 scoreboard objectives add note_c_seg1_dur dummy
+# 混凝土段①客户端插值延迟计数（展示实体存储，seg1_client 置 0；concrete/tick 每 tick +1，>=2 时 seg1_merge）
+#   ★ 2026-09-05：seg1_s=4 与 seg1_dur=m-2 共同使 seg1_s+seg1_dur=m+2 → 段②到位=判定时刻（头端到位 s/2）
+#     （曾试 >=4 使 seg1_s=6，导致头端晚 2 刻不到位、段③截断，故回退为 >=2）
+scoreboard objectives add note_c_seg1_ticks dummy
 # 混凝土判定状态（交互实体存储，M2-F 段落判定）
 #   note_c_density = density；note_c_dur = duration；note_c_seg_done = 当前段是否已判；
 #   note_c_seg_end = 当前段结束寿命；note_c_seg_idx = 当前段索引；note_c_done = 全部段完成

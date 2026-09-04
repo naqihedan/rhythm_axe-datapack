@@ -5,12 +5,14 @@
 #arg: scan_idx
 $execute store result score #tmp_birth play_state run data get storage rhythm_axe:runtime notes[$(scan_idx)].time
 $execute store result score #tmp_life play_state run data get storage rhythm_axe:runtime notes[$(scan_idx)].note_base_life
-# ignore_note_speed=true：出生 = time - 基础寿命（不乘流速）
-$execute if data storage rhythm_axe:runtime notes[$(scan_idx)].ignore_note_speed run scoreboard players operation #tmp_birth play_state -= #tmp_life play_state
-# 否则：出生 = time - 基础寿命×16/流速
-$execute unless data storage rhythm_axe:runtime notes[$(scan_idx)].ignore_note_speed run scoreboard players operation #tmp_life play_state *= 16 const
-$execute unless data storage rhythm_axe:runtime notes[$(scan_idx)].ignore_note_speed run scoreboard players operation #tmp_life play_state /= note_speed options
-$execute unless data storage rhythm_axe:runtime notes[$(scan_idx)].ignore_note_speed run scoreboard players operation #tmp_birth play_state -= #tmp_life play_state
+# ignore_note_speed=true：出生 = time - 基础寿命（不乘流速）；否则 = time - 基础寿命×16/流速
+# ★ 2026-09-04 修复：按值判断 ignore_note_speed（存在但为 0b 也算不忽略，随流速缩放）
+scoreboard players set #ig_on play_state 0
+$execute store result score #ig_on play_state run data get storage rhythm_axe:runtime notes[$(scan_idx)].ignore_note_speed
+execute if score #ig_on play_state matches 1 run scoreboard players operation #tmp_birth play_state -= #tmp_life play_state
+execute if score #ig_on play_state matches 0 run scoreboard players operation #tmp_life play_state *= 16 const
+execute if score #ig_on play_state matches 0 run scoreboard players operation #tmp_life play_state /= note_speed options
+execute if score #ig_on play_state matches 0 run scoreboard players operation #tmp_birth play_state -= #tmp_life play_state
 # ★ 2026-08-29 线性音符出生提前 DELAY(4) 刻：把客户端插值延迟挪到出生前（不可见前置），
 #   可见移动占满 note_base_life → 速度 = dist/note_base_life（不再因延迟变快）；寿命随后在 summon +4 保持节拍
 $execute store result score #tmp_type play_state run data get storage rhythm_axe:runtime notes[$(scan_idx)].type

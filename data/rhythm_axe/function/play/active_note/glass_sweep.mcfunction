@@ -33,12 +33,25 @@ scoreboard players operation #sqrt_sq display_calc += #stmp display_calc
 scoreboard players operation #stmp display_calc = #dz play_state
 scoreboard players operation #stmp display_calc *= #dz play_state
 scoreboard players operation #sqrt_sq display_calc += #stmp display_calc
-function rhythm_axe:utilization/math/sqrt
-# 采样步数 N = ceil(距离×100 / 50)（步长 0.5 格 = 50×100 尺度），至少 1
-scoreboard players operation #N play_state = #sqrt_out display_calc
-scoreboard players operation #N play_state += 49 const
-scoreboard players operation #N play_state /= 50 const
-execute if score #N play_state matches ..0 run scoreboard players set #N play_state 1
+# 采样步数 N = ceil(距离/0.5)（步长 0.5 格）。★ 性能优化（2026-09-04）：不做 sqrt（108 命令/玻璃/刻，
+#   玻璃为主谱面的大头），直接按距离²（#sqrt_sq，×10000）查阈值：(N×50)² >= 距离²。N 上限 16（8 格/刻），
+#   实际玻璃每刻位移远低于此；超上限截到 16（若真超速会少采样，但几乎不可能）。
+scoreboard players set #N play_state 1
+execute if score #sqrt_sq display_calc > 2500 const run scoreboard players set #N play_state 2
+execute if score #sqrt_sq display_calc > 10000 const run scoreboard players set #N play_state 3
+execute if score #sqrt_sq display_calc > 22500 const run scoreboard players set #N play_state 4
+execute if score #sqrt_sq display_calc > 40000 const run scoreboard players set #N play_state 5
+execute if score #sqrt_sq display_calc > 62500 const run scoreboard players set #N play_state 6
+execute if score #sqrt_sq display_calc > 90000 const run scoreboard players set #N play_state 7
+execute if score #sqrt_sq display_calc > 122500 const run scoreboard players set #N play_state 8
+execute if score #sqrt_sq display_calc > 160000 const run scoreboard players set #N play_state 9
+execute if score #sqrt_sq display_calc > 202500 const run scoreboard players set #N play_state 10
+execute if score #sqrt_sq display_calc > 250000 const run scoreboard players set #N play_state 11
+execute if score #sqrt_sq display_calc > 302500 const run scoreboard players set #N play_state 12
+execute if score #sqrt_sq display_calc > 360000 const run scoreboard players set #N play_state 13
+execute if score #sqrt_sq display_calc > 422500 const run scoreboard players set #N play_state 14
+execute if score #sqrt_sq display_calc > 490000 const run scoreboard players set #N play_state 15
+execute if score #sqrt_sq display_calc > 562500 const run scoreboard players set #N play_state 16
 # 采样游标 i 从 0 开始（含 A 与 B 两端）
 scoreboard players set #i play_state 0
 function rhythm_axe:play/active_note/glass_sweep_step

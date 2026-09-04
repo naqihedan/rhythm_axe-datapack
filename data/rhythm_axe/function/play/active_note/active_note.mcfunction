@@ -49,15 +49,19 @@ execute as @e[type=item_display,tag=note_linear_pending,scores={note_active=4}] 
 # ★ 先 add 再 remove（同一选择器先 remove 后 add 会匹配不到实体 → note_linear 打不上 → move 走 unless 分支读恒值 note_cur_tz → 交互实体停出生位置）
 execute as @e[type=item_display,tag=note_linear_pending,scores={note_active=4}] run tag @s add note_linear
 tag @e[type=item_display,tag=note_linear_pending,scores={note_active=4}] remove note_linear_pending
-# ★ 2026-08-29 提前一刻（active=3）恢复 size：下一 tick ① 将消费 → 硬切满尺寸，不随插值长大
-#   （此刻无 interpolation_duration → 立即显示；随后 motion/start 只动 translation，scale 保持不变）
-execute as @e[type=item_display,tag=note_linear_pending,scores={note_active=3}] run execute store result entity @s transformation.scale[0] float 0.01 run scoreboard players get @s note_c_size
-execute as @e[type=item_display,tag=note_linear_pending,scores={note_active=3}] run execute store result entity @s transformation.scale[1] float 0.01 run scoreboard players get @s note_c_size
-execute as @e[type=item_display,tag=note_linear_pending,scores={note_active=3}] run execute store result entity @s transformation.scale[2] float 0.01 run scoreboard players get @s note_c_size
+# ★ 2026-09-04 不再用 active=3 恢复 size：改用 item=air 隐藏（summon 暂存 item 到 note_show、item 设 air；
+#   motion/start 恢复 item=方块）。scale 全程恒定 size，仅 item 切换，不会触发 scale 插值放大。
+#   note_linear_pending 只负责计数（active 0→1→2→3→4），active=4 才由 ① 消费 → motion/start 开始平移。
 # ② 每 tick 所有仍未消费的 pending 计数 +1（出生 tick 0→1，隔 4 tick 后到 4 被 ① 消费）
 scoreboard players add @e[type=item_display,tag=note_linear_pending] note_active 1
 # 线性插值进度 +1（move 算交互位置用；merge 终点当 tick 起=1 → 交互实体滞后 1 tick 对齐客户端渲染延迟）
+# ★ 性能优化（2026-09-04，O(N²) 消除）：交互实体也带 note_linear，同刻递增 note_lin_t，
+#   使 move_self 可用"note_lin_t-1"复现"上一刻视觉位置"（与 move 写 #pvx 的解耦延迟一致）。
 scoreboard players add @e[type=item_display,tag=note_linear] note_lin_t 1
+scoreboard players add @e[type=interaction,tag=note_linear] note_lin_t 1
+# ★ 性能优化（2026-09-04，O(N²) 消除）：玻璃中心 marker（仅线性，start 已打 note_linear）也同步递增 note_lin_t，
+#   供 marker_self 自算扫掠段。非线性玻璃 marker 无 note_lin_t，走 move 的旧扫描（见 move），故排除。
+scoreboard players add @e[type=marker,tag=note_glass_center,tag=note_linear] note_lin_t 1
 # 展示实体统一处理（★ 合并遍历 2026-08-09）：混凝土段推进 + 玻璃段推进 + move 一次遍历完成
 #   内部顺序：先驱动（写 NBT 视觉位置）再 move（读 NBT 存 note_prev_*），与原一致
 execute as @e[type=item_display,tag=note_display] at @s run function rhythm_axe:play/active_note/display_tick
@@ -66,6 +70,17 @@ execute as @e[type=item_display,tag=note_display] at @s run function rhythm_axe:
 execute as @e[type=item_display,tag=note_guide] at @s run function rhythm_axe:play/note/guide/tick
 
 # M2-C/D/E/F：交互实体统一判定（★ 合并遍历 2026-08-09：noteblock/plank/jukebox/concrete 一次遍历分流）
+# ★ 性能优化（2026-09-04）：判定窗口上界 3x+1 = #proto_high 在此全局算一次（interact_judge 读取），
+#   供 judgement/main_plank 的窗口门控（寿命 > 3x+1 时音符仍在飞向判定位置，无需判定）。
+scoreboard players operation #proto_high play_state = #judgement_scale play_state
+scoreboard players operation #proto_high play_state *= 3 const
+scoreboard players add #proto_high play_state 1
+# ★ 性能优化（2026-09-04，O(N²) 消除）：线性音符交互实体位置在此单独遍历自算（move_self），
+#   必须在 interact_judge（其 at @s 会捕获进入时的位置）之前，保证 looking_at 判定位置正确。
+#   ★ 2026-09-04 恢复玻璃：玻璃交互实体位置虽不参与判定（玻璃走中心 marker 的 glass_sweep 碰撞），
+#     但扣血反馈（damage_feedback → feedback）以交互实体位置 at @s 播放音效/粒子，故玻璃交互实体也须
+#     跟随视觉位置（之前排除导致反馈播在出生位置，玩家看不到/听不到）。每玻璃多 ~30 条命令，可接受。
+execute as @e[type=interaction,tag=note_linear] run function rhythm_axe:play/active_note/move_self
 execute as @e[type=interaction,tag=note_interaction] at @s run function rhythm_axe:play/active_note/interact_judge
 
 # ★ 2026-08-29 spawn / tick 事件：
@@ -84,8 +99,14 @@ execute as @e[type=interaction,tag=note_interaction,scores={note_moving=1}] at @
 #   Java 1.19.70+ dx/dy/dz = 判定箱相交
 # ★ 距离过滤（2026-08-09）：仅玩家 6 格内才扫掠——远离玩家的玻璃中心不可能与玩家判定箱相交，
 #   直接跳过整段扫掠（省每 tick 对远处 marker 的 CCD 采样）
+#   ★ 性能优化（2026-09-04）：6 格 → 4 格。玩家判定箱仅 0.6 格宽，玻璃中心距玩家 >4 格且每刻位移 <=4 格
+#   时，其扫掠段不可能触及玩家判定箱；收紧门控减少每刻判定的玻璃 marker 数（玻璃为主谱面的大头）。
+# ★ 性能优化（2026-09-04，O(N²) 消除）：玻璃中心 marker（仅线性）在此自算扫掠段（起点=上上一刻中心
+#   P(T-2)、终点=上一刻中心 P(T-1)），替代原 move 的"每展示实体全量扫描 marker"O(N²)；必须在 glass_sweep
+#   之前（sweep 读 marker 的 Pos/note_prev_*）。非线性玻璃 marker 走 move 的旧扫描，故排除。
+execute as @e[type=marker,tag=note_glass_center,tag=note_linear] run function rhythm_axe:play/active_note/marker_self
 # ★ 自动模式（2026-08-09）：auto=1 玩家不判定玻璃（不会产生 damage），直接短路不扫掠（省全部 CCD）
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_glass_center] at @s if entity @a[distance=..6] run function rhythm_axe:play/active_note/glass_sweep
+execute if score auto play_state matches 0 as @e[type=marker,tag=note_glass_center] at @s if entity @a[distance=..4] run function rhythm_axe:play/active_note/glass_sweep
 
 # M2-C/D：全局出窗检测——所有音符寿命越过 goodL 末刻（< -2x）且未判定
 # 音符盒等 → miss；木板/染色玻璃 → 静默清除（无 miss）；混凝土 → 跳过（尾未到判定位置，另有出窗）

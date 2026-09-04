@@ -26,3 +26,20 @@ scoreboard players set @s note_lin_t 0
 scoreboard players set @s note_active 0
 # 打 pending（active_note 计数到 3 后消费 → motion/start 一次性下发 参数+终点）
 tag @s add note_linear_pending
+# ★ 性能优化（2026-09-04，O(N²) 消除）：把运动数据快照给配对交互实体（自算位置用，见 move_self）。
+#   汇总展示实体已维护的静态/运动参数到 #d_*，再经 init_interaction 写到交互实体。
+#   （summon 逐音符调用本函数，无并发串扰；#nid 与 move 同款配对方式，仅此刻一次扫描）
+scoreboard players operation #nid play_state = @s note_id
+scoreboard players operation #d_bx play_state = @s note_base_x
+scoreboard players operation #d_by play_state = @s note_base_y
+scoreboard players operation #d_bz play_state = @s note_base_z
+scoreboard players operation #d_sx play_state = @s note_c_sx
+scoreboard players operation #d_sy play_state = @s note_c_sy
+scoreboard players operation #d_sz play_state = @s note_c_sz
+scoreboard players operation #d_cd play_state = @s note_c_dist
+scoreboard players operation #d_hs play_state = @s note_half_size
+scoreboard players operation #d_dur play_state = @s note_lin_dur
+scoreboard players operation #d_end play_state = @s note_lin_end
+execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run function rhythm_axe:play/note/motion/init_interaction
+# ★ 性能优化（2026-09-04，O(N²) 消除）：玻璃中心 marker 也复制运动数据（marker_self 自算扫掠段用）
+execute as @e[type=marker,tag=note_glass_center] if score @s note_id = #nid play_state run function rhythm_axe:play/note/motion/init_marker

@@ -78,9 +78,8 @@ scoreboard players set #dbg play_state 5
 function rhythm_axe:play/init_game
 scoreboard players set #dbg play_state 6
 
-# 进入主循环（schedule 自循环）
-# ★ 修复（2026-08-08 用户实测"前两个音符停出生位置"）：原本直接调用 main_loop → 第一批音符（time 起点）
-#   与 start 初始化（gamemode/advancement/give 等）同一 tick 生成 → 客户端实体同步延迟 → 插值设置时
-#   客户端还没收到实体的起点 transformation（wiki：实体首 tick 可能不渲染）→ 插值起点丢失 → 停出生位置。
-#   改为 schedule 1t：第一批生成落在独立 tick，客户端有 1 tick 缓冲（生成 tick 结束后收到实体初始数据）。
-schedule function rhythm_axe:play/main_loop 1t
+# ★ 2026-09-05 跨刻排序：main_loop 不再在此直接 schedule。
+#   init_game 里的 sort_notes 用 schedule 跨多刻对 notes 按 _birth 排序；
+#   排序完成后由 sort_bucket_finish → sort_start_main 启动 main_loop。
+#   （否则主循环会在音符还没排好序时就开始生成，游标推进错误。）
+# schedule function rhythm_axe:play/main_loop 1t

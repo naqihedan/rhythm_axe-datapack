@@ -6,12 +6,15 @@ data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.edit
 scoreboard players set #bidx editor 0
 scoreboard players set #btotal editor 0
 execute store result score #btotal editor run data get storage rhythm_axe:maps.editor editing.batch_ids
+# ★ 顺序游标初始化：find_by_id 从 0 开始找第一个
+data modify storage rhythm_axe:prop batch_cursor set value 0
 function rhythm_axe:editor/menu/note/batch/batch_apply_drive
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop idx
 data remove storage rhythm_axe:prop note_id
 data remove storage rhythm_axe:prop found_index
 data remove storage rhythm_axe:prop index
+data remove storage rhythm_axe:prop batch_cursor
 function rhythm_axe:editor/file/commit
 function rhythm_axe:editor/refresh
 scoreboard players add #content_ver editor 1

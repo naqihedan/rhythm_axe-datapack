@@ -1,6 +1,6 @@
-# 桶排序 第4步：遍历 notes，对每个音符算出桶下标 off，交给 sort_bucket_put 放入桶
-# 桶下标 off = _birth - #earliest_birth（0 起连续），天然按出生时刻分组且保序
-# 宏参数 sort_i（读自 storage sort_i）
+# 桶排序 第4步（宏叶子）：处理单个音符，算桶下标 off，交给 sort_bucket_put（宏叶子）入桶
+# ★ 2026-09-05 重构为宏叶子（不递归），遍历/推进由普通驱动器 sort_bucket_fill_drive 负责。
+#   桶下标 off = _birth - #earliest_birth（0 起连续），天然按出生时刻分组且保序。
 # ★ 宏陷阱：$(sort_off) 是"调用 sort_bucket_put 那一刻"storage 的值 → 本函数算好 off
 #   写入 storage 后必须【跨函数】让 put 读到，不能在本函数内直接 $(sort_off)（整体展开会取旧值）
 #arg: sort_i

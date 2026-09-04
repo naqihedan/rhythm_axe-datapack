@@ -18,11 +18,17 @@ execute store result storage rhythm_axe:maps.editor next_note_id int 1 run score
 
 # 按 time 升序插入
 data modify storage rhythm_axe:prop list_name set value "notes"
-data modify storage rhythm_axe:prop index set value 0
+# ★ 顺序游标：从上次插入点开始找（剪贴板按 time 升序 → 插入点单调不减，O(n) 不高阶全扫）
+execute store result storage rhythm_axe:prop index int 1 run data get storage rhythm_axe:prop paste_find
 data remove storage rhythm_axe:prop insert_mode
 function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"append"} run function rhythm_axe:editor/note/paste/paste_apply_append with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"insert"} run function rhythm_axe:editor/note/paste/paste_apply_insert with storage rhythm_axe:prop
+# ★ 记录下一个查找起点：append 用当前 index（数组末尾），insert 用 insert_index+1
+execute if data storage rhythm_axe:prop {insert_mode:"append"} run execute store result storage rhythm_axe:prop paste_find int 1 run data get storage rhythm_axe:prop index
+execute if data storage rhythm_axe:prop {insert_mode:"insert"} run execute store result score #pf editor run data get storage rhythm_axe:prop insert_index
+execute if data storage rhythm_axe:prop {insert_mode:"insert"} run scoreboard players add #pf editor 1
+execute if data storage rhythm_axe:prop {insert_mode:"insert"} run execute store result storage rhythm_axe:prop paste_find int 1 run scoreboard players get #pf editor
 
 # 游标 +1 后粘贴下一个
 execute store result score #paste_count editor run data get storage rhythm_axe:prop paste_index

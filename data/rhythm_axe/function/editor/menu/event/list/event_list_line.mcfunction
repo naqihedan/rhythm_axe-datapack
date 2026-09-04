@@ -1,5 +1,5 @@
 #arg:cursor,index,edit_val,copy_val,paste_val,delete_val
-# 事件列表单行：时间 + 【编辑】【复制】【粘贴】【删除】，下面逐条列出指令
+# 事件列表单行：时间 + [编辑][复制][粘贴][删除]，下面逐条列出指令
 $tellraw @s [\
 {"text":"时间:","color":"gray"},\
 {"nbt":"history[$(cursor)].events[$(index)].time","storage":"rhythm_axe:maps.editor","color":"white"},\

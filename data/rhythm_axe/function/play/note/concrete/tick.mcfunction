@@ -36,10 +36,14 @@ scoreboard players operation #seg3_trig display_calc = @s note_c_lt
 scoreboard players operation #seg3_trig display_calc += 2 const
 execute if score @s note_c_m <= @s note_c_lt if score @s note_c_seg matches 2 if score #ct display_calc >= #seg3_trig display_calc unless score @s anim_status matches 1 if score @s note_c_power matches 1 run function rhythm_axe:play/note/concrete/seg3_client
 execute if score @s note_c_m <= @s note_c_lt if score @s note_c_seg matches 2 if score #ct display_calc >= #seg3_trig display_calc unless score @s anim_status matches 1 unless score @s note_c_power matches 1 run function rhythm_axe:play/note/concrete/seg3
-# 段①客户端插值（两阶段延迟，2026-08-10）：armed+active=1 → promote；pending+active=1 → merge 段①终点
-#   （summon 在 active_note 之前 → 出生同 tick active 已翻 1 → 用 armed→pending 再延迟一 tick，保证参数与终点分 tick）
-execute if entity @s[tag=note_concrete_seg1_armed] if score @s note_active matches 1 run function rhythm_axe:play/note/concrete/seg1_promote
-execute if entity @s[tag=note_concrete_seg1_pending] if score @s note_active matches 1 run function rhythm_axe:play/note/concrete/seg1_merge
+# 段①客户端插值（★ 2026-09-05 计数链）：pending 后每 tick 计数 +1，>=2 才 merge 段①终点
+#   （出生→merge 隔 2-tick：#ct 从 2 到 4，seg1_s=4；配合 seg1_client 的 seg1_dur=m-2 →
+#    seg1_s+seg1_dur=m+2 → 段②到位=判定时刻，头端到位 s/2。★ 2026-09-05 曾用 4-tick（seg1_s=6）
+#    导致 head 晚 2 刻不到位、段③截断，故回退为 2-tick）
+#   ★ 2026-09-05 起用消费优先计数（避免同 tick 链式 set 丢失，"插值起点丢失"仍需出生状态被客户端渲染）
+#   先消费 counter>=2 的，再对 counter<=1 的 +1）
+execute if entity @s[tag=note_concrete_seg1_pending] if score @s note_c_seg1_ticks matches 2.. run function rhythm_axe:play/note/concrete/seg1_merge
+execute if entity @s[tag=note_concrete_seg1_pending] if score @s note_c_seg1_ticks matches ..1 run scoreboard players add @s note_c_seg1_ticks 1
 # 段③客户端插值（★ 2026-08-14 起单阶段：seg3_client 一次下发 参数+终点；旧三阶段已弃用）
 #   （旧：armed+active=1 → seg3_param；pending+active=1 → seg3_merge——有 2 tick 空窗+瞬切跳变，不再调用）
 # execute if entity @s[tag=note_concrete_seg3_armed] if score @s note_active matches 1 run function rhythm_axe:play/note/concrete/seg3_param
@@ -56,12 +60,15 @@ execute if score debug_output options matches 2.. if score @s note_id matches 12
 #   段①：hp = ratio×m/10000（头端 0 → m 进度）
 #   段②：hp = m + ratio×(lt-m)/10000（头端 m → lt 到位）
 #   段③：hp = lt（头端保持到位）
+# ★ 性能优化（2026-09-04）：easing/power 只算给非线性音符用（#ratio 只在 unless note_c_power matches 1 的
+#   分支里被消费）；线性（power=1，默认）复用不了 #ratio，却每刻无条件执行 115 条命令 → 改为仅在非线性时调用。
+#   （note_c_power 在 summon 与 anim_power 一致：power=1 → 客户端插值/线性分支，见 concrete/tick 分支门控）
 scoreboard players operation #n display_calc = @s anim_timer
 scoreboard players operation #total display_calc = @s anim_duration
 execute if score #total display_calc matches ..0 run scoreboard players set #total display_calc 1
-scoreboard players operation #power display_calc = @s anim_power
-scoreboard players operation #easing_type display_calc = @s anim_easing
-function rhythm_axe:utilization/display_animation/easing/power
+execute unless score @s note_c_power matches 1 run scoreboard players operation #power display_calc = @s anim_power
+execute unless score @s note_c_power matches 1 run scoreboard players operation #easing_type display_calc = @s anim_easing
+execute unless score @s note_c_power matches 1 run function rhythm_axe:utilization/display_animation/easing/power
 # 段① hp（★ 2026-08-10 分流）：线性（客户端插值，anim_status=0 不能复刻 anim_timer）→ 用 seg1_s 推算；非线性 → anim_timer 复刻 ratio
 #   线性 progress = clamp((#ct - seg1_s)/时长, 0, 1)；hp = progress × 时长（短=m、长=lt）
 # 短 hold 线性
@@ -129,38 +136,32 @@ scoreboard players operation #ihz display_calc *= -1 const
 scoreboard players operation #ihz display_calc *= #hp display_calc
 scoreboard players operation #ihz display_calc /= @s note_c_lt
 # 头端世界坐标（×100）
-execute store result score #icx play_state run data get entity @s Pos[0] 100
+# ★ 性能优化（2026-09-04）：展示实体 Pos 固定 = 判定位置（summon 已快照到 note_base_*），
+#   直接用计分板替代 3 次 data get entity @s Pos NBT 读。
+scoreboard players operation #icx play_state = @s note_base_x
 scoreboard players operation #icx play_state += @s note_c_sx
 scoreboard players operation #icx play_state += #ihx display_calc
-execute store result score #icy play_state run data get entity @s Pos[1] 100
+scoreboard players operation #icy play_state = @s note_base_y
 scoreboard players operation #icy play_state += @s note_c_sy
 scoreboard players operation #icy play_state += #ihy display_calc
 scoreboard players operation #icys display_calc = @s note_c_size
 scoreboard players operation #icys display_calc /= 2 const
 scoreboard players operation #icy play_state -= #icys display_calc
-execute store result score #icz play_state run data get entity @s Pos[2] 100
+scoreboard players operation #icz play_state = @s note_base_z
 scoreboard players operation #icz play_state += @s note_c_sz
 scoreboard players operation #icz play_state += #ihz display_calc
-# ★ 混凝土：交互实体往出生方向回退 size/2（对准长条身体而非头端，避免只包住 50%；方向 = note_c_s/note_c_dist）
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #bo display_calc = @s note_c_size
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #bo display_calc /= 2 const
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #box display_calc = #bo display_calc
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #box display_calc *= @s note_c_sx
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #box display_calc /= @s note_c_dist
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #icx play_state += #box display_calc
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #boy display_calc = #bo display_calc
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #boy display_calc *= @s note_c_sy
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #boy display_calc /= @s note_c_dist
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #icy play_state += #boy display_calc
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #boz display_calc = #bo display_calc
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #boz display_calc *= @s note_c_sz
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #boz display_calc /= @s note_c_dist
-execute if score @s note_c_dist matches 1.. run scoreboard players operation #icz play_state += #boz display_calc
+# ★ 2026-09-04 与编辑器一致：混凝土交互实体跟随长条头部（交互 = 头端），不再往出生回退 size/2。
+#   编辑器头端几何已含 size/2 前伸、交互回退 size/2 后落在判定位（头部）；游玩 #icx 头端已到位判定位，
+#   若再回退会偏到头部后方 size/2（比编辑器偏后），故此处不做第二次回退。
 # 配对写入交互实体（直接写当前头端 = 展示视觉位置）
+# ★ 性能优化（2026-09-04）：原 x/y/z 各一次全量 @e[type=interaction] 扫描（3 次 N 扫描）→ 合并为 1 次扫描，
+#   #icx/#icy/#icz 经 #pv* 交给 move_write_pair 一次写完 Pos×3（该子函数被 move 复用，语义一致）。
+#   注：#pv* 只在 move 里被消费，而混凝土展示实体在 move 顶部即 return fail，不会读 #pv*，故复用安全。
 scoreboard players operation #nid play_state = @s note_id
-execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run execute store result entity @s Pos[0] double 0.01 run scoreboard players get #icx play_state
-execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run execute store result entity @s Pos[1] double 0.01 run scoreboard players get #icy play_state
-execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run execute store result entity @s Pos[2] double 0.01 run scoreboard players get #icz play_state
+scoreboard players operation #pvx play_state = #icx play_state
+scoreboard players operation #pvy play_state = #icy play_state
+scoreboard players operation #pvz play_state = #icz play_state
+execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run function rhythm_axe:play/active_note/move_write_pair
 # （不再存 note_prev_cx/cy/cz：交互直接写当前视觉位置）
 
 # 调试（lv.2）：诊断展示 vs 交互到位时序（2026-08-08）

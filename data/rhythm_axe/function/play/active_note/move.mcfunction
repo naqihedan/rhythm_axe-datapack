@@ -71,25 +71,23 @@ scoreboard players operation #pvy play_state -= #tmp_scale play_state
 # 配对：找到与当前展示实体相同 note_id 的交互实体，写其 Pos（用上一刻位置）
 # ★ 抽子函数优化（性能轮）：每展示实体只遍历 1 次交互实体（原 3 次），Pos×3 在函数内一次写完；
 #   子函数执行后外层 @s 恢复为展示实体（run function 不改变外层执行者）
+# ★ 性能优化（2026-09-04，O(N²) 消除）：note_linear 的交互实体已由 interact_judge→move_self 自算位置
+#   （数据在 summon 时复制），这里跳过整段"每展示实体全量扫描交互实体"，仅非线性音符仍走本扫描（少数）。
 scoreboard players operation #nid play_state = @s note_id
-execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run function rhythm_axe:play/active_note/move_write_pair
-# 玻璃判定中心 marker 跟随（位置 = 玻璃中心，y 不减 size/2）
-# ★ 扫掠段整体退 1 刻（2026-08-08 用户实测"玻璃判定早1刻"）：
-#   展示实体渲染晚 1 刻 → 视觉当前帧 F(T)=P(T-1)（NBT 提前值），玻璃这一刻走的路径=[P(T-2),P(T-1)]。
-#   原 marker 扫掠段=[P(T-1),P(T)]（起点=上一刻/终点=当前刻）超前视觉路径 1 刻 → 判定早 1 刻。
-#   修复：起点用 note_prev2_*（上上一刻 P(T-2)）、终点用 note_prev_*（上一刻 P(T-1)）。
-scoreboard players operation #pvx2 play_state = @s note_prev2_x
-scoreboard players operation #pvy2 play_state = @s note_prev2_y
-scoreboard players operation #pvz2 play_state = @s note_prev2_z
-# #pvy 上面已被减去 size/2（交互实体脚底），marker 需加回 → #pvy_c = #pvy + #tmp_scale = 中心
-scoreboard players operation #pvy_c play_state = #pvy play_state
-scoreboard players operation #pvy_c play_state += #tmp_scale play_state
-execute if entity @s[tag=note_stained_glass] as @e[type=marker,tag=note_glass_center] if score @s note_id = #nid play_state run function rhythm_axe:play/active_note/move_write_marker
-
-# 存当前视觉位置为上一刻（供下一刻使用）；旧上一刻滚为上上一刻（玻璃扫掠段起点）
-scoreboard players operation @s note_prev2_x = @s note_prev_x
-scoreboard players operation @s note_prev2_y = @s note_prev_y
-scoreboard players operation @s note_prev2_z = @s note_prev_z
+execute unless entity @s[tag=note_linear] as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run function rhythm_axe:play/active_note/move_write_pair
+# ★ 玻璃判定中心 marker 跟随：线性玻璃已由 active_note→marker_self 自算（O(N²) 消除，大头），
+#   这里仅对【非线性玻璃】（tag=!note_linear）保留旧"每展示实体全量扫描 marker"逻辑（非线性数量少）。
+#   ★ 扫掠段退 1 刻（2026-08-08）：起点=上上一刻 P(T-2)、终点=上一刻 P(T-1)。
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvx2 play_state = @s note_prev2_x
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvy2 play_state = @s note_prev2_y
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvz2 play_state = @s note_prev2_z
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvy_c play_state = #pvy play_state
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvy_c play_state += #tmp_scale play_state
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] as @e[type=marker,tag=note_glass_center] if score @s note_id = #nid play_state run function rhythm_axe:play/active_note/move_write_marker
+# 存当前视觉位置为上一刻；旧上一刻滚为上上一刻（非线性玻璃 marker 扫掠段起点用）
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation @s note_prev2_x = @s note_prev_x
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation @s note_prev2_y = @s note_prev_y
+execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation @s note_prev2_z = @s note_prev_z
 scoreboard players operation @s note_prev_x = #vx play_state
 scoreboard players operation @s note_prev_y = #vy play_state
 scoreboard players operation @s note_prev_z = #vz play_state

@@ -12,6 +12,8 @@ function rhythm_axe:editor/file/begin
 data modify storage rhythm_axe:maps.editor op_label set value "粘贴音符"
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 data modify storage rhythm_axe:prop paste_index set value 0
+# ★ 顺序游标初始化：insert_find 从 0 开始找第一个插入点
+data modify storage rhythm_axe:prop paste_find set value 0
 function rhythm_axe:editor/note/paste/paste_one with storage rhythm_axe:prop
 function rhythm_axe:editor/file/commit
 function rhythm_axe:editor/refresh

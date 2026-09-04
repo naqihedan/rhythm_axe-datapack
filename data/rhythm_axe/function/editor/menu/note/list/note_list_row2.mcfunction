@@ -15,11 +15,13 @@ scoreboard players set #temp_playhead editor 0
 execute store result score #temp_playhead editor run data get storage rhythm_axe:maps.editor playhead
 scoreboard players set #temp_cursor editor 32
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life run execute store result score #temp_cursor editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life
+scoreboard players set #temp_ig editor 0
+$execute store result score #temp_ig editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed
 $execute store result score #temp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp editor -= #temp_cursor editor
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp_cursor editor *= 16 const
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp_cursor editor /= note_speed options
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp editor -= #temp_cursor editor
+execute if score #temp_ig editor matches 1 run scoreboard players operation #temp editor -= #temp_cursor editor
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor *= 16 const
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor /= note_speed options
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp editor -= #temp_cursor editor
 # 线性提前4刻：普通0/1/2 power=1；玻璃4 power=1 dur>=1（与 scan_birth_one 一致）
 scoreboard players set #temp_type editor 0
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type run execute store result score #temp_type editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type
@@ -42,8 +44,6 @@ execute if score #temp_type editor matches 3 run scoreboard players remove #temp
 execute if score #temp_type editor matches 4 run scoreboard players operation #temp editor += #temp_cursor editor
 execute if score #temp_type editor matches 4 run scoreboard players add #temp editor 1
 execute if score #temp_playhead editor > #temp editor run scoreboard players set #show_row editor 0
-# 存活序上限 40
-execute if score #note_alive editor matches 40.. run scoreboard players set #show_row editor 0
 # 复选框：note id + 选中状态（实体带 editor_note_selected 且 note_id 匹配；供排序与勾选）
 $execute if score #show_row editor matches 1 run execute store result score #ncid editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].id
 scoreboard players set #sel_on editor 0
@@ -51,9 +51,14 @@ execute if score #show_row editor matches 1 run execute as @e[type=interaction,t
 # 排序：选中音符置底（#list_pass 0=只显示未选中；1=只显示选中）
 execute if score #list_pass editor matches 0 if score #sel_on editor matches 1 run scoreboard players set #show_row editor 0
 execute if score #list_pass editor matches 1 if score #sel_on editor matches 0 run scoreboard players set #show_row editor 0
-# 存活：计数 +1，算按钮值（编辑 600+序、复制 640+序、粘贴 680+序、删除 720+序）
+# 存活：计数 +1（得显示序号）
 execute if score #show_row editor matches 1 run scoreboard players add #note_alive editor 1
+# 翻页过滤：仅显示本页（#temp = 序号 - 页起点 #page_start）
 execute if score #show_row editor matches 1 run execute store result score #temp editor run scoreboard players get #note_alive editor
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor -= #page_start editor
+execute if score #show_row editor matches 1 if score #temp editor matches ..0 run scoreboard players set #show_row editor 0
+execute if score #show_row editor matches 1 if score #temp editor matches 41.. run scoreboard players set #show_row editor 0
+# 按钮值（页内相对：编辑 600+页内序、复制 640+页内序、粘贴 680+、删除 720+）
 execute if score #show_row editor matches 1 run scoreboard players set #temp_cursor editor 599
 execute if score #show_row editor matches 1 run scoreboard players operation #temp editor += #temp_cursor editor
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop edit_val int 1 run scoreboard players get #temp editor
@@ -64,8 +69,9 @@ execute if score #show_row editor matches 1 run scoreboard players operation #te
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop paste_val int 1 run scoreboard players get #temp editor
 execute if score #show_row editor matches 1 run scoreboard players operation #temp editor += #temp_cursor editor
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop delete_val int 1 run scoreboard players get #temp editor
-# 复选框 toggle 点击值
-execute if score #show_row editor matches 1 run scoreboard players operation #temp editor = #note_alive editor
+# 复选框 toggle 点击值（页内相对）
+execute if score #show_row editor matches 1 run execute store result score #temp editor run scoreboard players get #note_alive editor
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor -= #page_start editor
 execute if score #show_row editor matches 1 run scoreboard players add #temp editor 1599
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop sel_val int 1 run scoreboard players get #temp editor
 # 输出行

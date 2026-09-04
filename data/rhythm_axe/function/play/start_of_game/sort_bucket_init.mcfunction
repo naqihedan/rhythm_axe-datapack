@@ -19,5 +19,6 @@ data modify storage rhythm_axe:runtime sort_sorted set value []
 scoreboard players set #sort_fill_done play_state 0
 scoreboard players set #sort_bucket_idx play_state 0
 execute store result storage rhythm_axe:runtime sort_bucket_idx int 1 run scoreboard players get #sort_bucket_idx play_state
-function rhythm_axe:play/start_of_game/sort_bucket_grow with storage rhythm_axe:runtime
+# ★ 2026-09-05 同步：grow 为同步普通递归，直接调用（不再 schedule）
+function rhythm_axe:play/start_of_game/sort_bucket_grow
 scoreboard players set #dbg play_state 14

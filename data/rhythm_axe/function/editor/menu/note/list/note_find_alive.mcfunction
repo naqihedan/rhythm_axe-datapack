@@ -13,11 +13,13 @@ scoreboard players set #temp_playhead editor 0
 execute store result score #temp_playhead editor run data get storage rhythm_axe:maps.editor playhead
 scoreboard players set #temp_cursor editor 32
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life run execute store result score #temp_cursor editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life
+scoreboard players set #temp_ig editor 0
+$execute store result score #temp_ig editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed
 $execute store result score #temp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp editor -= #temp_cursor editor
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp_cursor editor *= 16 const
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp_cursor editor /= note_speed options
-$execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].ignore_note_speed run scoreboard players operation #temp editor -= #temp_cursor editor
+execute if score #temp_ig editor matches 1 run scoreboard players operation #temp editor -= #temp_cursor editor
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor *= 16 const
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor /= note_speed options
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp editor -= #temp_cursor editor
 # 线性提前4刻：普通0/1/2 power=1；玻璃4 power=1 dur>=1（与 scan_birth_one 一致）
 scoreboard players set #temp_type editor 0
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type run execute store result score #temp_type editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type

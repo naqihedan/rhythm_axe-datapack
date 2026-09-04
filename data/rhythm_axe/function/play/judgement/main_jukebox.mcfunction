@@ -1,16 +1,14 @@
 # 唱片机判定核心（@s = 唱片机交互实体；每 tick 由 active_note/active_note 调用）
-# M2-E：唱片机 = 进阶版音符盒，通过左右键交互判定（NBT 时间戳检测）
+# M2-E：唱片机 = 进阶版音符盒，通过左右键交互判定（advancement 触发 + UUID 匹配）
 # 规则：
 #   - 包括 bad、good、perfect、miss 所有种类判定（按点击时的寿命换算等级）
-#   - 左右键点击唱片机交互实体 → interaction 实体的 interaction.timestamp / attack.timestamp
-#     更新（游戏 tick）→ 每 tick 比对时间戳变化 → 打通用点击标记 interacted
+#   - 左右键点击唱片机交互实体 → player_interacted_with_entity / player_hurt_entity advancement
+#     触发 → 捕获玩家 UUID → 遍历唱片机交互实体按 interaction.player / attack.player 匹配 → 打 interacted
+#     （照编辑器 note_deselect / note_click 同款，见 jukebox_clicked_* / jukebox_clicked_match_*）
 #   - 音符每刻自检：有标记且寿命在判定窗口内（[3x, -2x]）→ 判定；
 #     标记存在但寿命不在窗口内（过早/过晚点击）→ 忽略并清除标记
 #   - 判定保护（最后一刻兜底）：goodL 最后一刻（寿命==-2x）仍无点击判定 →
 #     玩家视线与唱片机相交 → good_late；相离 → miss
-# ⚠️ 为什么用 NBT 而不用 advancement：26.x 中 advancement 的完成记录持久化、revoke 无法清除，
-#    start 的 grant 永远"获得即完成即失去"（玩家历史交互过 interaction）→ advancement 无法重新
-#    激活。NBT 时间戳是纯原生、确定性的点击检测（advancement 保留仅作辅助双保险，不依赖）。
 scoreboard players operation #life play_state = @s note_life
 
 # 有通用点击标记 → 点击判定（消费 interacted）

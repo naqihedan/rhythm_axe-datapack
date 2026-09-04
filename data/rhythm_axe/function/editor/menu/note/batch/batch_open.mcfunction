@@ -2,12 +2,15 @@
 # batch_ids = selection（音符 id 列表）；panel_from 记录来源（从哪来回哪去）
 function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
-# 清理 selection 中已失效（被删除但未移除）的音符 id，确保批量计数与已选中列表一致
+# 清理 selection 中已失效（被删但未移除）的音符 id，确保批量计数与已选中列表一致
+# ★ 顺序游标 clean_cursor：find_by_id 从上次命中位置继续，避免逐个全扫导致 O(n²) 超限
 data modify storage rhythm_axe:prop slc_out set value []
 data modify storage rhythm_axe:prop slc_idx set value 0
+data modify storage rhythm_axe:prop clean_cursor set value 0
 execute if data storage rhythm_axe:maps.editor selection run function rhythm_axe:editor/menu/note/selected/sel_clean_drive
 data remove storage rhythm_axe:prop slc_out
 data remove storage rhythm_axe:prop slc_idx
+data remove storage rhythm_axe:prop clean_cursor
 execute store result score #sel_count editor run data get storage rhythm_axe:maps.editor selection
 data modify storage rhythm_axe:maps.editor editing.batch set value 1b
 data modify storage rhythm_axe:maps.editor editing.batch_ids set from storage rhythm_axe:maps.editor selection

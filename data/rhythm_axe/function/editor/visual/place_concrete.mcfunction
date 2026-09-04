@@ -9,11 +9,24 @@
 # 算 size/2×100（editor_n_size = size×1000 → /20）
 scoreboard players operation #half_sz editor = @s editor_n_size
 scoreboard players operation #half_sz editor /= 20 const
+# ★ 2026-09-04 修复流速缩放不一致：把实体 editor_n_lt 覆写为「有效寿命」#life（=time-birth，已含流速缩放），
+#   此后所有短/长判定（dur vs lt）、段①③时长、段②结束、全长都按有效寿命走 → 慢流速时三段速度一致。
+#   此前 editor_n_lt 是基础寿命（未缩放），短 hold 长度与长 hold 段②③用基础寿命，慢流速时头尾快、中段慢。
+scoreboard players operation #life editor = @s editor_n_time
+scoreboard players operation #life editor -= @s editor_n_birth
+execute if score #life editor matches ..0 run scoreboard players set #life editor 1
+execute if score #life editor matches 1.. run scoreboard players operation @s editor_n_lt = #life editor
+# 修正长条全长目标（×100）#L100（预置给 s1/s2/s3 用，替代原先用基础寿命烘的 editor_n_len）：
+#   短 hold（dur<=有效寿命）= dist×dur/有效寿命；长 hold（dur>有效寿命）= dist+size（size×100 = #half_sz×2）
+scoreboard players operation #L100 editor = @s editor_n_dist
+execute if score @s editor_n_dur <= @s editor_n_lt run scoreboard players operation #L100 editor *= @s editor_n_dur
+execute if score @s editor_n_dur <= @s editor_n_lt run scoreboard players operation #L100 editor /= @s editor_n_lt
+execute if score @s editor_n_dur > @s editor_n_lt run scoreboard players operation #L100 editor += #half_sz editor
+execute if score @s editor_n_dur > @s editor_n_lt run scoreboard players operation #L100 editor += #half_sz editor
 # 算段分界
 # ★ 2026-09-01 流速缩放（★ 09-01 二次修正：短 hold 段①=dur 固定，不缩放——同游玩 duration 固定）：
-#   段①（拉伸）时长——短 hold（dur<=lt）= dur 固定；长 hold（dur>lt）= lt×scale=base×16/流速（到判定时刻）。
-#   段②（平移）时长 = seg2_end - seg1_end，随流速缩放（短 hold = base×16/流速-dur；长 hold = dur-base×16/流速）。
-#   段③（收缩）时长固定（短 hold=dur / 长 hold=lt），与游玩一致。
+#   段①（拉伸）时长——短 hold（dur<=有效寿命）= dur 固定；长 hold（dur>有效寿命）= 有效寿命（到判定时刻）。
+#   段②（平移/静止）结束 = seg2_end；段③（收缩）时长固定（短 hold=dur / 长 hold=有效寿命），与游玩一致。
 scoreboard players operation #scale editor = @s editor_n_time
 scoreboard players operation #scale editor -= @s editor_n_birth
 execute if score @s editor_n_lt matches 1.. run scoreboard players operation #scale editor /= @s editor_n_lt

@@ -4,6 +4,11 @@ execute store result score #history_size editor run data get storage rhythm_axe:
 execute store result score #temp_cursor editor run data get storage rhythm_axe:maps.editor history_cursor
 scoreboard players operation #temp editor = #temp_cursor editor
 scoreboard players add #temp editor 1
+# ★ 保存基线失效防护：若已保存的快照位于将被丢弃的 redo 分支（saved_cursor > cursor），
+#   设 saved_cursor=-1（无保存基线）→ 未保存计数 >0，避免计数错误/越界
+execute store result score #temp_saved editor run data get storage rhythm_axe:maps.editor saved_cursor
+execute if score #temp_saved editor > #temp_cursor editor run data modify storage rhythm_axe:maps.editor saved_cursor set value -1
+scoreboard players reset #temp_saved editor
 execute if score #history_size editor > #temp editor run function rhythm_axe:editor/file/truncate
 # 记录操作所在面板（撤销/重做后回此面板；每次操作覆盖，存的是最新操作发生时的面板）
 # ★ 2026-08-28 优先用操作发起面板 editing.panel_from（设置面板打开时记录=从哪个列表来），

@@ -1,5 +1,5 @@
 #arg:cursor,index,edit_val,copy_val,paste_val,delete_val
-# 时间点列表单行：█（红/绿）+ 时间/bpm(三位小数)/每小节拍数/每拍刻数/判定缩放 + 【编辑】【复制】【粘贴】【删除】
+# 时间点列表单行：█（红/绿）+ 时间/bpm(三位小数)/每小节拍数/每拍刻数/判定缩放 + [编辑][复制][粘贴][删除]
 $execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].timing_points[$(index)].bpm 1000
 scoreboard players operation #vi editor = #v editor
 scoreboard players operation #vi editor /= 1000 const
