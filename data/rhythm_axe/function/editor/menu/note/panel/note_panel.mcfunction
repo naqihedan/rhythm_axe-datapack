@@ -458,13 +458,13 @@ execute store result score #rel_on editor run data get storage rhythm_axe:maps.e
 execute store result score #v editor run data get storage rhythm_axe:maps.editor editing.temp.size 10
 execute if score #rel_on editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor editing.rel.delta.size
 execute if score #rel_on editor matches 1 run scoreboard players operation #v editor /= 10 const
-scoreboard players operation #vi editor = #v editor
-scoreboard players operation #vi editor /= 10 const
-scoreboard players operation #vf editor = #v editor
-scoreboard players operation #vf editor %= 10 const
-execute if score #vf editor matches ..-1 run scoreboard players operation #vf editor *= -1 const
 scoreboard players set #nz editor 0
-execute if score #v editor matches ..-1 if score #vi editor matches 0 run scoreboard players set #nz editor 1
+execute if score #v editor matches ..-1 run scoreboard players set #nz editor 1
+scoreboard players operation #vi editor = #v editor
+execute if score #vi editor matches ..-1 run scoreboard players operation #vi editor *= -1 const
+scoreboard players operation #vf editor = #vi editor
+scoreboard players operation #vi editor /= 10 const
+scoreboard players operation #vf editor %= 10 const
 execute if score #rel_on editor matches 1 unless score #v editor matches 0 if score #nz editor matches 1 run tellraw @s [\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 793"},"hover_event":{"action":"show_text","value":"取消本项修改（增量归 0）"}},\
 {"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 788"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\

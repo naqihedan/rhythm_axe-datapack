@@ -7,7 +7,7 @@
 # brightness 全 15：音符不受环境光照影响，始终满亮度显示
 # 展示实体：先 summon 到原点 (0,0,0)，再用 data modify 从 cur_note 精确写 Pos
 # ★ 修复 spawn 错位：宏展开 $(pos_x) 会把 double 1.0 展开成整数 "1"，summon 命令对整数坐标自动对齐方块中心（1→1.5、0→0.5）；
-# 先让展示实体生成在该生成的位置附近确保能加载，再写入精确数据确保位置正确。forceload试过了没用
+# 先让展示实体生成在该生成的位置附近确保能加载，再写入精确数据确保位置正确
 #   transformation.translation 是 NBT 数据不经 summon 坐标解析，start_x/z 用宏无碍
 $summon item_display $(pos_x) $(pos_y) $(pos_z) {item:{id:"minecraft:note_block",count:1},Tags:["note","note_display","$(mapid)_n$(id)","map_$(mapid)"],brightness:{block:15,sky:15},transformation:{translation:[$(start_x),$(start_y),$(start_z)],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
 # ★ 2026-09-04 修复：data modify entity Pos 写入失效（Pos 留 0,0,0 → 展示实体停在原点）。
