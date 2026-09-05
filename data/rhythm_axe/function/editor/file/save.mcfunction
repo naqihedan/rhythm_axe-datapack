@@ -25,7 +25,9 @@ $data remove storage rhythm_axe:maps.$(mapid) highest_score
 $data remove storage rhythm_axe:maps.$(mapid) notes
 $data remove storage rhythm_axe:maps.$(mapid) timing_points
 $data remove storage rhythm_axe:maps.$(mapid) events
+$data remove storage rhythm_axe:maps.$(mapid) editor_playhead
 $data modify storage rhythm_axe:maps.$(mapid) {} merge from storage rhythm_axe:maps.editor history[$(cur)]
 $execute store result storage rhythm_axe:maps.$(mapid) highest_score int 1 run scoreboard players get #saved_highest editor
+$data modify storage rhythm_axe:maps.$(mapid) editor_playhead set from storage rhythm_axe:maps.editor playhead
 data modify storage rhythm_axe:maps.editor saved_cursor set from storage rhythm_axe:maps.editor history_cursor
 $tellraw @s [{"text":"[编辑器] 谱面已保存 ","color":"green"},{"text":"$(mapid)","color":"aqua"}]

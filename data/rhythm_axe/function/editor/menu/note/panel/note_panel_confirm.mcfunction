@@ -15,7 +15,9 @@ execute if score #rel_time editor matches 1 run execute store result score #rel_
 execute if score #rel_time editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_time editor matches 1 if score #temp editor matches ..-1 run scoreboard players set #temp editor 0
 execute if score #rel_time editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.time int 1 run scoreboard players get #temp editor
-execute if score #rel_size editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.size 100
+execute if score #rel_size editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.size 1000
+execute if score #rel_size editor matches 1 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_size editor matches 1 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_size editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.size
 execute if score #rel_size editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_size editor matches 1 if score #temp editor matches ..10 run scoreboard players set #temp editor 10
@@ -25,27 +27,39 @@ scoreboard players set #rel_pos editor 0
 execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
 scoreboard players set #rel_sp editor 0
 execute store result score #rel_sp editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
-execute if score #rel_pos editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.position[0] 100
+execute if score #rel_pos editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.position[0] 1000
+execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_pos editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[0]
 execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_pos editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.position[0] double 0.01 run scoreboard players get #temp editor
-execute if score #rel_pos editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.position[1] 100
+execute if score #rel_pos editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.position[1] 1000
+execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_pos editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[1]
 execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_pos editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.position[1] double 0.01 run scoreboard players get #temp editor
-execute if score #rel_pos editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.position[2] 100
+execute if score #rel_pos editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.position[2] 1000
+execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_pos editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[2]
 execute if score #rel_pos editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_pos editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.position[2] double 0.01 run scoreboard players get #temp editor
-execute if score #rel_sp editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[0] 100
+execute if score #rel_sp editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[0] 1000
+execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_sp editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[0]
 execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_sp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.start_pos[0] double 0.01 run scoreboard players get #temp editor
-execute if score #rel_sp editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[1] 100
+execute if score #rel_sp editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[1] 1000
+execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_sp editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[1]
 execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_sp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.start_pos[1] double 0.01 run scoreboard players get #temp editor
-execute if score #rel_sp editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[2] 100
+execute if score #rel_sp editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[2] 1000
+execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_sp editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[2]
 execute if score #rel_sp editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_sp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.start_pos[2] double 0.01 run scoreboard players get #temp editor

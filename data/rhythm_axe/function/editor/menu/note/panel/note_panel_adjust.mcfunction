@@ -54,7 +54,9 @@ execute if score #click_value editor matches 772..773 run execute store result s
 # 大小 size（774/775，0.1 步；绝对下界 0.1、相对改增量；float 用 scoreboard ×100）
 scoreboard players set #rel_on editor 0
 execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.size
-execute if score #click_value editor matches 774..775 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.size 100
+execute if score #click_value editor matches 774..775 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.size 1000
+execute if score #click_value editor matches 774..775 run scoreboard players operation #temp editor += 5 const
+execute if score #click_value editor matches 774..775 run scoreboard players operation #temp editor /= 10 const
 execute if score #rel_on editor matches 1 if score #click_value editor matches 774..775 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.rel.delta.size
 execute if score #click_value editor matches 774 run scoreboard players remove #temp editor 10
 execute if score #click_value editor matches 775 run scoreboard players add #temp editor 10

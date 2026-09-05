@@ -455,7 +455,9 @@ execute if score #temp editor matches 3 unless score #batch_mode editor matches 
 # 相对模式显示增量（delta.size 为 ×100，转为 ×10 与绝对同尺度），绝对显示 temp.size
 scoreboard players set #rel_on editor 0
 execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.size
-execute store result score #v editor run data get storage rhythm_axe:maps.editor editing.temp.size 10
+execute store result score #v editor run data get storage rhythm_axe:maps.editor editing.temp.size 100
+scoreboard players operation #v editor += 5 const
+scoreboard players operation #v editor /= 10 const
 execute if score #rel_on editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor editing.rel.delta.size
 execute if score #rel_on editor matches 1 run scoreboard players operation #v editor /= 10 const
 scoreboard players set #nz editor 0
@@ -491,7 +493,9 @@ execute if score #rel_on editor matches 1 if score #v editor matches 0 run tellr
 ]
 # 绝对模式：temp.size != orig.size → 已修改（红 [x]）；否则灰
 scoreboard players set #mod_size editor 0
-execute store result score #orig_s editor run data get storage rhythm_axe:maps.editor editing.orig.size 10
+execute store result score #orig_s editor run data get storage rhythm_axe:maps.editor editing.orig.size 100
+scoreboard players operation #orig_s editor += 5 const
+scoreboard players operation #orig_s editor /= 10 const
 execute if score #rel_on editor matches 0 unless score #v editor = #orig_s editor run scoreboard players set #mod_size editor 1
 execute if score #rel_on editor matches 0 if score #mod_size editor matches 1 run tellraw @s [\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 793"},"hover_event":{"action":"show_text","value":"取消本项修改（还原为打开时的值）"}},\
@@ -513,9 +517,15 @@ execute if score #rel_on editor matches 0 unless score #mod_size editor matches 
 # 相对模式读增量（delta 为 ×100，/10 转 ×10 与绝对同尺度）
 scoreboard players set #rel_pos editor 0
 execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
-execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.temp.position[0] 10
-execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.temp.position[1] 10
-execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.temp.position[2] 10
+execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.temp.position[0] 100
+scoreboard players operation #vx editor += 5 const
+scoreboard players operation #vx editor /= 10 const
+execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.temp.position[1] 100
+scoreboard players operation #vy editor += 5 const
+scoreboard players operation #vy editor /= 10 const
+execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.temp.position[2] 100
+scoreboard players operation #vz editor += 5 const
+scoreboard players operation #vz editor /= 10 const
 execute if score #rel_pos editor matches 1 run execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[0]
 execute if score #rel_pos editor matches 1 run execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[1]
 execute if score #rel_pos editor matches 1 run execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[2]
@@ -561,9 +571,15 @@ execute if score #rel_pos editor matches 1 if score #vy editor matches ..-1 run 
 execute if score #rel_pos editor matches 1 if score #vz editor matches 1.. run scoreboard players set #mod_pos editor 1
 execute if score #rel_pos editor matches 1 if score #vz editor matches ..-1 run scoreboard players set #mod_pos editor 1
 # 绝对模式：任一轴 temp != orig → 已修改
-execute if score #rel_pos editor matches 0 run execute store result score #ox editor run data get storage rhythm_axe:maps.editor editing.orig.position[0] 10
-execute if score #rel_pos editor matches 0 run execute store result score #oy editor run data get storage rhythm_axe:maps.editor editing.orig.position[1] 10
-execute if score #rel_pos editor matches 0 run execute store result score #oz editor run data get storage rhythm_axe:maps.editor editing.orig.position[2] 10
+execute if score #rel_pos editor matches 0 run execute store result score #ox editor run data get storage rhythm_axe:maps.editor editing.orig.position[0] 100
+execute if score #rel_pos editor matches 0 run scoreboard players operation #ox editor += 5 const
+execute if score #rel_pos editor matches 0 run scoreboard players operation #ox editor /= 10 const
+execute if score #rel_pos editor matches 0 run execute store result score #oy editor run data get storage rhythm_axe:maps.editor editing.orig.position[1] 100
+execute if score #rel_pos editor matches 0 run scoreboard players operation #oy editor += 5 const
+execute if score #rel_pos editor matches 0 run scoreboard players operation #oy editor /= 10 const
+execute if score #rel_pos editor matches 0 run execute store result score #oz editor run data get storage rhythm_axe:maps.editor editing.orig.position[2] 100
+execute if score #rel_pos editor matches 0 run scoreboard players operation #oz editor += 5 const
+execute if score #rel_pos editor matches 0 run scoreboard players operation #oz editor /= 10 const
 execute if score #rel_pos editor matches 0 unless score #vx editor = #ox editor run scoreboard players set #mod_pos editor 1
 execute if score #rel_pos editor matches 0 unless score #vy editor = #oy editor run scoreboard players set #mod_pos editor 1
 execute if score #rel_pos editor matches 0 unless score #vz editor = #oz editor run scoreboard players set #mod_pos editor 1
@@ -611,9 +627,15 @@ data remove storage rhythm_axe:prop paux
 # 相对模式读增量（delta 为 ×100，/10 转 ×10 与绝对同尺度）
 scoreboard players set #rel_sp editor 0
 execute store result score #rel_sp editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
-execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[0] 10
-execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[1] 10
-execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[2] 10
+execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[0] 100
+scoreboard players operation #vx editor += 5 const
+scoreboard players operation #vx editor /= 10 const
+execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[1] 100
+scoreboard players operation #vy editor += 5 const
+scoreboard players operation #vy editor /= 10 const
+execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[2] 100
+scoreboard players operation #vz editor += 5 const
+scoreboard players operation #vz editor /= 10 const
 execute if score #rel_sp editor matches 1 run execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[0]
 execute if score #rel_sp editor matches 1 run execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[1]
 execute if score #rel_sp editor matches 1 run execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[2]
@@ -659,9 +681,15 @@ execute if score #rel_sp editor matches 1 if score #vy editor matches ..-1 run s
 execute if score #rel_sp editor matches 1 if score #vz editor matches 1.. run scoreboard players set #mod_sp editor 1
 execute if score #rel_sp editor matches 1 if score #vz editor matches ..-1 run scoreboard players set #mod_sp editor 1
 # 绝对模式：任一轴 temp != orig → 已修改
-execute if score #rel_sp editor matches 0 run execute store result score #ox editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[0] 10
-execute if score #rel_sp editor matches 0 run execute store result score #oy editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[1] 10
-execute if score #rel_sp editor matches 0 run execute store result score #oz editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[2] 10
+execute if score #rel_sp editor matches 0 run execute store result score #ox editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[0] 100
+execute if score #rel_sp editor matches 0 run scoreboard players operation #ox editor += 5 const
+execute if score #rel_sp editor matches 0 run scoreboard players operation #ox editor /= 10 const
+execute if score #rel_sp editor matches 0 run execute store result score #oy editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[1] 100
+execute if score #rel_sp editor matches 0 run scoreboard players operation #oy editor += 5 const
+execute if score #rel_sp editor matches 0 run scoreboard players operation #oy editor /= 10 const
+execute if score #rel_sp editor matches 0 run execute store result score #oz editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[2] 100
+execute if score #rel_sp editor matches 0 run scoreboard players operation #oz editor += 5 const
+execute if score #rel_sp editor matches 0 run scoreboard players operation #oz editor /= 10 const
 execute if score #rel_sp editor matches 0 unless score #vx editor = #ox editor run scoreboard players set #mod_sp editor 1
 execute if score #rel_sp editor matches 0 unless score #vy editor = #oy editor run scoreboard players set #mod_sp editor 1
 execute if score #rel_sp editor matches 0 unless score #vz editor = #oz editor run scoreboard players set #mod_sp editor 1

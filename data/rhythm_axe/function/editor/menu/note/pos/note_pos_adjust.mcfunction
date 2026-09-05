@@ -3,7 +3,9 @@
 # 绝对模式改 editing.temp.<field>；相对模式改 editing.rel.delta.<group>[axis]（×100 整数）；无值域钳制
 scoreboard players set #rel_on editor 0
 $execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.$(rel_group)
-$execute if score #rel_on editor matches 0 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.$(field_name) 100
+$execute if score #rel_on editor matches 0 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.$(field_name) 1000
+execute if score #rel_on editor matches 0 run scoreboard players operation #temp editor += 5 const
+execute if score #rel_on editor matches 0 run scoreboard players operation #temp editor /= 10 const
 $execute if score #rel_on editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.rel.delta.$(rel_group)[$(rel_axis)]
 $scoreboard players operation #temp editor += $(delta) const
 $execute if score #rel_on editor matches 0 run execute store result storage rhythm_axe:maps.editor editing.temp.$(field_name) double 0.01 run scoreboard players get #temp editor

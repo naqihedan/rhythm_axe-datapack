@@ -114,16 +114,20 @@ $execute if score #note_type play_state matches 1 run data merge entity @e[tag=e
 $execute if score #note_type play_state matches 2 run data merge entity @e[tag=editor_n_$(nid),type=item_display,limit=1] {CustomName:{"text":"唱片机_$(nid)"}}
 $execute if score #note_type play_state matches 3 run data merge entity @e[tag=editor_n_$(nid),type=item_display,limit=1] {CustomName:{"text":"混凝土_$(nid)"}}
 $execute if score #note_type play_state matches 4 run data merge entity @e[tag=editor_n_$(nid),type=item_display,limit=1] {CustomName:{"text":"染色玻璃_$(nid)"}}
-# 缩放 = size（x/y/z 统一）
-$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] transformation.scale[0] float 0.01 run data get storage rhythm_axe:prop size 100
-$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] transformation.scale[1] float 0.01 run data get storage rhythm_axe:prop size 100
-$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] transformation.scale[2] float 0.01 run data get storage rhythm_axe:prop size 100
+# 缩放 = size（x/y/z 统一）；#nsz = round(size×100)（浮点精度四舍五入）
+scoreboard players set #nsz display_calc 0
+execute store result score #nsz display_calc run data get storage rhythm_axe:prop size 1000
+scoreboard players operation #nsz display_calc += 5 const
+scoreboard players operation #nsz display_calc /= 10 const
+$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] transformation.scale[0] float 0.01 run scoreboard players get #nsz display_calc
+$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] transformation.scale[1] float 0.01 run scoreboard players get #nsz display_calc
+$execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] transformation.scale[2] float 0.01 run scoreboard players get #nsz display_calc
 # 混凝土长条全长（×100）：短 hold = dist×dur/lt；长 hold = dist+size（尾端起点往回退 size/2 → 头端到位 s/2 需多走 size）
 # ★ 2026-08-26：短 hold 同游玩（dist×dur/lt）；长 hold 因尾端起点 = -d-s/2、头端终点 = s/2，全长 = d+s
 scoreboard players operation #L100 display_calc = #note_dist display_calc
 execute if score #note_type play_state matches 3 if score #n_dur editor <= #n_lt editor run scoreboard players operation #L100 display_calc *= #n_dur editor
 execute if score #note_type play_state matches 3 if score #n_dur editor <= #n_lt editor run scoreboard players operation #L100 display_calc /= #n_lt editor
-execute if score #note_type play_state matches 3 if score #n_dur editor > #n_lt editor run execute store result score #sz100 display_calc run data get storage rhythm_axe:prop size 100
+execute if score #note_type play_state matches 3 if score #n_dur editor > #n_lt editor run scoreboard players operation #sz100 display_calc = #nsz display_calc
 execute if score #note_type play_state matches 3 if score #n_dur editor > #n_lt editor run scoreboard players operation #L100 display_calc += #sz100 display_calc
 $execute if score #note_type play_state matches 3 run execute store result entity @e[tag=editor_n_$(nid),type=item_display,limit=1] transformation.scale[2] float 0.01 run scoreboard players get #L100 display_calc
 # 混凝土全长（×100）存实体（place 分段拉伸用）
@@ -131,8 +135,8 @@ $execute if score #note_type play_state matches 3 run execute as @e[tag=editor_n
 
 # ===== 交互实体（重现只看不碰；为后续编辑交互预留）=====
 $summon interaction $(pos_x) $(pos_y) $(pos_z) {width:1f,height:1f,response:true,Tags:["editor_note","editor_n_$(nid)"]}
-$execute store result entity @e[tag=editor_n_$(nid),type=interaction,limit=1] width float 0.01 run data get storage rhythm_axe:prop size 100
-$execute store result entity @e[tag=editor_n_$(nid),type=interaction,limit=1] height float 0.01 run data get storage rhythm_axe:prop size 100
+$execute store result entity @e[tag=editor_n_$(nid),type=interaction,limit=1] width float 0.01 run scoreboard players get #nsz display_calc
+$execute store result entity @e[tag=editor_n_$(nid),type=interaction,limit=1] height float 0.01 run scoreboard players get #nsz display_calc
 # 交互实体记 note_id（后续编辑交互用）
 $execute as @e[tag=editor_n_$(nid),type=interaction,limit=1] run scoreboard players set @s note_id $(nid)
 

@@ -13,7 +13,9 @@ $execute unless score #rele editor matches 1 run data modify storage rhythm_axe:
 # 大小（float，下界 0.1；delta 为 ×100 整数）
 scoreboard players set #rele editor 0
 execute store result score #rele editor run data get storage rhythm_axe:maps.editor editing.rel.on.size
-$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].size 100
+$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].size 1000
+execute if score #rele editor matches 1 run scoreboard players operation #v editor += 5 const
+execute if score #rele editor matches 1 run scoreboard players operation #v editor /= 10 const
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.size
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 execute if score #rele editor matches 1 if score #v editor matches ..10 run scoreboard players set #v editor 10
@@ -22,15 +24,21 @@ $execute unless score #rele editor matches 1 run data modify storage rhythm_axe:
 # 判定位置 x/y/z（无下界钳制；delta 为 ×100 整数）
 scoreboard players set #rele editor 0
 execute store result score #rele editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
-$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[0] 100
+$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[0] 1000
+execute if score #rele editor matches 1 run scoreboard players operation #v editor += 5 const
+execute if score #rele editor matches 1 run scoreboard players operation #v editor /= 10 const
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[0]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[0] double 0.01 run scoreboard players get #v editor
-$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[1] 100
+$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[1] 1000
+execute if score #rele editor matches 1 run scoreboard players operation #v editor += 5 const
+execute if score #rele editor matches 1 run scoreboard players operation #v editor /= 10 const
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[1]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[1] double 0.01 run scoreboard players get #v editor
-$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[2] 100
+$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[2] 1000
+execute if score #rele editor matches 1 run scoreboard players operation #v editor += 5 const
+execute if score #rele editor matches 1 run scoreboard players operation #v editor /= 10 const
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[2]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[2] double 0.01 run scoreboard players get #v editor
@@ -38,15 +46,21 @@ $execute unless score #rele editor matches 1 run data modify storage rhythm_axe:
 # 起始位置 x/y/z（无下界钳制；delta 为 ×100 整数）
 scoreboard players set #rele editor 0
 execute store result score #rele editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
-$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[0] 100
+$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[0] 1000
+execute if score #rele editor matches 1 run scoreboard players operation #v editor += 5 const
+execute if score #rele editor matches 1 run scoreboard players operation #v editor /= 10 const
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[0]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[0] double 0.01 run scoreboard players get #v editor
-$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[1] 100
+$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[1] 1000
+execute if score #rele editor matches 1 run scoreboard players operation #v editor += 5 const
+execute if score #rele editor matches 1 run scoreboard players operation #v editor /= 10 const
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[1]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[1] double 0.01 run scoreboard players get #v editor
-$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[2] 100
+$execute if score #rele editor matches 1 run execute store result score #v editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[2] 1000
+execute if score #rele editor matches 1 run scoreboard players operation #v editor += 5 const
+execute if score #rele editor matches 1 run scoreboard players operation #v editor /= 10 const
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[2]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[2] double 0.01 run scoreboard players get #v editor

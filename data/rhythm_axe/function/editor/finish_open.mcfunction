@@ -42,6 +42,11 @@ data remove storage rhythm_axe:prop music
 
 # 播放头回到开头（= min(0, 最早出生)-1，与游玩一致）再刷新视觉
 function rhythm_axe:editor/visual/seek_start
+# 恢复编辑器保存的播放头位置（旧谱面无该字段则保留 seek_start 的开头位置）
+$execute if data storage rhythm_axe:maps.$(mapid) editor_playhead run data modify storage rhythm_axe:maps.editor playhead set from storage rhythm_axe:maps.$(mapid) editor_playhead
+execute store result score #playhead editor run data get storage rhythm_axe:maps.editor playhead
+execute store result bossbar rhythm_axe:editor_progress value run scoreboard players get #playhead editor
+function rhythm_axe:editor/visual/progress_actionbar
 # 显示聊天栏主菜单（点击 /trigger editor_click 不弹确认窗）
 function rhythm_axe:editor/refresh
 function rhythm_axe:editor/menu/main
