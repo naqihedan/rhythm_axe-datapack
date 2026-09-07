@@ -8,9 +8,6 @@
 # 前置：scan_birth_one 已把每个音符的 _birth 写入 notes[]._birth；
 #   #earliest_birth play_state 已由 scan_birth 算出（= 最小 _birth，作桶偏移基准）。
 # ★ 本函数只做初始化 + 启动链；不再同步递归，也不再清理 sort_* 键（那些在 finish 时清理）。
-
-# 【临时诊断】排序链进入计数器：若 >1，说明排序链被反复执行（外部反复触发 start 或某处循环调用）
-scoreboard players add #sort_chain_calls play_state 1
 execute store result score #sort_count play_state run data get storage rhythm_axe:runtime notes
 # 至少 2 个音符才需要排序（1 个或 0 个直接启动主循环）
 scoreboard players set #sort_i play_state 0

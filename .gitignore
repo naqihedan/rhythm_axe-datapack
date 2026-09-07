@@ -19,5 +19,4 @@ _backup*/
 Thumbs.db
 .DS_Store
 
-# local development docs (private design notes)
-# 节奏地图开发文档/
+_macro_out.txt

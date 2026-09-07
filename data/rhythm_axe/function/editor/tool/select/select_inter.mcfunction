@@ -15,8 +15,10 @@ scoreboard players set #hit editor 0
 $execute if score #px editor matches $(minx)..$(maxx) if score #py editor matches $(miny)..$(maxy) if score #pz editor matches $(minz)..$(maxz) run scoreboard players set #hit editor 1
 # 命中：填 selection + 高亮展示实体 + 标记交互实体为已选中（供右击取消选中判定）
 execute if score #hit editor matches 1 run execute store result storage rhythm_axe:prop nid int 1 run scoreboard players get @s note_id
-execute if score #hit editor matches 1 run data modify storage rhythm_axe:maps.editor selection append from storage rhythm_axe:prop nid
+execute if score #hit editor matches 1 run execute store result storage rhythm_axe:prop idx int 1 run scoreboard players get @s editor_n_idx
+execute if score #hit editor matches 1 run function rhythm_axe:editor/menu/note/selected/sel_select_one with storage rhythm_axe:prop
 execute if score #hit editor matches 1 run scoreboard players add #sel_count editor 1
 execute if score #hit editor matches 1 run tag @s add editor_note_selected
 execute if score #hit editor matches 1 run function rhythm_axe:editor/tool/select/select_mark_glow with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop nid
+data remove storage rhythm_axe:prop idx

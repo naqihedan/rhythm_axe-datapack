@@ -8,10 +8,6 @@ scoreboard players add #sort_range play_state 1
 scoreboard players set #sort_i play_state 0
 execute store result storage rhythm_axe:runtime sort_i int 1 run scoreboard players get #sort_i play_state
 scoreboard players set #dbg play_state 13
-# 【临时诊断】init 进入计数器：与 #sort_chain_calls 对比定位（= 应等于 [排序诊断] 打印次数）
-scoreboard players add #sort_init_calls play_state 1
-# 【临时诊断】打印排序关键值
-tellraw @a [{"text":"[排序诊断] ","color":"gold"},{"text":"max=","color":"white"},{"score":{"objective":"play_state","name":"#sort_max"}},{"text":" earliest=","color":"white"},{"score":{"objective":"play_state","name":"#earliest_birth"}},{"text":" range=","color":"white"},{"score":{"objective":"play_state","name":"#sort_range"}}]
 data modify storage rhythm_axe:runtime sort_bucket set value []
 # 合并结果列表先建空（后续 append from 需要目标已存在）
 data modify storage rhythm_axe:runtime sort_sorted set value []

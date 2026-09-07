@@ -5,13 +5,12 @@
 # 展示实体（物品展示）
 # transformation 需 left_rotation 与 right_rotation 成对（wiki 示例）
 # brightness 全 15：音符不受环境光照影响，始终满亮度显示
-# 展示实体：先 summon 到大致位置，再用 data modify 从 cur_note 精确写 Pos
+# 展示实体：先 summon 到原点 (0,0,0)，再用 data modify 从 cur_note 精确写 Pos
 # ★ 修复 spawn 错位：宏展开 $(pos_x) 会把 double 1.0 展开成整数 "1"，summon 命令对整数坐标自动对齐方块中心（1→1.5、0→0.5）；
-# 先让展示实体生成在该生成的位置附近确保能加载，再写入精确数据确保位置正确
 #   transformation.translation 是 NBT 数据不经 summon 坐标解析，start_x/z 用宏无碍
-$summon item_display $(pos_x) $(pos_y) $(pos_z) {item:{id:"minecraft:note_block",count:1},Tags:["note","note_display","$(mapid)_n$(id)","map_$(mapid)"],brightness:{block:15,sky:15},transformation:{translation:[$(start_x),$(start_y),$(start_z)],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
+$summon item_display 0.0 0.0 0.0 {item:{id:"minecraft:note_block",count:1},Tags:["note","note_display","$(mapid)_n$(id)","map_$(mapid)"],brightness:{block:15,sky:15},transformation:{translation:[$(start_x),$(start_y),$(start_z)],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
 # ★ 2026-09-04 修复：data modify entity Pos 写入失效（Pos 留 0,0,0 → 展示实体停在原点）。
-#   summon 用宏坐标在判别位置生成（即使对齐方块中心也"能加载"）；精确位置由下方 store result 覆写。
+#   改用 store result entity Pos double 写【判定位置】（与交互实体同款实测生效）。×100 → 0.01。
 #   展示实体 Pos = 判定位置（锚点）；运动偏移走 transformation.translation，故固定不随帧变。
 execute store result score #dspx play_state run data get storage rhythm_axe:runtime cur_note.pos_x 100
 execute store result score #dspy play_state run data get storage rhythm_axe:runtime cur_note.pos_y 100
@@ -76,14 +75,10 @@ $execute if score #note_type play_state matches 2 run data merge entity @e[tag=$
 $execute if score #note_type play_state matches 3 run data merge entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] {CustomName:{"text":"混凝土_$(id)"}}
 $execute if score #note_type play_state matches 4 run data merge entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] {CustomName:{"text":"染色玻璃_$(id)"}}
 
-# 缩放 = size（x/y/z 先统一为 size；混凝土 z 轴随后覆盖为长条长度）；#nsz = round(size×100)（浮点精度四舍五入）
-scoreboard players set #nsz play_state 0
-execute store result score #nsz play_state run data get storage rhythm_axe:runtime cur_note.size 1000
-scoreboard players operation #nsz play_state += 5 const
-scoreboard players operation #nsz play_state /= 10 const
-$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale[0] float 0.01 run scoreboard players get #nsz play_state
-$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale[1] float 0.01 run scoreboard players get #nsz play_state
-$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale[2] float 0.01 run scoreboard players get #nsz play_state
+# 缩放 = size（x/y/z 先统一为 size；混凝土 z 轴随后覆盖为长条长度）
+$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale[0] float 0.01 run data get storage rhythm_axe:runtime cur_note.size 100
+$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale[1] float 0.01 run data get storage rhythm_axe:runtime cur_note.size 100
+$execute store result entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] transformation.scale[2] float 0.01 run data get storage rhythm_axe:runtime cur_note.size 100
 
 # ===== 朝向：展示实体正面面向落点（局部 +z 轴朝运动方向）=====
 # 所有音符绕 Y（yaw）；混凝土额外绕 X（pitch）使长条沿含 Y 的运动方向（长条面垂直轨迹）
@@ -200,7 +195,7 @@ $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_c_lt /= note_speed options
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_dist run scoreboard players get #sqrt_out display_calc
 # note_c_size = size×100（concrete_move 批量写 scale[0]/[1] 用）
-$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_size = #nsz play_state
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_m = #cm display_calc
 # 普通音符（0/1/2）：存 start 分量与 dist（move 算交互位置用：视觉 = Pos + 局部z×(-start/dist)）
 $execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_sx = #dir_x play_state
@@ -228,7 +223,7 @@ $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_c_lt *= 16 const
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_c_lt /= note_speed options
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_dist run scoreboard players get #note_dist display_calc
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_size = #nsz play_state
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_easing run data get storage rhythm_axe:runtime cur_note.anim_easing
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_power run data get storage rhythm_axe:runtime cur_note.anim_power
 $execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score @s note_c_easing matches 0 run scoreboard players set @s note_c_easing 1
@@ -256,8 +251,8 @@ $execute unless score #note_type play_state matches 3 run execute as @e[tag=$(ma
 # 注意：所有操作交互实体的选择器都必须限定 tag=note_interaction，
 #   因为同一音符还有一个 item_display 展示实体（note_display，兼作完美判定区域代表，见下方）
 $summon interaction $(pos_x) $(pos_y) $(pos_z) {width:1f,height:1f,response:true,Tags:["note","note_interaction","$(mapid)_n$(id)","map_$(mapid)"]}
-$execute store result entity @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] width float 0.01 run scoreboard players get #nsz play_state
-$execute store result entity @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] height float 0.01 run scoreboard players get #nsz play_state
+$execute store result entity @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] width float 0.01 run data get storage rhythm_axe:runtime cur_note.size 100
+$execute store result entity @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] height float 0.01 run data get storage rhythm_axe:runtime cur_note.size 100
 # 交互实体初始位置 = 视觉出生位置（判定位置 + start_pos）
 execute store result score #ipx play_state run data get storage rhythm_axe:runtime cur_note.pos_x 100
 execute store result score #ipx2 play_state run data get storage rhythm_axe:runtime cur_note.start_x 100
@@ -267,7 +262,7 @@ execute store result score #ipy2 play_state run data get storage rhythm_axe:runt
 scoreboard players operation #ipy play_state += #ipy2 play_state
 # 交互实体 Pos 为脚底、展示实体 Pos 为方块中心 → y 减去 音符尺寸×0.5（×100 尺度：size×100/2）
 #   使交互实体碰撞箱完全包裹展示模型（设计：交互实体嵌套展示实体、中心同一）
-scoreboard players operation #tmp_size play_state = #nsz play_state
+execute store result score #tmp_size play_state run data get storage rhythm_axe:runtime cur_note.size 100
 scoreboard players operation #tmp_size play_state /= 2 const
 scoreboard players operation #ipy play_state -= #tmp_size play_state
 execute store result score #ipz play_state run data get storage rhythm_axe:runtime cur_note.pos_z 100
@@ -509,8 +504,8 @@ execute if score #note_type play_state matches 4 if score #ANIM_POWER display_ca
 execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run scoreboard players operation #m_end display_calc /= #ANIM_DURATION display_calc
 # ===== 线性音符出生隐藏（★ 2026-08-29）：出生 scale=0（不可见，避免延迟期停在出生位置），motion/start 恢复 size =====
 #   先存 note_c_size = size×100（普通 0/1/2 原本不存；玻璃 4 已有，重复存无害）
-$execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_size = #nsz play_state
-$execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_c_size = #nsz play_state
+$execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
+$execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_c_size run data get storage rhythm_axe:runtime cur_note.size 100
 # ★ 2026-09-04 改「item=air 隐藏」（scale 保持 size）：旧「scale=0 隐藏→active=3 恢复」在客户端一帧跨两 tick
 #   时会把 scale 从 0 插值到 size → 音符「从小到大」放大 bug。改为出生时把实际 item 暂存到 note_show，item 设 air（不可见），
 #   motion/start（active=4）时恢复 item=方块 → scale 恒定不插值，音符在出生位置隐藏、4 刻后瞬间出现。

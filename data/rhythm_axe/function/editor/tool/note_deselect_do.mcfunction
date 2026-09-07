@@ -2,15 +2,10 @@
 # 熄灭该音符展示实体高亮
 execute as @e[type=item_display,tag=editor_note] if score @s note_id = #nc_id editor run data modify entity @s Glowing set value 0b
 execute as @e[type=item_display,tag=editor_note] if score @s note_id = #nc_id editor run data remove entity @s glow_color_override
-# 从 selection 移除该 id（重建列表，跳过 #rm_id）
-execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][rm]","color":"gray"},{"text":" 待移除 #nc_id=","color":"gold"},{"score":{"name":"#nc_id","objective":"editor"},"color":"aqua"},{"text":" 移除前 selection=","color":"gold"},{"nbt":"selection","storage":"rhythm_axe:maps.editor","color":"aqua"}]
-data modify storage rhythm_axe:prop rm_out set value []
-data modify storage rhythm_axe:prop rm_idx set value 0
-execute store result score #rm_id editor run scoreboard players get #nc_id editor
-function rhythm_axe:editor/menu/note/selected/sel_remove_drive
-execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][rm]","color":"gray"},{"text":" 移除后 selection=","color":"gold"},{"nbt":"selection","storage":"rhythm_axe:maps.editor","color":"aqua"}]
-data remove storage rhythm_axe:prop rm_out
-data remove storage rhythm_axe:prop rm_idx
+# 移除该音符的 selected 标记，再重建 selection
+execute store result storage rhythm_axe:prop nid int 1 run scoreboard players get #nc_id editor
+function rhythm_axe:editor/menu/note/selected/sel_deselect_by_id
+data remove storage rhythm_axe:prop nid
 # 同步 #sel_count（从 selection 长度重算）
 execute store result score #sel_count editor run data get storage rhythm_axe:maps.editor selection
 # 取消选中后弹出「已选定音符列表」面板（显示剩余选中）

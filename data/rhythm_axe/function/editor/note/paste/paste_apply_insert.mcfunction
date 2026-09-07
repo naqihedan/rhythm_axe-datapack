@@ -3,3 +3,5 @@
 $data modify storage rhythm_axe:maps.editor history[$(cursor)].notes insert $(insert_index) from storage rhythm_axe:maps.editor clipboard.notes[$(paste_index)]
 $data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(insert_index)].id set value $(new_id)
 $data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(insert_index)].time set value $(new_time)
+# 粘贴不继承选中状态（selected 是编辑器状态，非音符数据）
+$data remove storage rhythm_axe:maps.editor history[$(cursor)].notes[$(insert_index)].selected

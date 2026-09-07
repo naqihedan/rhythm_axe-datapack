@@ -139,6 +139,8 @@ $execute store result entity @e[tag=editor_n_$(nid),type=interaction,limit=1] wi
 $execute store result entity @e[tag=editor_n_$(nid),type=interaction,limit=1] height float 0.01 run scoreboard players get #nsz display_calc
 # 交互实体记 note_id（后续编辑交互用）
 $execute as @e[tag=editor_n_$(nid),type=interaction,limit=1] run scoreboard players set @s note_id $(nid)
+# 交互实体记音符下标（框选 select_inter O(1) 读，避免逐个 find 爆 200000）
+$execute as @e[tag=editor_n_$(nid),type=interaction,limit=1] run scoreboard players set @s editor_n_idx $(idx)
 
 # ===== 存储移动参数到展示实体（place 统一计算位置 + 播放 tick 清理用）=====
 # note_id：唯一 id；editor_n_birth/time/end：出生/判定/消失虚拟时刻；editor_n_dist：dist×100

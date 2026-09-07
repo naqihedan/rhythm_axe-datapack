@@ -34,12 +34,13 @@ scoreboard players add #ny editor 1
 scoreboard players operation #nz editor = #maxz editor
 scoreboard players operation #nz editor -= #minz editor
 scoreboard players add #nz editor 1
-# 清空 selection + 清除旧高亮 + 清空旧选中标签（重新判定前所有音符光熄灭、选中标签清空）
-data modify storage rhythm_axe:maps.editor selection set value []
+# 清空旧选中（selected 标记 + selection + 高亮 + tag）
+function rhythm_axe:editor/menu/note/selected/sel_clear_all
 scoreboard players set #sel_count editor 0
 execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
 execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
-# 存宏参 → select_highlight（判定+高亮+填充 selection）
+# 存宏参 → select_highlight（判定+高亮+标记 selected）
+data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 execute store result storage rhythm_axe:prop minx int 1 run scoreboard players get #minx editor
 execute store result storage rhythm_axe:prop maxx int 1 run scoreboard players get #maxx editor
 execute store result storage rhythm_axe:prop miny int 1 run scoreboard players get #miny editor
@@ -47,7 +48,10 @@ execute store result storage rhythm_axe:prop maxy int 1 run scoreboard players g
 execute store result storage rhythm_axe:prop minz int 1 run scoreboard players get #minz editor
 execute store result storage rhythm_axe:prop maxz int 1 run scoreboard players get #maxz editor
 function rhythm_axe:editor/tool/select/select_highlight with storage rhythm_axe:prop
+# 重建 selection（按 notes 顺序收集选中标记的音符）
+function rhythm_axe:editor/menu/note/selected/sel_rebuild
 # 清宏参
+data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop minx
 data remove storage rhythm_axe:prop maxx
 data remove storage rhythm_axe:prop miny

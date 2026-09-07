@@ -45,6 +45,8 @@ execute as @e[tag=editor_guide,type=item_display] run function rhythm_axe:editor
 # 无未出生（全部已消失/存活）→ 游标落到末尾（#vis_idx 结束时 = notes 长度）
 execute if score #vis_next editor matches 999999 run scoreboard players operation #vis_next editor = #vis_idx editor
 # ★ 刷新后补光：整体重建会清掉 Glowing，重新给被选中音符补黄色高亮
+# ★ 先重建 selection（基于音符元素 selected 标记，按 notes 顺序），供 sel_glow 补光
+function rhythm_axe:editor/menu/note/selected/sel_rebuild
 data modify storage rhythm_axe:prop glow_idx set value 0
 function rhythm_axe:editor/menu/note/selected/sel_glow_drive
 data remove storage rhythm_axe:prop glow_idx

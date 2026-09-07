@@ -72,10 +72,10 @@ execute if score #panel_id editor matches 8 unless score #click_value editor mat
 execute if score #panel_id editor matches 8 unless score #click_value editor matches 901..903 run return fail
 execute if score #panel_id editor matches 9 unless score #click_value editor matches 40..42 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
 execute if score #panel_id editor matches 9 unless score #click_value editor matches 40..42 run return fail
-execute if score #panel_id editor matches 10 unless score #click_value editor matches 1 unless score #click_value editor matches 600..759 unless score #click_value editor matches 1600..1639 unless score #click_value editor matches 1562 unless score #click_value editor matches 1640 unless score #click_value editor matches 1641..1642 unless score #click_value editor matches 1683 unless score #click_value editor matches 1684..1685 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
-execute if score #panel_id editor matches 10 unless score #click_value editor matches 1 unless score #click_value editor matches 600..759 unless score #click_value editor matches 1600..1639 unless score #click_value editor matches 1562 unless score #click_value editor matches 1640 unless score #click_value editor matches 1641..1642 unless score #click_value editor matches 1683 unless score #click_value editor matches 1684..1685 run return fail
-execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 unless score #click_value editor matches 890 unless score #click_value editor matches 891..893 unless score #click_value editor matches 894..895 unless score #click_value editor matches 896..899 unless score #click_value editor matches 904..908 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
-execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 unless score #click_value editor matches 890 unless score #click_value editor matches 891..893 unless score #click_value editor matches 894..895 unless score #click_value editor matches 896..899 unless score #click_value editor matches 904..908 run return fail
+execute if score #panel_id editor matches 10 unless score #click_value editor matches 1 unless score #click_value editor matches 600..759 unless score #click_value editor matches 1600..1639 unless score #click_value editor matches 1562 unless score #click_value editor matches 1640 unless score #click_value editor matches 1641..1642 unless score #click_value editor matches 1683 unless score #click_value editor matches 1684..1685 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914 unless score #click_value editor matches 915 unless score #click_value editor matches 916 unless score #click_value editor matches 917 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
+execute if score #panel_id editor matches 10 unless score #click_value editor matches 1 unless score #click_value editor matches 600..759 unless score #click_value editor matches 1600..1639 unless score #click_value editor matches 1562 unless score #click_value editor matches 1640 unless score #click_value editor matches 1641..1642 unless score #click_value editor matches 1683 unless score #click_value editor matches 1684..1685 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914 unless score #click_value editor matches 915 unless score #click_value editor matches 916 unless score #click_value editor matches 917 run return fail
+execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 unless score #click_value editor matches 890 unless score #click_value editor matches 891..893 unless score #click_value editor matches 894..895 unless score #click_value editor matches 896..899 unless score #click_value editor matches 904..908 unless score #click_value editor matches 909 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
+execute if score #panel_id editor matches 11 unless score #click_value editor matches 760..805 unless score #click_value editor matches 856 unless score #click_value editor matches 860..887 unless score #click_value editor matches 787..790 unless score #click_value editor matches 890 unless score #click_value editor matches 891..893 unless score #click_value editor matches 894..895 unless score #click_value editor matches 896..899 unless score #click_value editor matches 904..908 unless score #click_value editor matches 909 run return fail
 execute if score #panel_id editor matches 12 unless score #click_value editor matches 806..827 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
 execute if score #panel_id editor matches 12 unless score #click_value editor matches 806..827 run return fail
 execute if score #panel_id editor matches 13 unless score #click_value editor matches 830..851 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
@@ -91,8 +91,8 @@ execute if score #panel_id editor matches 16 unless score #click_value editor ma
 execute if score #panel_id editor matches 17 unless score #click_value editor matches 1 unless score #click_value editor matches 1370..1373 unless score #click_value editor matches 1380..1389 unless score #click_value editor matches 1390..1399 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
 execute if score #panel_id editor matches 17 unless score #click_value editor matches 1 unless score #click_value editor matches 1370..1373 unless score #click_value editor matches 1380..1389 unless score #click_value editor matches 1390..1399 run return fail
 # 面板 18（已选定音符列表）：1560 返回 + 1561 清空选中 + 1562 批量编辑 + 1563 批量复制 + 1564 批量粘贴 + 1400-1559（编辑/复制/粘贴/删除）+ 1643-1682（复选框去选）
-execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1564 unless score #click_value editor matches 1400..1559 unless score #click_value editor matches 1643..1682 unless score #click_value editor matches 1684..1685 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
-execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1564 unless score #click_value editor matches 1400..1559 unless score #click_value editor matches 1643..1682 unless score #click_value editor matches 1684..1685 run return fail
+execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1564 unless score #click_value editor matches 1400..1559 unless score #click_value editor matches 1643..1682 unless score #click_value editor matches 1684..1685 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914 unless score #click_value editor matches 915 unless score #click_value editor matches 916 unless score #click_value editor matches 917 run tellraw @s [{"text":"[编辑器] 该按钮不属于当前面板","color":"yellow"}]
+execute if score #panel_id editor matches 18 unless score #click_value editor matches 1560..1564 unless score #click_value editor matches 1400..1559 unless score #click_value editor matches 1643..1682 unless score #click_value editor matches 1684..1685 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914 unless score #click_value editor matches 915 unless score #click_value editor matches 916 unless score #click_value editor matches 917 run return fail
 
 # 按点击值分发
 execute if score #click_value editor matches 1 run function rhythm_axe:editor/menu/main
@@ -158,7 +158,7 @@ execute if score #click_value editor matches 1390..1399 run data remove storage 
 # 【返回】1560：仅返回主菜单（不清空 selection，保留选中与高亮）
 execute if score #click_value editor matches 1560 run function rhythm_axe:editor/menu/main
 # 【清空选中并返回】1561：清空 selection 与高亮、清空选中标签，然后返回主菜单
-execute if score #click_value editor matches 1561 run data modify storage rhythm_axe:maps.editor selection set value []
+execute if score #click_value editor matches 1561 run function rhythm_axe:editor/menu/note/selected/sel_clear_all
 execute if score #click_value editor matches 1561 run scoreboard players set #sel_count editor 0
 execute if score #click_value editor matches 1561 run execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
 execute if score #click_value editor matches 1561 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
@@ -383,7 +383,7 @@ execute if score #click_value editor matches 680..719 run function rhythm_axe:ed
 execute if score #click_value editor matches 720..759 run function rhythm_axe:editor/menu/note/list/note_list_delete_prep
 execute if score #click_value editor matches 1600..1639 run function rhythm_axe:editor/menu/note/list/note_list_toggle
 # 取消选中（不退出列表）：清空 selection + 熄灭高亮，然后刷新列表
-execute if score #click_value editor matches 1640 run data modify storage rhythm_axe:maps.editor selection set value []
+execute if score #click_value editor matches 1640 run function rhythm_axe:editor/menu/note/selected/sel_clear_all
 execute if score #click_value editor matches 1640 run scoreboard players set #sel_count editor 0
 execute if score #click_value editor matches 1640 run execute as @e[type=item_display,tag=editor_note] run data modify entity @s Glowing set value 0b
 execute if score #click_value editor matches 1640 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
@@ -435,6 +435,44 @@ execute if score #click_value editor matches 764 if data storage rhythm_axe:maps
 execute if score #batch_do editor matches 1 if score #click_value editor matches 763 run function rhythm_axe:editor/menu/note/batch/batch_confirm
 execute if score #batch_do editor matches 1 if score #click_value editor matches 764 run function rhythm_axe:editor/menu/note/batch/batch_cancel
 execute if score #batch_do editor matches 1 run return fail
+# 时间轴翻转（活跃/已选定列表底部【时间轴翻转】按钮 909；对 selection 立即 begin/commit 重排，可撤销）
+execute if score #panel_id editor matches 10 if score #click_value editor matches 909 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_time
+execute if score #panel_id editor matches 18 if score #click_value editor matches 909 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_time
+execute if score #click_value editor matches 909 run return 0
+# —— 翻转按钮组（面板10/18 底部第二行）：X/Y/Z 判定位置镜像 + 同时翻起始 ——
+# —— 镜像翻转组（面板10/18 底部第二行）：X/Y/Z/S 为状态开关，切换后由 917【翻转】执行 ——
+# X 开关（910）：切换 mirror.x 并刷新面板
+execute if score #click_value editor matches 910 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.x
+execute if score #click_value editor matches 910 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.x set value 1b
+execute if score #click_value editor matches 910 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.x set value 0b
+execute if score #click_value editor matches 910 if score #panel_id editor matches 10 run function rhythm_axe:editor/menu/note/list/note_list_open
+execute if score #click_value editor matches 910 if score #panel_id editor matches 18 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 910 run return 0
+# Y 开关（914）：切换 mirror.y 并刷新面板
+execute if score #click_value editor matches 914 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.y
+execute if score #click_value editor matches 914 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.y set value 1b
+execute if score #click_value editor matches 914 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.y set value 0b
+execute if score #click_value editor matches 914 if score #panel_id editor matches 10 run function rhythm_axe:editor/menu/note/list/note_list_open
+execute if score #click_value editor matches 914 if score #panel_id editor matches 18 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 914 run return 0
+# Z 开关（915）：切换 mirror.z 并刷新面板
+execute if score #click_value editor matches 915 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.z
+execute if score #click_value editor matches 915 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.z set value 1b
+execute if score #click_value editor matches 915 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.z set value 0b
+execute if score #click_value editor matches 915 if score #panel_id editor matches 10 run function rhythm_axe:editor/menu/note/list/note_list_open
+execute if score #click_value editor matches 915 if score #panel_id editor matches 18 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 915 run return 0
+# S 开关（916）：切换 mirror.s 并刷新面板
+execute if score #click_value editor matches 916 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.s
+execute if score #click_value editor matches 916 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.s set value 1b
+execute if score #click_value editor matches 916 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.s set value 0b
+execute if score #click_value editor matches 916 if score #panel_id editor matches 10 run function rhythm_axe:editor/menu/note/list/note_list_open
+execute if score #click_value editor matches 916 if score #panel_id editor matches 18 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 916 run return 0
+# 执行翻转（917）：按开关执行镜像翻转
+execute if score #panel_id editor matches 10 if score #click_value editor matches 917 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_mirror
+execute if score #panel_id editor matches 18 if score #click_value editor matches 917 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_mirror
+execute if score #click_value editor matches 917 run return 0
 execute if score #click_value editor matches 794 run function rhythm_axe:editor/menu/note/panel/note_toggle_following_point
 execute if score #click_value editor matches 795 run function rhythm_axe:editor/menu/note/panel/note_toggle_ignore_speed
 # 【x】基础寿命重置：批量=清除 batch_set.base_life + temp 恢复默认 24；单音符=temp 恢复 orig.note_base_life
