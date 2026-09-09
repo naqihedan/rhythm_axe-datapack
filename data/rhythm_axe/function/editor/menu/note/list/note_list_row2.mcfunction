@@ -22,18 +22,10 @@ execute if score #temp_ig editor matches 1 run scoreboard players operation #tem
 execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor *= 16 const
 execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor /= note_speed options
 execute if score #temp_ig editor matches 0 run scoreboard players operation #temp editor -= #temp_cursor editor
-# 线性提前4刻：普通0/1/2 power=1；玻璃4 power=1 dur>=1（与 scan_birth_one 一致）
-scoreboard players set #temp_type editor 0
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type run execute store result score #temp_type editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type
-scoreboard players set #temp_pow editor 1
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].anim_power run execute store result score #temp_pow editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].anim_power
-execute if score #temp_type editor matches 0..2 if score #temp_pow editor matches 1 run scoreboard players remove #temp editor 4
-scoreboard players set #temp_dur editor 3
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration run execute store result score #temp_dur editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration
-execute if score #temp_type editor matches 4 if score #temp_pow editor matches 1 if score #temp_dur editor matches 1.. run scoreboard players remove #temp editor 4
+# 出生刻判定（与 spawn_one_ 一致，无线性提前）：playhead < 出生刻 → 未出生
 execute if score #temp_playhead editor < #temp editor run scoreboard players set #show_row editor 0
-# 消失刻 = 实体 editor_n_end（playhead > 消失刻 → 已消失）：
-#   普通 0/1/2：time；混凝土 3：time+dur-1；玻璃 4：time+dur+1（与 spawn_one_ 的 #n_end 一致）
+# 消失刻 = 实体 editor_n_end（playhead > 消失刻 → 已消失；与 spawn_one_ 的 #n_end 一致）：
+#   普通 0/1/2：time；混凝土 3：time+dur-1；玻璃 4：time+dur×16/note_speed+1（ignore_note_speed=1 不缩放）
 scoreboard players set #temp_cursor editor 0
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration run execute store result score #temp_cursor editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration
 scoreboard players set #temp_type editor 0
@@ -41,13 +33,15 @@ $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index
 $execute store result score #temp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time
 execute if score #temp_type editor matches 3 run scoreboard players operation #temp editor += #temp_cursor editor
 execute if score #temp_type editor matches 3 run scoreboard players remove #temp editor 1
-execute if score #temp_type editor matches 4 run scoreboard players operation #temp editor += #temp_cursor editor
+execute if score #temp_type editor matches 4 run scoreboard players operation #temp_glass editor = #temp_cursor editor
+execute if score #temp_type editor matches 4 if score #temp_ig editor matches 0 run scoreboard players operation #temp_glass editor *= 16 const
+execute if score #temp_type editor matches 4 if score #temp_ig editor matches 0 run scoreboard players operation #temp_glass editor /= note_speed options
+execute if score #temp_type editor matches 4 run scoreboard players operation #temp editor += #temp_glass editor
 execute if score #temp_type editor matches 4 run scoreboard players add #temp editor 1
 execute if score #temp_playhead editor > #temp editor run scoreboard players set #show_row editor 0
-# 复选框：note id + 选中状态（实体带 editor_note_selected 且 note_id 匹配；供排序与勾选）
-$execute if score #show_row editor matches 1 run execute store result score #ncid editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].id
+# 复选框：选中状态以 storage 音符元素 .selected 为真源（供排序与勾选）
 scoreboard players set #sel_on editor 0
-execute if score #show_row editor matches 1 run execute as @e[type=interaction,tag=editor_note_selected] if score @s note_id = #ncid editor run scoreboard players set #sel_on editor 1
+$execute if score #show_row editor matches 1 if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].selected run scoreboard players set #sel_on editor 1
 # 排序：选中音符置底（#list_pass 0=只显示未选中；1=只显示选中）
 execute if score #list_pass editor matches 0 if score #sel_on editor matches 1 run scoreboard players set #show_row editor 0
 execute if score #list_pass editor matches 1 if score #sel_on editor matches 0 run scoreboard players set #show_row editor 0

@@ -23,6 +23,6 @@ execute unless items entity @s weapon.mainhand *[custom_data~{editor_tool:true}]
         custom_data={editor_tool:true,editor_tool_timeline:true,editor_tool_timeline_start:true,editor_tool_state:0}\
     ] 1
 
-# 执行工具命令：站立=返回开头(28)，蹲下=跳到结尾(29)
-execute unless entity @s[predicate=rhythm_axe:sneaking] run trigger editor_click set 28
-execute if entity @s[predicate=rhythm_axe:sneaking] run trigger editor_click set 29
+# 直接执行：站立=返回开头，蹲下=跳到结尾；不再 set trigger 避免 consume 二次发声
+execute unless entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/menu/jump/jump_start
+execute if entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/menu/jump/jump_end

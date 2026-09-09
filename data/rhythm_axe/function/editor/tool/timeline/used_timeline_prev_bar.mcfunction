@@ -23,6 +23,10 @@ execute unless items entity @s weapon.mainhand *[custom_data~{editor_tool:true}]
         custom_data={editor_tool:true,editor_tool_timeline:true,editor_tool_timeline_prev_bar:true,editor_tool_fwd:"快退一小节",editor_tool_bwd:"快进一小节",editor_tool_model:"minecraft:copper_ingot",editor_tool_state:0}\
     ] 1
 
-# 执行工具命令：站立=快退一小节(20)，蹲下=快进一小节(26)
-execute unless entity @s[predicate=rhythm_axe:sneaking] run trigger editor_click set 20
-execute if entity @s[predicate=rhythm_axe:sneaking] run trigger editor_click set 26
+# 直接执行：站立=快退一小节(step bar back)，蹲下=快进一小节(step bar fwd)；不再 set trigger 避免 consume 二次发声
+execute unless entity @s[predicate=rhythm_axe:sneaking] run data modify storage rhythm_axe:prop kind set value "bar"
+execute unless entity @s[predicate=rhythm_axe:sneaking] run data modify storage rhythm_axe:prop direction set value "back"
+execute unless entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/playback/step with storage rhythm_axe:prop
+execute if entity @s[predicate=rhythm_axe:sneaking] run data modify storage rhythm_axe:prop kind set value "bar"
+execute if entity @s[predicate=rhythm_axe:sneaking] run data modify storage rhythm_axe:prop direction set value "fwd"
+execute if entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/playback/step with storage rhythm_axe:prop

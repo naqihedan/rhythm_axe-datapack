@@ -23,5 +23,5 @@ execute unless items entity @s weapon.mainhand *[custom_data~{editor_tool:true}]
         custom_data={editor_tool:false,editor_tool:true,editor_tool_timeline:true,editor_tool_timeline_playpause:true}\
     ] 1
 
-# 执行工具命令
-trigger editor_click set 23
+# 直接执行：播放/暂停（不再 set trigger，避免 consume 二次发声）
+function rhythm_axe:editor/menu/playback_toggle

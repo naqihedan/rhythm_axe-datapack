@@ -3,6 +3,7 @@
 # ★ 重进存档后 editor_timeline_gui 可能被清 0（mod 时间轴开关随之关闭）→ 恢复编辑时强制置 1，确保时间轴重新显示
 scoreboard players set editor_timeline_gui options 1
 data modify storage rhythm_axe:maps.editor active set value 1b
+
 execute store result score #panel_id editor run data get storage rhythm_axe:maps.editor current_panel
 execute if score #panel_id editor matches 1 run function rhythm_axe:editor/menu/main
 execute if score #panel_id editor matches 2 run function rhythm_axe:editor/menu/map/panel/map_panel

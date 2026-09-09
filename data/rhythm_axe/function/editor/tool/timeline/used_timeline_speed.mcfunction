@@ -25,4 +25,5 @@ execute unless items entity @s weapon.mainhand *[custom_data~{editor_tool:true}]
 
 # 站立：播放速度循环（25/50/75/100%）；下蹲：音符流速工具（2/4/8/16 循环，刷新世界音符）
 execute if entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/menu/cycle_note_speed
-execute unless entity @s[predicate=rhythm_axe:sneaking] run trigger editor_click set 27
+# 站立：播放速度循环直接执行（不再 set trigger 避免 consume 二次发声）
+execute unless entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/menu/cycle_speed
