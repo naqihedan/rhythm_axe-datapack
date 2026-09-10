@@ -1,73 +1,63 @@
-# 面板 18：已选定音符列表（1560 返回 / 1561 清空返回 / 1562 批量编辑 / 1563/1564 批量复制粘贴 /
-#            1400..1559 各行 编辑/复制/粘贴/删除；1643..1682 复选框；1684/1685 翻页；909/910/914-917 时间轴翻转组）。
+# 面板 18：已选定音符列表（规范v2：11401 返回 / 11402 清空返回 / 11403 批量编辑 / 11404 批量复制 / 11405 批量粘贴；
+#            100000..103999 动态行；11601/11602 翻页；909/910/914-917 翻转组）。
+#   动态行：值 = 100000 + 页内序×100 + 列码（复选框 0 / 编辑 3 / 复制 5 / 粘贴 6 / 删除 7；页内序 0..39）
 # sel_note_list_open 设 current_panel=18。返回用 1560/1561，本面板不含值 1。
 # 入口白名单守卫
-execute unless score #click_value editor matches 1560..1564 unless score #click_value editor matches 1400..1559 unless score #click_value editor matches 1643..1682 unless score #click_value editor matches 1684..1685 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914..917 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 1560..1564 unless score #click_value editor matches 1400..1559 unless score #click_value editor matches 1643..1682 unless score #click_value editor matches 1684..1685 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914..917 run return fail
+execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914..917 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914..917 run return fail
 
 # 【返回】1560：仅返回主菜单（不清空 selection）
-execute if score #click_value editor matches 1560 run function rhythm_axe:editor/menu/main
+execute if score #click_value editor matches 11401 run function rhythm_axe:editor/menu/main
 # 【清空选中并返回】1561
-execute if score #click_value editor matches 1561 run function rhythm_axe:editor/menu/note/selected/sel_clear_all
-execute if score #click_value editor matches 1561 run scoreboard players set #sel_count editor 0
-execute if score #click_value editor matches 1561 run execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
-execute if score #click_value editor matches 1561 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
-execute if score #click_value editor matches 1561 run function rhythm_axe:editor/menu/main
+execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/note/selected/sel_clear_all
+execute if score #click_value editor matches 11402 run scoreboard players set #sel_count editor 0
+execute if score #click_value editor matches 11402 run execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
+execute if score #click_value editor matches 11402 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
+execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/main
 # 【批量编辑】1562 / 【批量复制】1563 / 【批量粘贴】1564
-execute if score #click_value editor matches 1562 run function rhythm_axe:editor/menu/note/batch/batch_open
-execute if score #click_value editor matches 1563 run function rhythm_axe:editor/menu/note/selected/sel_batch_copy
-execute if score #click_value editor matches 1564 run function rhythm_axe:editor/menu/note/selected/sel_batch_paste
+execute if score #click_value editor matches 11403 run function rhythm_axe:editor/menu/note/batch/batch_open
+execute if score #click_value editor matches 11404 run function rhythm_axe:editor/menu/note/selected/sel_batch_copy
+execute if score #click_value editor matches 11405 run function rhythm_axe:editor/menu/note/selected/sel_batch_paste
 
-# 各行操作（sel_idx = sel_page*40 + (click-底)）
-execute if score #click_value editor matches 1400..1439 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor sel_page
-scoreboard players set #temp_cursor editor 40
-scoreboard players operation #temp editor *= #temp_cursor editor
-execute if score #click_value editor matches 1400..1439 run scoreboard players operation #temp_cursor editor = #click_value editor
-execute if score #click_value editor matches 1400..1439 run scoreboard players remove #temp_cursor editor 1400
-execute if score #click_value editor matches 1400..1439 run scoreboard players operation #temp editor += #temp_cursor editor
-execute if score #click_value editor matches 1400..1439 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
-execute if score #click_value editor matches 1400..1439 run function rhythm_axe:editor/menu/note/selected/sel_note_panel_open_prep with storage rhythm_axe:prop
-execute if score #click_value editor matches 1400..1439 run data remove storage rhythm_axe:prop sel_idx
-execute if score #click_value editor matches 1440..1479 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor sel_page
-scoreboard players set #temp_cursor editor 40
-scoreboard players operation #temp editor *= #temp_cursor editor
-execute if score #click_value editor matches 1440..1479 run scoreboard players operation #temp_cursor editor = #click_value editor
-execute if score #click_value editor matches 1440..1479 run scoreboard players remove #temp_cursor editor 1440
-execute if score #click_value editor matches 1440..1479 run scoreboard players operation #temp editor += #temp_cursor editor
-execute if score #click_value editor matches 1440..1479 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
-execute if score #click_value editor matches 1440..1479 run function rhythm_axe:editor/menu/note/selected/sel_note_copy_prep with storage rhythm_axe:prop
-execute if score #click_value editor matches 1440..1479 run data remove storage rhythm_axe:prop sel_idx
-execute if score #click_value editor matches 1480..1519 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor sel_page
-scoreboard players set #temp_cursor editor 40
-scoreboard players operation #temp editor *= #temp_cursor editor
-execute if score #click_value editor matches 1480..1519 run scoreboard players operation #temp_cursor editor = #click_value editor
-execute if score #click_value editor matches 1480..1519 run scoreboard players remove #temp_cursor editor 1480
-execute if score #click_value editor matches 1480..1519 run scoreboard players operation #temp editor += #temp_cursor editor
-execute if score #click_value editor matches 1480..1519 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
-execute if score #click_value editor matches 1480..1519 run function rhythm_axe:editor/menu/note/selected/sel_note_paste_prep with storage rhythm_axe:prop
-execute if score #click_value editor matches 1480..1519 run data remove storage rhythm_axe:prop sel_idx
-execute if score #click_value editor matches 1520..1559 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor sel_page
-scoreboard players set #temp_cursor editor 40
-scoreboard players operation #temp editor *= #temp_cursor editor
-execute if score #click_value editor matches 1520..1559 run scoreboard players operation #temp_cursor editor = #click_value editor
-execute if score #click_value editor matches 1520..1559 run scoreboard players remove #temp_cursor editor 1520
-execute if score #click_value editor matches 1520..1559 run scoreboard players operation #temp editor += #temp_cursor editor
-execute if score #click_value editor matches 1520..1559 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
-execute if score #click_value editor matches 1520..1559 run function rhythm_axe:editor/menu/note/selected/sel_note_delete_prep with storage rhythm_axe:prop
-execute if score #click_value editor matches 1520..1559 run data remove storage rhythm_axe:prop sel_idx
-# 【复选框】1643+页内序：取消选中该音符并重开已选定列表
-execute if score #click_value editor matches 1643..1682 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor sel_page
-scoreboard players set #temp_cursor editor 40
-scoreboard players operation #temp editor *= #temp_cursor editor
-execute if score #click_value editor matches 1643..1682 run scoreboard players operation #temp_cursor editor = #click_value editor
-execute if score #click_value editor matches 1643..1682 run scoreboard players remove #temp_cursor editor 1643
-execute if score #click_value editor matches 1643..1682 run scoreboard players operation #temp editor += #temp_cursor editor
-execute if score #click_value editor matches 1643..1682 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
-execute if score #click_value editor matches 1643..1682 run function rhythm_axe:editor/menu/note/selected/sel_note_toggle with storage rhythm_axe:prop
-execute if score #click_value editor matches 1643..1682 run data remove storage rhythm_axe:prop sel_idx
+# —— 动态行（值 = 100000 + 页内序×100 + 列码）：抠出列码(#temp_cursor) 与 页内序(#temp) ——
+execute if score #click_value editor matches 100000..103999 run scoreboard players operation #temp_cursor editor = #click_value editor
+execute if score #click_value editor matches 100000..103999 run scoreboard players remove #temp_cursor editor 100000
+execute if score #click_value editor matches 100000..103999 run scoreboard players set #temp editor 100
+execute if score #click_value editor matches 100000..103999 run scoreboard players operation #temp_cursor editor %= #temp editor
+execute if score #click_value editor matches 100000..103999 run scoreboard players operation #temp editor = #click_value editor
+execute if score #click_value editor matches 100000..103999 run scoreboard players remove #temp editor 100000
+execute if score #click_value editor matches 100000..103999 run scoreboard players operation #temp editor /= 100 const
+# sel_idx = sel_page×40 + 页内序（所有列共用）
+execute if score #click_value editor matches 100000..103999 run execute store result score #temp_playhead editor run data get storage rhythm_axe:maps.editor sel_page
+execute if score #click_value editor matches 100000..103999 run scoreboard players set #temp_ig editor 40
+execute if score #click_value editor matches 100000..103999 run scoreboard players operation #temp_playhead editor *= #temp_ig editor
+execute if score #click_value editor matches 100000..103999 run scoreboard players operation #temp editor += #temp_playhead editor
+# 复选框 0：取消选中该音符并重开已选定列表
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 0 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 0 run function rhythm_axe:editor/menu/note/selected/sel_note_toggle with storage rhythm_axe:prop
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 0 run data remove storage rhythm_axe:prop sel_idx
+# 编辑 3（进面板 11）
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 3 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 3 run function rhythm_axe:editor/menu/note/selected/sel_note_panel_open_prep with storage rhythm_axe:prop
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 3 run data remove storage rhythm_axe:prop sel_idx
+# 复制 5
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 5 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 5 run function rhythm_axe:editor/menu/note/selected/sel_note_copy_prep with storage rhythm_axe:prop
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 5 run data remove storage rhythm_axe:prop sel_idx
+# 粘贴 6
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 6 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 6 run function rhythm_axe:editor/menu/note/selected/sel_note_paste_prep with storage rhythm_axe:prop
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 6 run data remove storage rhythm_axe:prop sel_idx
+# 删除 7
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 7 run execute store result storage rhythm_axe:prop sel_idx int 1 run scoreboard players get #temp editor
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 7 run function rhythm_axe:editor/menu/note/selected/sel_note_delete_prep with storage rhythm_axe:prop
+execute if score #click_value editor matches 100000..103999 if score #temp_cursor editor matches 7 run data remove storage rhythm_axe:prop sel_idx
+# 清理临时
+execute if score #click_value editor matches 100000..103999 run scoreboard players reset #temp editor
+execute if score #click_value editor matches 100000..103999 run scoreboard players reset #temp_cursor editor
 # 翻页（本面板 → sel_note_prev/next_page）
-execute if score #click_value editor matches 1684 run function rhythm_axe:editor/menu/note/selected/sel_note_prev_page
-execute if score #click_value editor matches 1685 run function rhythm_axe:editor/menu/note/selected/sel_note_next_page
+execute if score #click_value editor matches 11601 run function rhythm_axe:editor/menu/note/selected/sel_note_prev_page
+execute if score #click_value editor matches 11602 run function rhythm_axe:editor/menu/note/selected/sel_note_next_page
 
 # —— 时间轴翻转（909）与镜像翻转组（910/914/915/916 开关 + 917 执行），本面板刷新 sel_note_list_open ——
 execute if score #click_value editor matches 909 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_time

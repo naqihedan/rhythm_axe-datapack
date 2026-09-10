@@ -14,6 +14,10 @@ execute if score #click_value editor matches 903 run return fail
 # 仅在编辑中响应
 execute unless data storage rhythm_axe:maps.editor {active:1b} run return fail
 
+# ★ 会话自检（2026-09-10）：editor.mapid 缺失/为空 ⇒ 从工作副本 id 修回。
+#   否则随后 with storage rhythm_axe:prop 的宏调用会因宏参数缺失而静默实例化失败（点了没反应）。
+function rhythm_axe:editor/util/session_mapid_fix
+
 # 时间控件（20-29）：任意面板可用（提前分发并返回，绕过面板隔离；面板按钮值 20-29 与各子面板不冲突）
 execute if score #click_value editor matches 20 run data modify storage rhythm_axe:prop kind set value "bar"
 execute if score #click_value editor matches 20 run data modify storage rhythm_axe:prop direction set value "back"

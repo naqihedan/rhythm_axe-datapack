@@ -11,8 +11,18 @@ execute if data storage rhythm_axe:runtime events run data remove storage rhythm
 # 其它根字段（id/title/.../teleport/spawn_pos 等）由 merge 覆盖，无需逐个清
 $data modify storage rhythm_axe:runtime {} merge from storage rhythm_axe:maps.$(mapid)
 $data modify storage rhythm_axe:runtime mapid set value "$(mapid)"
-# ★ title 若为复合 {text:...}，宏 $(title) 传不了（bossbar/结算标题不显示）→ 清洗为字符串（与编辑器 main_header 一致；字符串组件则跳过）
-execute if data storage rhythm_axe:runtime title.text run data modify storage rhythm_axe:runtime title set from storage rhythm_axe:runtime title.text
+# 生成标题组件 runtime.title_comp（JSON 组件串直接注入；裸纯文本合成字面组件；复合/列表走 nbt+interpret）
+data remove storage rhythm_axe:prop title
+data remove storage rhythm_axe:prop title_comp
+data modify storage rhythm_axe:prop title set from storage rhythm_axe:runtime title
+execute unless data storage rhythm_axe:prop title run data modify storage rhythm_axe:prop title set value "(无标题)"
+execute if data storage rhythm_axe:prop {title:""} run data modify storage rhythm_axe:prop title set value "(无标题)"
+data modify storage rhythm_axe:prop src set value "rhythm_axe:runtime"
+execute if data storage rhythm_axe:prop title run function rhythm_axe:utilization/title_comp with storage rhythm_axe:prop
+data modify storage rhythm_axe:runtime title_comp set from storage rhythm_axe:prop title_comp
+data remove storage rhythm_axe:prop title
+data remove storage rhythm_axe:prop title_comp
+data remove storage rhythm_axe:prop src
 
 # 运行标记
 scoreboard players set is_running play_state 1

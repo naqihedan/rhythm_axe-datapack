@@ -27,6 +27,8 @@ $data remove storage rhythm_axe:maps.$(mapid) timing_points
 $data remove storage rhythm_axe:maps.$(mapid) events
 $data remove storage rhythm_axe:maps.$(mapid) editor_playhead
 $data modify storage rhythm_axe:maps.$(mapid) {} merge from storage rhythm_axe:maps.editor history[$(cur)]
+# ★ 强制键与内部 id 一致：工作副本里的 id 可能是旧名（改名后不同步）⇒ 不改会被 merge 写进正式存储（2026-09-10）
+$data modify storage rhythm_axe:maps.$(mapid) id set value "$(mapid)"
 # 保存时剔除音符的 selected（正式谱面不带选中状态；工作副本保留选中）
 $function rhythm_axe:editor/file/save_strip_selected {mapid:"$(mapid)"}
 $execute store result storage rhythm_axe:maps.$(mapid) highest_score int 1 run scoreboard players get #saved_highest editor

@@ -17,8 +17,7 @@ execute unless data storage rhythm_axe:maps.editor panel_temp.spawn_z run data m
 execute unless data storage rhythm_axe:maps.editor panel_temp.spawn_yaw run data modify storage rhythm_axe:maps.editor panel_temp.spawn_yaw set value 0.0d
 execute unless data storage rhythm_axe:maps.editor panel_temp.spawn_pitch run data modify storage rhythm_axe:maps.editor panel_temp.spawn_pitch set value 0.0d
 execute unless data storage rhythm_axe:maps.editor panel_temp.title run data modify storage rhythm_axe:maps.editor panel_temp.title set value "{\"text\":\"\"}"
-# ★ title 必须存字符串（JSON 组件）；宏 $(title) 传不了复合，复合会导致标题行不显示 → 清洗为字符串
-execute if data storage rhythm_axe:maps.editor panel_temp.title.text run data modify storage rhythm_axe:maps.editor panel_temp.title set from storage rhythm_axe:maps.editor panel_temp.title.text
+# 复合/列表原样保留（显示时由 utilization/title_comp 走 nbt+interpret 解析；裸纯文本也已兼容），不再解包 .text
 execute unless data storage rhythm_axe:maps.editor panel_temp.artist run data modify storage rhythm_axe:maps.editor panel_temp.artist set value ""
 execute unless data storage rhythm_axe:maps.editor panel_temp.music run data modify storage rhythm_axe:maps.editor panel_temp.music set value ""
 execute unless data storage rhythm_axe:maps.editor panel_temp.preview run data modify storage rhythm_axe:maps.editor panel_temp.preview set value ""

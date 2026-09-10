@@ -8,12 +8,12 @@ tellraw @s [{"text":"====批量编辑 ","color":"gold","bold":true},{"score":{"n
 execute store result score #v editor run data get storage rhythm_axe:maps.editor editing.rel.delta.time
 tellraw @s [\
 {"text":"判定时间：","color":"gray"},\
-{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 783"},"hover_event":{"action":"show_text","value":"增量 -tpb"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 760"},"hover_event":{"action":"show_text","value":"增量 -1 刻"}},\
+{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12003"},"hover_event":{"action":"show_text","value":"增量 -tpb"}},\
+{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12001"},"hover_event":{"action":"show_text","value":"增量 -1 刻"}},\
 {"score":{"name":"#v","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 761"},"hover_event":{"action":"show_text","value":"增量 +1 刻"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 784"},"hover_event":{"action":"show_text","value":"增量 +tpb"}},\
-{"text":" 【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 792"},"hover_event":{"action":"show_text","value":"撤销本项修改（增量归 0）"}}\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12002"},"hover_event":{"action":"show_text","value":"增量 +1 刻"}},\
+{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12004"},"hover_event":{"action":"show_text","value":"增量 +tpb"}},\
+{"text":" 【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14016"},"hover_event":{"action":"show_text","value":"撤销本项修改（增量归 0）"}}\
 ]
 # 大小（增量，一位小数；负数符号处理）
 execute store result score #v editor run data get storage rhythm_axe:maps.editor editing.rel.delta.size
@@ -27,17 +27,17 @@ scoreboard players operation #vf editor = #v editor
 scoreboard players operation #vf editor %= 10 const
 execute if score #sneg editor matches 1 run tellraw @s [\
 {"text":"大小：","color":"gray"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 774"},"hover_event":{"action":"show_text","value":"增量 -0.1"}},\
+{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"增量 -0.1"}},\
 {"text":"-","color":"white"},{"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 775"},"hover_event":{"action":"show_text","value":"增量 +0.1"}},\
-{"text":" 【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 793"},"hover_event":{"action":"show_text","value":"撤销本项修改（增量归 0）"}}\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"增量 +0.1"}},\
+{"text":" 【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"撤销本项修改（增量归 0）"}}\
 ]
 execute if score #sneg editor matches 0 run tellraw @s [\
 {"text":"大小：","color":"gray"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 774"},"hover_event":{"action":"show_text","value":"增量 -0.1"}},\
+{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"增量 -0.1"}},\
 {"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 775"},"hover_event":{"action":"show_text","value":"增量 +0.1"}},\
-{"text":" 【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 793"},"hover_event":{"action":"show_text","value":"撤销本项修改（增量归 0）"}}\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"增量 +0.1"}},\
+{"text":" 【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"撤销本项修改（增量归 0）"}}\
 ]
 # 判定位置（三个轴增量）
 scoreboard players set #rel_pos editor 0
@@ -111,7 +111,7 @@ data remove storage rhythm_axe:prop bzp2
 data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop tcomp
 data remove storage rhythm_axe:prop paux
-tellraw @s [{"text":"  【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 796"},"hover_event":{"action":"show_text","value":"撤销判定位置增量改动（三轴归 0）"}}]
+tellraw @s [{"text":"  【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14018"},"hover_event":{"action":"show_text","value":"撤销判定位置增量改动（三轴归 0）"}}]
 # 起始位置（三个轴增量）
 scoreboard players set #rel_sp editor 0
 execute store result score #rel_sp editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
@@ -184,9 +184,9 @@ data remove storage rhythm_axe:prop bzp2
 data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop tcomp
 data remove storage rhythm_axe:prop paux
-tellraw @s [{"text":"  【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 797"},"hover_event":{"action":"show_text","value":"撤销起始位置增量改动（三轴归 0）"}}]
+tellraw @s [{"text":"  【x】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14019"},"hover_event":{"action":"show_text","value":"撤销起始位置增量改动（三轴归 0）"}}]
 # 底部
 tellraw @s [\
-{"text":"【取消】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 764"},"hover_event":{"action":"show_text","value":"丢弃批量修改并返回列表"}},\
-{"text":"  【确认】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 763"},"hover_event":{"action":"show_text","value":"把批量增量应用到所选音符（可撤销）"}}\
+{"text":"【取消】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13702"},"hover_event":{"action":"show_text","value":"丢弃批量修改并返回列表"}},\
+{"text":"  【确认】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13701"},"hover_event":{"action":"show_text","value":"把批量增量应用到所选音符（可撤销）"}}\
 ]

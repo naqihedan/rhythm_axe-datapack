@@ -12,18 +12,20 @@ execute if score #temp editor matches 2 run tellraw @s [{"nbt":"editing.temp.tim
 execute if score #temp editor matches 3 run tellraw @s [{"nbt":"editing.temp.time","storage":"rhythm_axe:maps.editor","color":"white"},{"text":" 混凝土 #","color":"aqua"},{"nbt":"editing.temp.id","storage":"rhythm_axe:maps.editor","color":"white"},{"text":"（共 ","color":"gray"},{"score":{"name":"#he_count","objective":"editor"}},{"text":" 条指令）","color":"gray"}]
 execute if score #temp editor matches 4 run tellraw @s [{"nbt":"editing.temp.time","storage":"rhythm_axe:maps.editor","color":"white"},{"text":" 染色玻璃 #","color":"aqua"},{"nbt":"editing.temp.id","storage":"rhythm_axe:maps.editor","color":"white"},{"text":"（共 ","color":"gray"},{"score":{"name":"#he_count","objective":"editor"}},{"text":" 条指令）","color":"gray"}]
 tellraw @s [{"text":"","color":"gray"}]
-# 指令列表（递归渲染，从 0 开始；行按钮值 10000+idx*10+off 由 panel 与 row_advance 算好传入 prop，宏行直接引用）
+# 指令列表（递归渲染，从 0 开始；规范v2 行按钮值 = (1000+idx)×100 + 列码(编辑3/复制5/粘贴6/删除7)，由 panel 与 row_advance 算好传入 prop，宏行直接引用）
 data modify storage rhythm_axe:prop idx set value 0
-scoreboard players set #he_base editor 10000
+scoreboard players set #he_base editor 100000
+scoreboard players add #he_base editor 3
 execute store result storage rhythm_axe:prop he_edit int 1 run scoreboard players get #he_base editor
+scoreboard players remove #he_base editor 3
 scoreboard players operation #he_tmp editor = #he_base editor
-scoreboard players add #he_tmp editor 1
+scoreboard players add #he_tmp editor 5
 execute store result storage rhythm_axe:prop he_copy int 1 run scoreboard players get #he_tmp editor
 scoreboard players operation #he_tmp editor = #he_base editor
-scoreboard players add #he_tmp editor 2
+scoreboard players add #he_tmp editor 6
 execute store result storage rhythm_axe:prop he_paste int 1 run scoreboard players get #he_tmp editor
 scoreboard players operation #he_tmp editor = #he_base editor
-scoreboard players add #he_tmp editor 3
+scoreboard players add #he_tmp editor 7
 execute store result storage rhythm_axe:prop he_del int 1 run scoreboard players get #he_tmp editor
 function rhythm_axe:editor/menu/note/hit_events/note_hit_events_row with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop idx
@@ -33,4 +35,4 @@ data remove storage rhythm_axe:prop he_paste
 data remove storage rhythm_axe:prop he_del
 tellraw @s [{"text":"","color":"gray"}]
 # 操作按钮
-tellraw @s [{"text":"【添加指令】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 857"},"hover_event":{"action":"show_text","value":"在列表末尾追加一条空指令"}},{"text":"  【取消】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 858"},"hover_event":{"action":"show_text","value":"丢弃修改并返回音符面板"}},{"text":"  【确认】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 859"},"hover_event":{"action":"show_text","value":"把修改写回音符的击打事件（可撤销）"}}]
+tellraw @s [{"text":"【添加指令】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10757"},"hover_event":{"action":"show_text","value":"在列表末尾追加一条空指令"}},{"text":"  【取消】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10758"},"hover_event":{"action":"show_text","value":"丢弃修改并返回音符面板"}},{"text":"  【确认】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10759"},"hover_event":{"action":"show_text","value":"把修改写回音符的击打事件（可撤销）"}}]

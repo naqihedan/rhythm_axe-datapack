@@ -20,7 +20,7 @@
       "label": "提交",
       "action": {
         "type": "dynamic/run_command",
-        "template": "/function rhythm_axe:test/dialog_receive {\"value\":\"$(raw)\"}"
+        "template": "function rhythm_axe:test/dialog_receive {\"value\":\"$(raw)\"}"
       }
     }
   ]

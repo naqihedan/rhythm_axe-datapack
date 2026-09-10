@@ -34,7 +34,7 @@
       "label": { "text": "确认" },
       "action": {
         "type": "dynamic/run_command",
-        "template": "/function rhythm_axe:editor/menu/note/dialog/dialog_submit_global_sound {\"spawn\":\"$(spawn)\",\"tick\":\"$(tick)\",\"bad\":\"$(bad)\",\"good_early\":\"$(good_early)\",\"perfect_early\":\"$(perfect_early)\",\"perfect\":\"$(perfect)\",\"perfect_late\":\"$(perfect_late)\",\"good_late\":\"$(good_late)\",\"miss\":\"$(miss)\",\"damage\":\"$(damage)\"}"
+        "template": "function rhythm_axe:editor/menu/note/dialog/dialog_submit_global_sound {\"spawn\":\"$(spawn)\",\"tick\":\"$(tick)\",\"bad\":\"$(bad)\",\"good_early\":\"$(good_early)\",\"perfect_early\":\"$(perfect_early)\",\"perfect\":\"$(perfect)\",\"perfect_late\":\"$(perfect_late)\",\"good_late\":\"$(good_late)\",\"miss\":\"$(miss)\",\"damage\":\"$(damage)\"}"
       }
     }
   ]

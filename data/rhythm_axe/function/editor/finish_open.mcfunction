@@ -28,12 +28,17 @@ data remove storage rhythm_axe:prop spawn_z
 data remove storage rhythm_axe:prop spawn_yaw
 data remove storage rhythm_axe:prop spawn_pitch
 
-# 标题用宏传（26.x nbt interpret 不解析，会显示原始 JSON）；history[0] 固定无宏参数，此行不加 $
+# 标题复制到 prop 暂存 → 由 utilization/title_comp 生成标题组件（history[0] 固定无宏参数，此行不加 $）
+data remove storage rhythm_axe:prop title
 data modify storage rhythm_axe:prop title set from storage rhythm_axe:maps.editor history[0].title
-# ★ title 若为复合 {text:...}，宏 $(title) 传不了（反馈标题不显示）→ 清洗为字符串
-execute if data storage rhythm_axe:prop title.text run data modify storage rhythm_axe:prop title set from storage rhythm_axe:prop title.text
+# 兜底：title 缺失/为空时给占位
+execute unless data storage rhythm_axe:prop title run data modify storage rhythm_axe:prop title set value "(无标题)"
+execute if data storage rhythm_axe:prop {title:""} run data modify storage rhythm_axe:prop title set value "(无标题)"
+data modify storage rhythm_axe:prop src set value "rhythm_axe:prop"
+execute if data storage rhythm_axe:prop title run function rhythm_axe:utilization/title_comp with storage rhythm_axe:prop
 function rhythm_axe:editor/finish_open_title with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop title
+data remove storage rhythm_axe:prop title_comp
 
 # ★ 打开即预热音乐解码（后台解码整首 OGG，之后的 playmusic 缓存命中零延迟）
 $execute if data storage rhythm_axe:maps.$(mapid) music run data modify storage rhythm_axe:prop music set from storage rhythm_axe:maps.$(mapid) music

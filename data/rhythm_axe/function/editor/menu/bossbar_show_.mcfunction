@@ -1,11 +1,16 @@
 #arg:cursor
 # 编辑器打开期间 bossbar 一直显示：名称=谱面标题（宏传，26.x nbt interpret 不解析）、可见对象、值、最大值
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].title run data modify storage rhythm_axe:prop title set from storage rhythm_axe:maps.editor history[$(cursor)].title
-# ★ title 若为复合 {text:...}，宏 $(title) 传不了（bossbar 名称不显示）→ 清洗为字符串（与 main_header 一致）
-execute if data storage rhythm_axe:prop title.text run data modify storage rhythm_axe:prop title set from storage rhythm_axe:prop title.text
-execute if data storage rhythm_axe:prop title run function rhythm_axe:editor/menu/bossbar_name with storage rhythm_axe:prop
+# 复合/列表直接保留（util/title_comp 会走 nbt+interpret 解析），只有字符串才需兜底
+execute unless data storage rhythm_axe:prop title run data modify storage rhythm_axe:prop title set value "(无标题)"
+execute if data storage rhythm_axe:prop {title:""} run data modify storage rhythm_axe:prop title set value "(无标题)"
+# 由 utilization/title_comp 生成标题组件（裸文本合成字面组件；复合/列表走 nbt+interpret）
+data modify storage rhythm_axe:prop src set value "rhythm_axe:prop"
+execute if data storage rhythm_axe:prop title run function rhythm_axe:utilization/title_comp with storage rhythm_axe:prop
+execute if data storage rhythm_axe:prop title_comp run function rhythm_axe:editor/menu/bossbar_name with storage rhythm_axe:prop
 execute unless data storage rhythm_axe:prop title run bossbar set rhythm_axe:editor_progress name {"text":"播放进度"}
 data remove storage rhythm_axe:prop title
+data remove storage rhythm_axe:prop title_comp
 bossbar set rhythm_axe:editor_progress players @a
 bossbar set rhythm_axe:editor_progress visible true
 execute store result bossbar rhythm_axe:editor_progress value run scoreboard players get #playhead editor

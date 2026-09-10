@@ -7,7 +7,7 @@
     {
       "type": "minecraft:plain_message",
       "contents": {
-        "text": "输入的文本组件（需要转义字符）：对象 {\\\"text\":\\\"标题\",\\\"color\":\\\"red\\\"}、列表 [{\\\"text\\\":\\\"A\\\"},{\\\"text\\\":\\\"B\"\\}] 或带引号字符串 \\\"新手教程\\\""
+        "text": "可直接输入纯文本（如 新手教程，支持空格）；需要颜色等样式时输入 JSON 文本组件：对象 {\\\"text\":\\\"标题\",\\\"color\":\\\"red\\\"}、列表 [{\\\"text\\\":\\\"A\\\"},{\\\"text\\\":\\\"B\"\\}] 或带引号字符串 \\\"新手教程\\\""
       }
     }
   ],
@@ -41,7 +41,7 @@
       },
       "action": {
         "type": "dynamic/run_command",
-        "template": "/function rhythm_axe:editor/menu/dialog/dialog_submit_title {\"value\":'$(title_value)'}"
+        "template": "function rhythm_axe:editor/menu/dialog/dialog_submit_title {\"value\":'$(title_value)'}"
       }
     }
   ]

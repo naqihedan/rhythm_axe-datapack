@@ -13,17 +13,19 @@ function rhythm_axe:editor/menu/main_header with storage rhythm_axe:prop
 function rhythm_axe:editor/menu/bossbar_show_ with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop cursor
 tellraw @s [\
-{"text":"【编辑谱面信息】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 2"},"hover_event":{"action":"show_text","value":"标题/作者/音乐/血量等"}},\
-{"text":"【时间点列表】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 3"},"hover_event":{"action":"show_text","value":"打开时间点列表"}},\
-{"text":"【事件列表】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 4"},"hover_event":{"action":"show_text","value":"打开事件点列表"}},\
-{"text":"【当前活跃音符列表】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 14"},"hover_event":{"action":"show_text","value":"查看当前存活音符"}},\
-{"text":"  【已选择音符列表】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 15"},"hover_event":{"action":"show_text","value":"查看被选中的音符（框选/左键选中）"}}\
+    {"text":"【编辑谱面信息】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10001"},"hover_event":{"action":"show_text","value":"标题/作者/音乐/血量等"}},\
+    {"text":"【时间点列表】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10002"},"hover_event":{"action":"show_text","value":"打开时间点列表"}},\
+    {"text":"【事件列表】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10003"},"hover_event":{"action":"show_text","value":"打开事件点列表"}},\
+]
+tellraw @s [\
+    {"text":"【当前活跃音符列表】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10101"},"hover_event":{"action":"show_text","value":"查看当前存活音符"}},\
+    {"text":"  【已选择音符列表】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10102"},"hover_event":{"action":"show_text","value":"查看被选中的音符（框选/左键选中）"}}\
 ]
 # 物品栏工具行
 # 音符工具：胡萝卜钓竿，手持看向前方 3 格右键放置音符（time=播放头，属性继承同类最近音符）
 tellraw @s [\
-{"text":"【音符工具】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 5"},"hover_event":{"action":"show_text","value":"给予胡萝卜钓竿工具：看向前方 3 格，右键在方块中心放置音符"}},\
-{"text":"  【时间轴控件】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 6"},"hover_event":{"action":"show_text","value":"给予时间轴控件工具：返回开头/前后跳/播放暂停/调速"}}\
+    {"text":"【音符工具】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10201"},"hover_event":{"action":"show_text","value":"给予胡萝卜钓竿工具：看向前方 3 格，右键在方块中心放置音符"}},\
+    {"text":"  【时间轴控件】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10202"},"hover_event":{"action":"show_text","value":"给予时间轴控件工具：返回开头/前后跳/播放暂停/调速"}}\
 ]
 # 撤销/重做行（无可用快照时红色）★主菜单撤销/重做（150/151）：仅主菜单可点，撤销/重做后返回主菜单
 # 操作反馈处的撤销/重做（8/9）保持原行为：撤销/重做后回 undo_panel 操作面板
@@ -32,51 +34,51 @@ execute store result score #history_size editor run data get storage rhythm_axe:
 scoreboard players operation #temp_playhead editor = #history_size editor
 scoreboard players remove #temp_playhead editor 1
 execute if score #temp_cursor editor matches 1.. if score #temp_cursor editor < #temp_playhead editor run tellraw @s [\
-{"text":"【撤销】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 150"},"hover_event":{"action":"show_text","value":"回退到上一个快照"}},\
-{"text":"  【重做】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 151"},"hover_event":{"action":"show_text","value":"恢复到下一个快照"}},\
-{"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
+    {"text":"【撤销】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10301"},"hover_event":{"action":"show_text","value":"回退到上一个快照"}},\
+    {"text":"  【重做】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10302"},"hover_event":{"action":"show_text","value":"恢复到下一个快照"}},\
+    {"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10303"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
 ]
 execute if score #temp_cursor editor matches 1.. unless score #temp_cursor editor < #temp_playhead editor run tellraw @s [\
-{"text":"【撤销】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 150"},"hover_event":{"action":"show_text","value":"回退到上一个快照"}},\
-{"text":"  【重做】","color":"red"},\
-{"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
+    {"text":"【撤销】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10301"},"hover_event":{"action":"show_text","value":"回退到上一个快照"}},\
+    {"text":"  【重做】","color":"red"},\
+    {"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10303"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
 ]
 execute unless score #temp_cursor editor matches 1.. if score #temp_cursor editor < #temp_playhead editor run tellraw @s [\
-{"text":"【撤销】","color":"red"},\
-{"text":"  【重做】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 151"},"hover_event":{"action":"show_text","value":"恢复到下一个快照"}},\
-{"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
+    {"text":"【撤销】","color":"red"},\
+    {"text":"  【重做】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10302"},"hover_event":{"action":"show_text","value":"恢复到下一个快照"}},\
+    {"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10303"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
 ]
 execute unless score #temp_cursor editor matches 1.. unless score #temp_cursor editor < #temp_playhead editor run tellraw @s [\
-{"text":"【撤销】","color":"red"},\
-{"text":"  【重做】","color":"red"},\
-{"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
+    {"text":"【撤销】","color":"red"},\
+    {"text":"  【重做】","color":"red"},\
+    {"text":"  【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10303"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
 ]
 tellraw @s [\
-{"text":"【保存谱面】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11"},"hover_event":{"action":"show_text","value":"把当前内容写入谱面"}},\
-{"text":"  【退出编辑】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 12"},"hover_event":{"action":"show_text","value":"退出编辑器"}},\
-{"text":"  【另存为新谱面】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13"},"hover_event":{"action":"show_text","value":"保存为 <mapid>_副本 并切换编辑"}},\
-{"text":"  【删除谱面】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 137"},"hover_event":{"action":"show_text","value":"把谱面移入回收站（可找回）"}},\
-{"text":"  【回收站】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 138"},"hover_event":{"action":"show_text","value":"查看回收站（可还原/彻底删除）"}}\
+    {"text":"【保存谱面】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10401"},"hover_event":{"action":"show_text","value":"把当前内容写入谱面"}},\
+    {"text":"  【退出编辑】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10402"},"hover_event":{"action":"show_text","value":"退出编辑器"}},\
+    {"text":"  【另存为新谱面】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10403"},"hover_event":{"action":"show_text","value":"复制当前内容为 <原mapid>_copy 的新谱面（未保存，切换编辑）"}},\
+    {"text":"  【删除谱面】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10404"},"hover_event":{"action":"show_text","value":"把谱面移入回收站（可找回）"}},\
+    {"text":"  【回收站】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10405"},"hover_event":{"action":"show_text","value":"查看回收站（可还原/彻底删除）"}}\
 ]
 # 时间控件行（播放按钮按状态显示 ▶/⏸）
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor playing
 execute if score #temp editor matches 1 run tellraw @s [\
-{"text":"<<<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 20"},"hover_event":{"action":"show_text","value":"后退一小节"}},\
-{"text":" << ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 21"},"hover_event":{"action":"show_text","value":"后退一拍"}},\
-{"text":"<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 22"},"hover_event":{"action":"show_text","value":"后退一刻"}},\
-{"text":" ⏸ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"暂停"}},\
-{"text":">","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 24"},"hover_event":{"action":"show_text","value":"前进一刻"}},\
-{"text":" >> ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 25"},"hover_event":{"action":"show_text","value":"前进一拍"}},\
-{"text":">>>","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 26"},"hover_event":{"action":"show_text","value":"前进一小节"}}\
+    {"text":"<<<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 20"},"hover_event":{"action":"show_text","value":"后退一小节"}},\
+    {"text":" << ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 21"},"hover_event":{"action":"show_text","value":"后退一拍"}},\
+    {"text":"<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 22"},"hover_event":{"action":"show_text","value":"后退一刻"}},\
+    {"text":" ⏸ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"暂停"}},\
+    {"text":">","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 24"},"hover_event":{"action":"show_text","value":"前进一刻"}},\
+    {"text":" >> ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 25"},"hover_event":{"action":"show_text","value":"前进一拍"}},\
+    {"text":">>>","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 26"},"hover_event":{"action":"show_text","value":"前进一小节"}}\
 ]
 execute unless score #temp editor matches 1 run tellraw @s [\
-{"text":"<<<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 20"},"hover_event":{"action":"show_text","value":"后退一小节"}},\
-{"text":" << ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 21"},"hover_event":{"action":"show_text","value":"后退一拍"}},\
-{"text":"<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 22"},"hover_event":{"action":"show_text","value":"后退一刻"}},\
-{"text":" ▶ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"播放"}},\
-{"text":">","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 24"},"hover_event":{"action":"show_text","value":"前进一刻"}},\
-{"text":" >> ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 25"},"hover_event":{"action":"show_text","value":"前进一拍"}},\
-{"text":">>>","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 26"},"hover_event":{"action":"show_text","value":"前进一小节"}}\
+    {"text":"<<<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 20"},"hover_event":{"action":"show_text","value":"后退一小节"}},\
+    {"text":" << ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 21"},"hover_event":{"action":"show_text","value":"后退一拍"}},\
+    {"text":"<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 22"},"hover_event":{"action":"show_text","value":"后退一刻"}},\
+    {"text":" ▶ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"播放"}},\
+    {"text":">","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 24"},"hover_event":{"action":"show_text","value":"前进一刻"}},\
+    {"text":" >> ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 25"},"hover_event":{"action":"show_text","value":"前进一拍"}},\
+    {"text":">>>","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 26"},"hover_event":{"action":"show_text","value":"前进一小节"}}\
 ]
 # 速度按钮（显示当前速度）
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor play_speed 100
@@ -86,25 +88,25 @@ execute if score #temp editor matches 75 run tellraw @s [{"text":"【75%】","co
 execute if score #temp editor matches 100 run tellraw @s [{"text":"【100%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 25%"}}]
 # 节拍器：26.1 下 if data ... value 1b 解析报错 → 用复合标签 {metronome:1b} 判断（常见问题：布尔值用复合标签匹配）
 execute if data storage rhythm_axe:maps.editor {metronome:1b} run tellraw @s [\
-{"text":"【返回开头】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 28"},"hover_event":{"action":"show_text","value":"播放头回到 0 刻"}},\
-{"text":"  【节拍器：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 7"},"hover_event":{"action":"show_text","value":"点击关闭节拍器"}},\
-{"text":"  【跳到结尾】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 29"},"hover_event":{"action":"show_text","value":"播放头跳到谱面结束时间"}}\
+    {"text":"【返回开头】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 28"},"hover_event":{"action":"show_text","value":"播放头回到 0 刻"}},\
+    {"text":"  【节拍器：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击关闭节拍器"}},\
+    {"text":"  【跳到结尾】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 29"},"hover_event":{"action":"show_text","value":"播放头跳到谱面结束时间"}}\
 ]
 execute unless data storage rhythm_axe:maps.editor {metronome:1b} run tellraw @s [\
-{"text":"【返回开头】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 28"},"hover_event":{"action":"show_text","value":"播放头回到 0 刻"}},\
-{"text":"  【节拍器：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 7"},"hover_event":{"action":"show_text","value":"点击开启节拍器"}},\
-{"text":"  【跳到结尾】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 29"},"hover_event":{"action":"show_text","value":"播放头跳到谱面结束时间"}}\
+    {"text":"【返回开头】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 28"},"hover_event":{"action":"show_text","value":"播放头回到 0 刻"}},\
+    {"text":"  【节拍器：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击开启节拍器"}},\
+    {"text":"  【跳到结尾】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 29"},"hover_event":{"action":"show_text","value":"播放头跳到谱面结束时间"}}\
 ]
 # 音符流速（读改全局 note_speed；调低显示更多音符、调高聚焦一小段；调整后刷新世界音符状态）
 execute store result score #temp editor run scoreboard players get note_speed options
 tellraw @s [\
-{"text":"音符流速：","color":"gray"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 131"},"hover_event":{"action":"show_text","value":"降低流速（显示更多音符）"}},\
-{"score":{"name":"#temp","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 132"},"hover_event":{"action":"show_text","value":"提高流速（聚焦少量音符）"}},\
-{"text":"  【2】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 139"},"hover_event":{"action":"show_text","value":"流速设为 2"}},\
-{"text":"【4】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 140"},"hover_event":{"action":"show_text","value":"流速设为 4"}},\
-{"text":"【8】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 141"},"hover_event":{"action":"show_text","value":"流速设为 8"}},\
-{"text":"【16】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 142"},"hover_event":{"action":"show_text","value":"流速设为 16"}}\
+    {"text":"音符流速：","color":"gray"},\
+    {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10601"},"hover_event":{"action":"show_text","value":"降低流速（显示更多音符）"}},\
+    {"score":{"name":"#temp","objective":"editor"},"color":"white"},\
+    {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10602"},"hover_event":{"action":"show_text","value":"提高流速（聚焦少量音符）"}},\
+    {"text":"  【2】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10603"},"hover_event":{"action":"show_text","value":"流速设为 2"}},\
+    {"text":"【4】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10604"},"hover_event":{"action":"show_text","value":"流速设为 4"}},\
+    {"text":"【8】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10605"},"hover_event":{"action":"show_text","value":"流速设为 8"}},\
+    {"text":"【16】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10606"},"hover_event":{"action":"show_text","value":"流速设为 16"}}\
 ]
 tellraw @s [{"text":"（修改经面板暂存，【保存谱面】才写入谱面）","color":"gray","italic":true}]

@@ -40,19 +40,19 @@ scoreboard players add #page_show editor 1
 scoreboard players operation #temp_playhead editor = #note_pages editor
 scoreboard players remove #temp_playhead editor 1
 execute if score #note_page editor matches 1.. if score #note_page editor < #temp_playhead editor run tellraw @s [\
-{"text":"【上一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 1684"},"hover_event":{"action":"show_text","value":"上一页"}},\
+{"text":"【上一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11601"},"hover_event":{"action":"show_text","value":"上一页"}},\
 {"text":" ","color":"white"},{"score":{"name":"#page_show","objective":"editor"},"color":"white"},{"text":"/","color":"gray"},{"score":{"name":"#note_pages","objective":"editor"},"color":"white"},{"text":" 共","color":"gray"},{"score":{"name":"#note_alive","objective":"editor"},"color":"white"},{"text":"个音符","color":"gray"},\
-{"text":" 【下一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 1685"},"hover_event":{"action":"show_text","value":"下一页"}}\
+{"text":" 【下一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11602"},"hover_event":{"action":"show_text","value":"下一页"}}\
 ]
 execute if score #note_page editor matches 1.. unless score #note_page editor < #temp_playhead editor run tellraw @s [\
-{"text":"【上一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 1684"},"hover_event":{"action":"show_text","value":"上一页"}},\
+{"text":"【上一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11601"},"hover_event":{"action":"show_text","value":"上一页"}},\
 {"text":" ","color":"white"},{"score":{"name":"#page_show","objective":"editor"},"color":"white"},{"text":"/","color":"gray"},{"score":{"name":"#note_pages","objective":"editor"},"color":"white"},{"text":" 共","color":"gray"},{"score":{"name":"#note_alive","objective":"editor"},"color":"white"},{"text":"个音符","color":"gray"},\
 {"text":" 【下一页】","color":"red"}\
 ]
 execute unless score #note_page editor matches 1.. if score #note_page editor < #temp_playhead editor run tellraw @s [\
 {"text":"【上一页】","color":"red"},\
 {"text":" ","color":"white"},{"score":{"name":"#page_show","objective":"editor"},"color":"white"},{"text":"/","color":"gray"},{"score":{"name":"#note_pages","objective":"editor"},"color":"white"},{"text":" 共","color":"gray"},{"score":{"name":"#note_alive","objective":"editor"},"color":"white"},{"text":"个音符","color":"gray"},\
-{"text":" 【下一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 1685"},"hover_event":{"action":"show_text","value":"下一页"}}\
+{"text":" 【下一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11602"},"hover_event":{"action":"show_text","value":"下一页"}}\
 ]
 execute unless score #note_page editor matches 1.. unless score #note_page editor < #temp_playhead editor run tellraw @s [\
 {"text":"【上一页】","color":"red"},\
@@ -75,13 +75,13 @@ data modify storage rhythm_axe:prop b4 set value "{\"text\":\"【全部选中】
 data modify storage rhythm_axe:prop b5 set value "{\"text\":\"【取消选中】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"没有已选中的音符\"}}"
 data modify storage rhythm_axe:prop b6 set value "{\"text\":\"【返回】\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 1\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"返回主菜单\"}}"
 # 有选中 → 启用 批量编辑/批量复制/取消选中
-execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop b1 set value "{\"text\":\"【批量编辑】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 1562\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"对选中的音符批量编辑（相对增量）\"}}"
-execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop b2 set value "{\"text\":\"【批量复制】\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 1641\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把选中音符的字段存入剪贴板\"}}"
-execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop b5 set value "{\"text\":\"【取消选中】\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 1640\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消所有选中（不退出列表）\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop b1 set value "{\"text\":\"【批量编辑】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11301\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"对选中的音符批量编辑（相对增量）\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop b2 set value "{\"text\":\"【批量复制】\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11302\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把选中音符的字段存入剪贴板\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop b5 set value "{\"text\":\"【取消选中】\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11305\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消所有选中（不退出列表）\"}}"
 # 已批量复制（剪贴板有内容）→ 启用 批量粘贴
-execute if data storage rhythm_axe:maps.editor clipboard.notes[0] run data modify storage rhythm_axe:prop b3 set value "{\"text\":\"【批量粘贴】\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 1642\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把剪贴板音符粘贴到播放头\"}}"
+execute if data storage rhythm_axe:maps.editor clipboard.notes[0] run data modify storage rhythm_axe:prop b3 set value "{\"text\":\"【批量粘贴】\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11303\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把剪贴板音符粘贴到播放头\"}}"
 # 有存活音符 → 启用 全部选中
-execute if entity @e[type=item_display,tag=editor_note] run data modify storage rhythm_axe:prop b4 set value "{\"text\":\"【全部选中】\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 1683\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"选中当前所有存活音符\"}}"
+execute if entity @e[type=item_display,tag=editor_note] run data modify storage rhythm_axe:prop b4 set value "{\"text\":\"【全部选中】\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11304\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"选中当前所有存活音符\"}}"
 # —— 第二行：镜像翻转组 ——：【翻转时间】| 镜像翻转音符[X][Y][Z][S]【翻转】
 # f1=翻转时间(909,即时) / f2/f3/f4/f5=X/Y/Z/S开关(910/914/915/916,点击仅切换状态不翻转) / f6=执行翻转(917,按开关执行)
 # ★ 首次打开列表时初始化镜像开关（S 默认开）

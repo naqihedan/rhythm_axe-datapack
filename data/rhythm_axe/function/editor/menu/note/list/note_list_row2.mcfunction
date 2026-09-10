@@ -52,25 +52,28 @@ execute if score #show_row editor matches 1 run execute store result score #temp
 execute if score #show_row editor matches 1 run scoreboard players operation #temp editor -= #page_start editor
 execute if score #show_row editor matches 1 if score #temp editor matches ..0 run scoreboard players set #show_row editor 0
 execute if score #show_row editor matches 1 if score #temp editor matches 41.. run scoreboard players set #show_row editor 0
-# 按钮值（页内相对：编辑 600+页内序、复制 640+页内序、粘贴 680+、删除 720+）
+# 按钮值（规范v2：值 = 行号×100 + 列码；行号 = 1000 + 页内序 ⇒ 值 = 100000 + 页内序×100 + 列码）
+# 列码：复选框 0 / 编辑 3 / 复制 5 / 粘贴 6 / 删除 7
 # ★ 2026-09-07 修复：用 alive_seq[$(index)]（数组存活序）而非 #note_alive（显示序），
 #   否则"选中置底"后显示序与数组存活序错位，点击按钮会定位到错误音符。
 $execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run execute store result score #temp editor run data get storage rhythm_axe:prop alive_seq[$(index)]
 $execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run scoreboard players operation #temp editor -= #page_start editor
-execute if score #show_row editor matches 1 run scoreboard players set #temp_cursor editor 600
-execute if score #show_row editor matches 1 run scoreboard players operation #temp editor += #temp_cursor editor
+execute if score #show_row editor matches 1 run scoreboard players set #temp_cursor editor 100
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor *= #temp_cursor editor
+execute if score #show_row editor matches 1 run scoreboard players add #temp editor 100003
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop edit_val int 1 run scoreboard players get #temp editor
-execute if score #show_row editor matches 1 run scoreboard players set #temp_cursor editor 40
-execute if score #show_row editor matches 1 run scoreboard players operation #temp editor += #temp_cursor editor
+execute if score #show_row editor matches 1 run scoreboard players add #temp editor 2
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop copy_val int 1 run scoreboard players get #temp editor
-execute if score #show_row editor matches 1 run scoreboard players operation #temp editor += #temp_cursor editor
+execute if score #show_row editor matches 1 run scoreboard players add #temp editor 1
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop paste_val int 1 run scoreboard players get #temp editor
-execute if score #show_row editor matches 1 run scoreboard players operation #temp editor += #temp_cursor editor
+execute if score #show_row editor matches 1 run scoreboard players add #temp editor 1
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop delete_val int 1 run scoreboard players get #temp editor
-# 复选框 toggle 点击值（页内相对）★ 用数组存活序 alive_seq[$(index)]
+# 复选框 toggle 点击值（列码 0）★ 用数组存活序 alive_seq[$(index)]
 $execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run execute store result score #temp editor run data get storage rhythm_axe:prop alive_seq[$(index)]
 $execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run scoreboard players operation #temp editor -= #page_start editor
-execute if score #show_row editor matches 1 run scoreboard players add #temp editor 1600
+execute if score #show_row editor matches 1 run scoreboard players set #temp_cursor editor 100
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor *= #temp_cursor editor
+execute if score #show_row editor matches 1 run scoreboard players add #temp editor 100000
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop sel_val int 1 run scoreboard players get #temp editor
 # 输出行
 $execute if score #show_row editor matches 1 if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)] run function rhythm_axe:editor/menu/note/list/note_checkbox_write with storage rhythm_axe:prop

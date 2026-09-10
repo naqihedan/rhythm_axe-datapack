@@ -1,6 +1,7 @@
-# 从点击值解析事件行号（点击值 = 401 + 页内序号；真实索引 = page*5 + 页内序号）并打开设置面板
+# 从点击值解析事件行号（点击值 = (1000+页内行)×100 + 3；真实索引 = events_page×5 + 页内行）并打开设置面板
 scoreboard players operation #temp editor = #click_value editor
-scoreboard players remove #temp editor 401
+scoreboard players operation #temp editor /= 100 const
+scoreboard players remove #temp editor 1000
 execute store result score #temp_playhead editor run data get storage rhythm_axe:maps.editor events_page
 scoreboard players set #index editor 5
 scoreboard players operation #temp_playhead editor *= #index editor

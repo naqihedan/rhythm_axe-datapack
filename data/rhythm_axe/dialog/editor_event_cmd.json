@@ -40,7 +40,7 @@
       },
       "action": {
         "type": "dynamic/run_command",
-        "template": "/function rhythm_axe:editor/menu/event/dialog/dialog_submit_event_cmd {\"value\":\"$(cmd_value)\"}"
+        "template": "function rhythm_axe:editor/menu/event/dialog/dialog_submit_event_cmd {\"value\":\"$(cmd_value)\"}"
       }
     }
   ]

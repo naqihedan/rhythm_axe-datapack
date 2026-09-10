@@ -41,7 +41,7 @@
       },
       "action": {
         "type": "dynamic/run_command",
-        "template": "/function rhythm_axe:editor/menu/dialog/dialog_submit_mapid {\"value\":\"$(mapid_value)\"}"
+        "template": "function rhythm_axe:editor/menu/dialog/dialog_submit_mapid {\"value\":\"$(mapid_value)\"}"
       }
     }
   ]
