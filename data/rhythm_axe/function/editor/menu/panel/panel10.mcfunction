@@ -26,10 +26,7 @@ execute if score #click_value editor matches 100000..103999 if score #temp edito
 # 清理临时列码
 execute if score #click_value editor matches 100000..103999 run scoreboard players reset #temp editor
 # 取消选中（不退出列表）：清空 selection + 熄灭高亮，然后刷新列表
-execute if score #click_value editor matches 11305 run function rhythm_axe:editor/menu/note/selected/sel_clear_all
-execute if score #click_value editor matches 11305 run scoreboard players set #sel_count editor 0
-execute if score #click_value editor matches 11305 run execute as @e[type=item_display,tag=editor_note] run data modify entity @s Glowing set value 0b
-execute if score #click_value editor matches 11305 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
+execute if score #click_value editor matches 11305 run function rhythm_axe:editor/menu/note/selected/sel_clear_all_visual
 execute if score #click_value editor matches 11305 run function rhythm_axe:editor/menu/note/list/note_list_open
 # 批量复制/粘贴（1641/1642）
 execute if score #click_value editor matches 11302 run function rhythm_axe:editor/menu/note/list/note_list_batch_copy
