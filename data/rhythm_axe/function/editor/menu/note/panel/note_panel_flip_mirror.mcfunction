@@ -27,9 +27,4 @@ execute store result storage rhythm_axe:maps.editor content_ver int 1 run scoreb
 data modify storage rhythm_axe:maps.editor feedback set value "已执行镜像翻转"
 data remove storage rhythm_axe:maps.editor editing
 data remove storage rhythm_axe:prop cursor
-# 执行翻转后，把前四个开关重置为默认值（X/Y/Z 关、S 开）
-data modify storage rhythm_axe:maps.editor mirror.x set value 0b
-data modify storage rhythm_axe:maps.editor mirror.y set value 0b
-data modify storage rhythm_axe:maps.editor mirror.z set value 0b
-data modify storage rhythm_axe:maps.editor mirror.s set value 1b
 function rhythm_axe:editor/menu/note/panel/note_panel_return

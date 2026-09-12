@@ -6,5 +6,6 @@ data remove entity @s interaction
 execute unless entity @s[tag=editor_note_selected] run return fail
 scoreboard players operation #nc_id editor = @s note_id
 tag @s remove editor_note_selected
-# 以玩家身份执行取消选中（熄灭高亮 + 从 selection 移除 + 打开已选定音符列表）
-execute as @a[tag=editor_active] run function rhythm_axe:editor/tool/note_deselect_do
+# 以玩家身份执行：蹲下 → 取消所有选中（可撤销）；站立 → 取消单个选中（熄灭高亮 + 从 selection 移除 + 打开已选定音符列表）
+execute as @a[tag=editor_active] if entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/tool/note_deselect_all
+execute as @a[tag=editor_active] unless entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/tool/note_deselect_do

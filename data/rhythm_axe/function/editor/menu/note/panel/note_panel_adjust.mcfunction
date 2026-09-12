@@ -21,18 +21,20 @@ execute if score #click_value editor matches 12101 run execute store result scor
 execute if score #click_value editor matches 12101 run scoreboard players add #temp editor 1
 execute if score #click_value editor matches 12101 if score #temp editor matches 5.. run scoreboard players set #temp editor 0
 execute if score #click_value editor matches 12101 run execute store result storage rhythm_axe:maps.editor editing.temp.type int 1 run scoreboard players get #temp editor
-# 持续 duration（768/769 单步 ±1 刻；785/786 双步 ±tpb；下界 0）
-execute if score #click_value editor matches 12201..12202 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.duration
-execute if score #click_value editor matches 12203..12204 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.duration
+# 持续 duration（12201/12202 单步 ±1 刻；12203/12204 双步 ±tpb）
+# 绝对模式改 temp.duration（下界 0）；相对模式改 editing.rel.delta.duration（可负，确认时统一钳制）
+scoreboard players set #rel_dur editor 0
+execute store result score #rel_dur editor run data get storage rhythm_axe:maps.editor editing.rel.on.duration
+execute if score #click_value editor matches 12201..12204 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.duration
+execute if score #rel_dur editor matches 1 if score #click_value editor matches 12201..12204 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.rel.delta.duration
 execute if score #click_value editor matches 12203..12204 run function rhythm_axe:editor/menu/note/panel/note_time_tpb
 execute if score #click_value editor matches 12201 run scoreboard players operation #temp editor -= #time_step editor
 execute if score #click_value editor matches 12202 run scoreboard players operation #temp editor += #time_step editor
 execute if score #click_value editor matches 12203 run scoreboard players operation #temp editor -= #time_step editor
 execute if score #click_value editor matches 12204 run scoreboard players operation #temp editor += #time_step editor
-execute if score #click_value editor matches 12201..12202 if score #temp editor matches ..-1 run scoreboard players set #temp editor 0
-execute if score #click_value editor matches 12203..12204 if score #temp editor matches ..-1 run scoreboard players set #temp editor 0
-execute if score #click_value editor matches 12201..12202 run execute store result storage rhythm_axe:maps.editor editing.temp.duration int 1 run scoreboard players get #temp editor
-execute if score #click_value editor matches 12203..12204 run execute store result storage rhythm_axe:maps.editor editing.temp.duration int 1 run scoreboard players get #temp editor
+execute if score #rel_dur editor matches 0 if score #click_value editor matches 12201..12204 if score #temp editor matches ..-1 run scoreboard players set #temp editor 0
+execute if score #rel_dur editor matches 0 if score #click_value editor matches 12201..12204 run execute store result storage rhythm_axe:maps.editor editing.temp.duration int 1 run scoreboard players get #temp editor
+execute if score #rel_dur editor matches 1 if score #click_value editor matches 12201..12204 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.duration int 1 run scoreboard players get #temp editor
 # 批量：判定时间被改时打 batch_set.time 标记（供【x】状态判断）
 execute if score #click_value editor matches 12001..12002 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.time set value 1b
 execute if score #click_value editor matches 12501..12502 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.size set value 1b

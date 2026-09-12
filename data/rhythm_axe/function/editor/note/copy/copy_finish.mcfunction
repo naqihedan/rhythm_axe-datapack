@@ -1,4 +1,7 @@
-# 复制完成：提示已复制数量并清理
+# 复制完成：走反馈系统（纯文本 + 数量，无撤销按钮），由重开列表时 show_feedback 渲染
 execute store result score #copy_count editor run data get storage rhythm_axe:maps.editor clipboard.notes
-tellraw @s [{"text":"[编辑器] 已复制 ","color":"green"},{"score":{"name":"#copy_count","objective":"editor"},"color":"aqua"},{"text":" 个音符","color":"green"}]
+data modify storage rhythm_axe:maps.editor feedback set value "已复制"
+scoreboard players operation #fb_count editor = #copy_count editor
+data modify storage rhythm_axe:prop fb_count set value 1b
+data modify storage rhythm_axe:maps.editor no_undo set value 1b
 function rhythm_axe:editor/note/copy/clip_cleanup

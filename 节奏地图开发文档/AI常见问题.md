@@ -18,4 +18,5 @@
 - **加了按钮却忘了同步白名单守卫** → `panelN.mcfunction` 顶部两行 `unless ... matches <号段>`，漏加就提示"该按钮不属于当前面板"、点了没反应。
 - **动态列表行用了绝对行号** → 必须用页内相对值，页码存 `notes_page`/`sel_page`，处理器还原 `页号×每页数 + 页内序`。
 - **旧范围迁移后仍写一条大范围** → 跨多个新行的范围（如 `768..781`）必须按连续段拆成多条 `execute`。
+- **只查 `editor_click set` 就断言“改全了”** → 按钮值还有两种隐藏写法：①宏参数注入（`data modify storage rhythm_axe:prop <key> set value N` + 宏内 `editor_click set $(<key>)`，如位置三轴的 `bxm..bzp2`）；②宏拼接（`set 1128$(index)`）。漏改的后果是守卫生效、按钮发旧号 ⇒ 点了提示“该按钮不属于当前面板”。全局审计：`python scripts/audit_injected_trigger_values.py`。
 - **忘更新文档**：改完 trigger 值要同步 `编辑器.md` 对应面板的表，否则下次照旧表加号必撞。

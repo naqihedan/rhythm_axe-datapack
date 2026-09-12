@@ -9,4 +9,6 @@ execute if data entity @s SelectedItem.components."minecraft:custom_data".editor
 # ===== 选择工具注视/选区玻璃（黄绿色玻璃，发绿光）=====
 # 未手持选择工具：清玻璃（确认选区后玻璃已被 select 逻辑 kill，此处仅兜底）
 execute unless data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select run kill @e[tag=editor_tool_select_glow]
-execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select run function rhythm_axe:editor/tool/select/select_glow_tick
+# 蹲下（时间段选择模式）：不显示玻璃预览（该模式只用 mod 时间轴上的入点/出点与范围色带）
+execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select if entity @s[predicate=rhythm_axe:sneaking] if entity @e[tag=editor_tool_select_glow] run kill @e[tag=editor_tool_select_glow]
+execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select unless entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/tool/select/select_glow_tick

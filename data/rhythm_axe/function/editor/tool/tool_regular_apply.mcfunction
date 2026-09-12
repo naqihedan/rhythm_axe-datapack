@@ -13,3 +13,6 @@ execute if data entity @s SelectedItem.components."minecraft:custom_data".editor
 
 # 4) 播放速度工具（【播放速度】↔【音符流速】）：标记 editor_tool_timeline_speed 存在
 execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_timeline_speed run function rhythm_axe:editor/tool/tool_speed_update
+
+# 5) 选择工具（【选择工具】金斧头 ↔【时间段选择】钻斧头）：标记 editor_tool_select 存在
+execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select run function rhythm_axe:editor/tool/tool_select_update

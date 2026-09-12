@@ -16,6 +16,7 @@ data modify storage rhythm_axe:maps.editor history_cursor set value 0
 data modify storage rhythm_axe:maps.editor saved_cursor set value 0
 data modify storage rhythm_axe:maps.editor clipboard set value []
 data modify storage rhythm_axe:maps.editor selection set value []
+data modify storage rhythm_axe:maps.editor time_select set value {state:0}
 data modify storage rhythm_axe:maps.editor playhead set value 0
 data modify storage rhythm_axe:maps.editor next_note_id set value 0
 data modify storage rhythm_axe:maps.editor playing set value 0b

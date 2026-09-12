@@ -82,8 +82,8 @@ execute if score #sel_count editor matches 1.. run data modify storage rhythm_ax
 execute if data storage rhythm_axe:maps.editor clipboard.notes[0] run data modify storage rhythm_axe:prop b3 set value "{\"text\":\"【批量粘贴】\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11303\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把剪贴板音符粘贴到播放头\"}}"
 # 有存活音符 → 启用 全部选中
 execute if entity @e[type=item_display,tag=editor_note] run data modify storage rhythm_axe:prop b4 set value "{\"text\":\"【全部选中】\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11304\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"选中当前所有存活音符\"}}"
-# —— 第二行：镜像翻转组 ——：【翻转时间】| 镜像翻转音符[X][Y][Z][S]【翻转】
-# f1=翻转时间(909,即时) / f2/f3/f4/f5=X/Y/Z/S开关(910/914/915/916,点击仅切换状态不翻转) / f6=执行翻转(917,按开关执行)
+# —— 第二行：镜像翻转组 ——：【翻转时间】| 镜像翻转音符[X][Y][Z][S]【镜像判定位置】
+# f1=翻转时间(11501,即时) / f2/f3/f4/f5=X/Y/Z/S开关(11502/11503/11504/11505,点击仅切换状态不翻转) / f6=执行翻转(11506,按开关执行)
 # ★ 首次打开列表时初始化镜像开关（S 默认开）
 execute unless data storage rhythm_axe:maps.editor mirror run data modify storage rhythm_axe:maps.editor mirror set value {x:0b,y:0b,z:0b,s:1b}
 execute store result score #mirror_x editor run data get storage rhythm_axe:maps.editor mirror.x
@@ -92,22 +92,29 @@ execute store result score #mirror_z editor run data get storage rhythm_axe:maps
 execute store result score #mirror_s editor run data get storage rhythm_axe:maps.editor mirror.s
 # f1 翻转时间（默认灰，有选中启用）
 data modify storage rhythm_axe:prop f1 set value "{\"text\":\"【翻转时间】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
-execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f1 set value "{\"text\":\"【翻转时间】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 909\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"让音符的判定时间在时间轴上镜像反转\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f1 set value "{\"text\":\"【翻转时间】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11501\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"让音符的判定时间在时间轴上镜像反转\"}}"
 # f2 X 开关（颜色=状态：灰=关/绿=开；点击仅切换，不翻转）
-data modify storage rhythm_axe:prop f2 set value "{\"text\":\"[X]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 910\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"X轴镜像 关：点击开启。开启后点【翻转】会关于 YZ 平面镜像判定位置 position.x（绕包围盒中心 x，new=2×center−old）\"}}"
-execute if score #mirror_x editor matches 1 run data modify storage rhythm_axe:prop f2 set value "{\"text\":\"[X]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 910\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"X轴镜像 开：点击关闭。开启后点【翻转】会关于 YZ 平面镜像判定位置 position.x（绕包围盒中心 x）\"}}"
+data modify storage rhythm_axe:prop f2 set value "{\"text\":\"[X]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11502\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"X轴镜像 关：点击开启。开启后点【翻转】会关于 YZ 平面镜像判定位置 position.x（绕包围盒中心 x，new=2×center−old）\"}}"
+execute if score #mirror_x editor matches 1 run data modify storage rhythm_axe:prop f2 set value "{\"text\":\"[X]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11502\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"X轴镜像 开：点击关闭。开启后点【翻转】会关于 YZ 平面镜像判定位置 position.x（绕包围盒中心 x）\"}}"
 # f3 Y 开关
-data modify storage rhythm_axe:prop f3 set value "{\"text\":\"[Y]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 914\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Y轴镜像 关：点击开启。开启后点【翻转】会关于 XZ 平面镜像判定位置 position.y（绕包围盒中心 y，new=2×center−old）\"}}"
-execute if score #mirror_y editor matches 1 run data modify storage rhythm_axe:prop f3 set value "{\"text\":\"[Y]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 914\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Y轴镜像 开：点击关闭。开启后点【翻转】会关于 XZ 平面镜像判定位置 position.y（绕包围盒中心 y）\"}}"
+data modify storage rhythm_axe:prop f3 set value "{\"text\":\"[Y]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11503\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Y轴镜像 关：点击开启。开启后点【翻转】会关于 XZ 平面镜像判定位置 position.y（绕包围盒中心 y，new=2×center−old）\"}}"
+execute if score #mirror_y editor matches 1 run data modify storage rhythm_axe:prop f3 set value "{\"text\":\"[Y]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11503\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Y轴镜像 开：点击关闭。开启后点【翻转】会关于 XZ 平面镜像判定位置 position.y（绕包围盒中心 y）\"}}"
 # f4 Z 开关
-data modify storage rhythm_axe:prop f4 set value "{\"text\":\"[Z]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 915\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Z轴镜像 关：点击开启。开启后点【翻转】会关于 XY 平面镜像判定位置 position.z（绕包围盒中心 z，new=2×center−old）\"}}"
-execute if score #mirror_z editor matches 1 run data modify storage rhythm_axe:prop f4 set value "{\"text\":\"[Z]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 915\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Z轴镜像 开：点击关闭。开启后点【翻转】会关于 XY 平面镜像判定位置 position.z（绕包围盒中心 z）\"}}"
+data modify storage rhythm_axe:prop f4 set value "{\"text\":\"[Z]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11504\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Z轴镜像 关：点击开启。开启后点【翻转】会关于 XY 平面镜像判定位置 position.z（绕包围盒中心 z，new=2×center−old）\"}}"
+execute if score #mirror_z editor matches 1 run data modify storage rhythm_axe:prop f4 set value "{\"text\":\"[Z]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11504\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"Z轴镜像 开：点击关闭。开启后点【翻转】会关于 XY 平面镜像判定位置 position.z（绕包围盒中心 z）\"}}"
 # f5 S 开关（同时翻转起始位置）
-data modify storage rhythm_axe:prop f5 set value "{\"text\":\"[S]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 916\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"同时翻起始 关：点击开启。开启后点【翻转】会按已开X/Y/Z轴让起始位置 start_pos 绕判定位置做对应轴镜像（start_pos.axis=−start_pos.axis）\"}}"
-execute if score #mirror_s editor matches 1 run data modify storage rhythm_axe:prop f5 set value "{\"text\":\"[S]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 916\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"同时翻起始 开：点击关闭。开启后点【翻转】会按已开X/Y/Z轴让起始位置 start_pos 绕判定位置做对应轴镜像\"}}"
+data modify storage rhythm_axe:prop f5 set value "{\"text\":\"[S]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11505\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"同时翻起始 关：点击开启。开启后点【翻转】会按已开X/Y/Z轴让起始位置 start_pos 绕判定位置做对应轴镜像（start_pos.axis=−start_pos.axis）\"}}"
+execute if score #mirror_s editor matches 1 run data modify storage rhythm_axe:prop f5 set value "{\"text\":\"[S]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11505\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"同时翻起始 开：点击关闭。开启后点【翻转】会按已开X/Y/Z轴让起始位置 start_pos 绕判定位置做对应轴镜像\"}}"
 # f6 执行翻转（默认灰，有选中启用）
-data modify storage rhythm_axe:prop f6 set value "{\"text\":\"【翻转】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
-execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f6 set value "{\"text\":\"【翻转】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 917\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"根据开启的镜像开关，对选中音符执行空间镜像翻转\"}}"
+data modify storage rhythm_axe:prop f6 set value "{\"text\":\"【镜像判定位置】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f6 set value "{\"text\":\"【镜像判定位置】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11506\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"根据开启的镜像开关，对选中音符执行空间镜像翻转\"}}"
+# f7/f8/f9 旋转按钮（灰=无选中；有选中启用；点击按 [X][Y][Z] 开关绕包围盒中心轴旋转）
+data modify storage rhythm_axe:prop f7 set value "{\"text\":\"【15°】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f7 set value "{\"text\":\"【15°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11507\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕包围盒中心旋转 15°（S 开则同旋转起始位置）\"}}"
+data modify storage rhythm_axe:prop f8 set value "{\"text\":\"【45°】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f8 set value "{\"text\":\"【45°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11508\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕包围盒中心旋转 45°（S 开则同旋转起始位置）\"}}"
+data modify storage rhythm_axe:prop f9 set value "{\"text\":\"【90°】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f9 set value "{\"text\":\"【90°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11509\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕包围盒中心旋转 90°（S 开则同旋转起始位置）\"}}"
 # 输出两行 + 清理临时组件
 function rhythm_axe:editor/menu/note/list/note_list_bottom with storage rhythm_axe:prop
 function rhythm_axe:editor/menu/note/list/note_flip_bottom with storage rhythm_axe:prop
@@ -123,3 +130,6 @@ data remove storage rhythm_axe:prop f3
 data remove storage rhythm_axe:prop f4
 data remove storage rhythm_axe:prop f5
 data remove storage rhythm_axe:prop f6
+data remove storage rhythm_axe:prop f7
+data remove storage rhythm_axe:prop f8
+data remove storage rhythm_axe:prop f9

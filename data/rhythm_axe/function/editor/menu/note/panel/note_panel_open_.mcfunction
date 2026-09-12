@@ -51,5 +51,5 @@ execute if score #temp editor matches 3 unless data storage rhythm_axe:maps.edit
 data modify storage rhythm_axe:maps.editor editing.orig_index set from storage rhythm_axe:prop index
 execute store result storage rhythm_axe:maps.editor editing.orig_index int 1 run data get storage rhythm_axe:prop index
 # 相对/绝对状态初始化（单音符默认绝对；相对增量置 0）。位置/起始位置相对增量为数组 [x,y,z]（×100 整数）。
-data modify storage rhythm_axe:maps.editor editing.rel set value {on:{time:0b,size:0b,position:0b,start_pos:0b},delta:{time:0,size:0,position:[0,0,0],start_pos:[0,0,0]}}
+data modify storage rhythm_axe:maps.editor editing.rel set value {on:{time:0b,size:0b,position:0b,start_pos:0b,duration:0b},delta:{time:0,size:0,position:[0,0,0],start_pos:[0,0,0],duration:0}}
 function rhythm_axe:editor/menu/note/panel/note_panel

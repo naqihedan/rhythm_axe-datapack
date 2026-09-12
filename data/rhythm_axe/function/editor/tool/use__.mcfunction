@@ -19,7 +19,8 @@ execute if items entity @s weapon.mainhand *[custom_data~{editor_tool_note_plank
 execute if items entity @s weapon.mainhand *[custom_data~{editor_tool_note_jukebox:true}] run return run function rhythm_axe:editor/tool/note/used_note_jukebox
 execute if items entity @s weapon.mainhand *[custom_data~{editor_tool_note_glass:true}] run return run function rhythm_axe:editor/tool/note/used_note_glass
 execute if items entity @s weapon.mainhand *[custom_data~{editor_tool_note_concrete:true}] run return run function rhythm_axe:editor/tool/note/used_note_concrete
-# 选择工具（金斧头）
+# 选择工具（金斧头）：站立=立方体框选两点；蹲下=时间轴入点/出点范围选择
+execute if items entity @s weapon.mainhand *[custom_data~{editor_tool_select:true}] if entity @s[predicate=rhythm_axe:sneaking] run return run function rhythm_axe:editor/tool/select/used_time_select
 execute if items entity @s weapon.mainhand *[custom_data~{editor_tool_select:true}] run return run function rhythm_axe:editor/tool/select/used_select
 
 # 副手（主手无工具时命中）
@@ -41,5 +42,6 @@ execute if items entity @s weapon.offhand *[custom_data~{editor_tool_note_plank:
 execute if items entity @s weapon.offhand *[custom_data~{editor_tool_note_jukebox:true}] run return run function rhythm_axe:editor/tool/note/used_note_jukebox
 execute if items entity @s weapon.offhand *[custom_data~{editor_tool_note_glass:true}] run return run function rhythm_axe:editor/tool/note/used_note_glass
 execute if items entity @s weapon.offhand *[custom_data~{editor_tool_note_concrete:true}] run return run function rhythm_axe:editor/tool/note/used_note_concrete
-# 选择工具（金斧头）
+# 选择工具（金斧头）：站立=立方体框选两点；蹲下=时间轴入点/出点范围选择
+execute if items entity @s weapon.offhand *[custom_data~{editor_tool_select:true}] if entity @s[predicate=rhythm_axe:sneaking] run return run function rhythm_axe:editor/tool/select/used_time_select
 execute if items entity @s weapon.offhand *[custom_data~{editor_tool_select:true}] run return run function rhythm_axe:editor/tool/select/used_select

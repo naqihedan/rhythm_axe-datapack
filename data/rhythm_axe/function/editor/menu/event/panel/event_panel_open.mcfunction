@@ -7,4 +7,10 @@ $data modify storage rhythm_axe:maps.editor editing.temp set from storage rhythm
 # 旧事件可能缺字段，补缺省值
 execute unless data storage rhythm_axe:maps.editor editing.temp.time run data modify storage rhythm_axe:maps.editor editing.temp.time set value 0
 execute unless data storage rhythm_axe:maps.editor editing.temp.commands run data modify storage rhythm_axe:maps.editor editing.temp.commands set value []
+# ★ 开始编辑事件点时，把播放头挪到该事件点位置（播放中自动重同步音乐与 tick rate）
+execute store result score #candidate editor run data get storage rhythm_axe:maps.editor editing.temp.time
+execute store result storage rhythm_axe:maps.editor playhead int 1 run scoreboard players get #candidate editor
+scoreboard players operation #playhead editor = #candidate editor
+data modify storage rhythm_axe:prop playhead set from storage rhythm_axe:maps.editor playhead
+execute if data storage rhythm_axe:maps.editor {playing:1b} run function rhythm_axe:editor/playback/resync
 function rhythm_axe:editor/menu/event/panel/event_panel

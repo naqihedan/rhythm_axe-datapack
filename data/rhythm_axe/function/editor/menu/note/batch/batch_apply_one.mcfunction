@@ -9,7 +9,7 @@ execute if score #rele editor matches 1 run execute store result score #d editor
 execute if score #rele editor matches 1 run scoreboard players operation #t editor += #d editor
 execute if score #rele editor matches 1 if score #t editor matches ..-1 run scoreboard players set #t editor 0
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time int 1 run scoreboard players get #t editor
-$execute unless score #rele editor matches 1 run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time set from storage rhythm_axe:maps.editor editing.temp.time
+$execute unless score #rele editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.time run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time set from storage rhythm_axe:maps.editor editing.temp.time
 # 大小（float，下界 0.1；delta 为 ×100 整数）
 scoreboard players set #rele editor 0
 execute store result score #rele editor run data get storage rhythm_axe:maps.editor editing.rel.on.size
@@ -20,7 +20,7 @@ execute if score #rele editor matches 1 run execute store result score #d editor
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 execute if score #rele editor matches 1 if score #v editor matches ..10 run scoreboard players set #v editor 10
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].size float 0.01 run scoreboard players get #v editor
-$execute unless score #rele editor matches 1 run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].size set from storage rhythm_axe:maps.editor editing.temp.size
+$execute unless score #rele editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.size run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].size set from storage rhythm_axe:maps.editor editing.temp.size
 # 判定位置 x/y/z（无下界钳制；delta 为 ×100 整数）
 scoreboard players set #rele editor 0
 execute store result score #rele editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
@@ -42,7 +42,7 @@ execute if score #rele editor matches 1 run scoreboard players operation #v edit
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[2]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position[2] double 0.01 run scoreboard players get #v editor
-$execute unless score #rele editor matches 1 run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position set from storage rhythm_axe:maps.editor editing.temp.position
+$execute unless score #rele editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.position run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].position set from storage rhythm_axe:maps.editor editing.temp.position
 # 起始位置 x/y/z（无下界钳制；delta 为 ×100 整数）
 scoreboard players set #rele editor 0
 execute store result score #rele editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
@@ -64,11 +64,19 @@ execute if score #rele editor matches 1 run scoreboard players operation #v edit
 execute if score #rele editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[2]
 execute if score #rele editor matches 1 run scoreboard players operation #v editor += #d editor
 $execute if score #rele editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos[2] double 0.01 run scoreboard players get #v editor
-$execute unless score #rele editor matches 1 run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos set from storage rhythm_axe:maps.editor editing.temp.start_pos
+$execute unless score #rele editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.start_pos run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos set from storage rhythm_axe:maps.editor editing.temp.start_pos
 # 同值字段（仅应用有 batch_set 标记的，避免默认值覆盖）
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.type run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type set from storage rhythm_axe:maps.editor editing.temp.type
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.base_life run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life set from storage rhythm_axe:maps.editor editing.temp.note_base_life
-$execute if data storage rhythm_axe:maps.editor editing.batch_set.duration run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration set from storage rhythm_axe:maps.editor editing.temp.duration
+# 持续时长（整数刻，下界 0）：相对=原值+增量；绝对=有 batch_set 标记时写同值
+scoreboard players set #rele_d editor 0
+execute store result score #rele_d editor run data get storage rhythm_axe:maps.editor editing.rel.on.duration
+$execute if score #rele_d editor matches 1 run execute store result score #t editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration
+execute if score #rele_d editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.duration
+execute if score #rele_d editor matches 1 run scoreboard players operation #t editor += #d editor
+execute if score #rele_d editor matches 1 if score #t editor matches ..-1 run scoreboard players set #t editor 0
+$execute if score #rele_d editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration int 1 run scoreboard players get #t editor
+$execute unless score #rele_d editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.duration run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration set from storage rhythm_axe:maps.editor editing.temp.duration
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.color run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].color set from storage rhythm_axe:maps.editor editing.temp.color
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.density run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].density set from storage rhythm_axe:maps.editor editing.temp.density
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.anim_easing run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].anim_easing set from storage rhythm_axe:maps.editor editing.temp.anim_easing

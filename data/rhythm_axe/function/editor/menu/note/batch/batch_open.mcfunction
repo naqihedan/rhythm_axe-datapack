@@ -22,7 +22,7 @@ execute if score #batch_n editor matches ..0 run return fail
 data modify storage rhythm_axe:maps.editor editing.temp set value {size:1.0f,note_base_life:24,anim_easing:1,anim_power:1,type:0,following_point:0b,ignore_note_speed:0b,custom_tag:"",position:[0.0d,0.0d,0.0d],start_pos:[0.0d,0.0d,24.0d],time:0,hitsound:0,hit_particles:0,duration:8,color:0b,density:8}
 data modify storage rhythm_axe:maps.editor editing.batch_set set value {}
 # 相对增量字段：默认相对，增量置 0（相对模式显示并应用增量；切换绝对则用 editing.temp 同值）
-data modify storage rhythm_axe:maps.editor editing.rel set value {on:{time:1b,size:1b,position:1b,start_pos:1b},delta:{time:0,size:0,position:[0,0,0],start_pos:[0,0,0]}}
+data modify storage rhythm_axe:maps.editor editing.rel set value {on:{time:1b,size:1b,position:1b,start_pos:1b,duration:1b},delta:{time:0,size:0,position:[0,0,0],start_pos:[0,0,0],duration:0}}
 data modify storage rhythm_axe:maps.editor editing.panel_from set from storage rhythm_axe:maps.editor current_panel
 execute store result score #batch_from editor run data get storage rhythm_axe:maps.editor current_panel
 data modify storage rhythm_axe:maps.editor current_panel set value 11

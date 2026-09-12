@@ -1,11 +1,11 @@
-# 面板 11：音符设置（单音符 / 批量编辑）。note_panel / batch_panel 设 current_panel=11。
+# 面板 11：音符设置（单音符 / 批量编辑）。note_panel 设 current_panel=11（批量由 batch_open → note_panel 复用本面板）。
 # 入口：面板10/18 的编辑行、批量，或 12806/12906/13006 进入全局/击打子面板后返回。
 # 含：note_panel_adjust 各字段加减、相对/绝对开关与重置、批量确认、单音符确认删除、【x】各字段重置、
-#     判定/起始位置单轴加减、时间轴翻转(909 仅 return，动作在面板10/18)、进全局音效/视效/击打子面板。
+#     判定/起始位置单轴加减、时间轴翻转(11501 仅 return，动作在面板10/18)、进全局音效/视效/击打子面板。
 # 号段（spec-v2：值 = 行号*100 + 列码）见 scripts/migrate_panel11_v2.py 头部表。
-# 入口白名单守卫（12001..14019 为本面板全部号段；909 = 与面板 10/18 共享的时间轴翻转）
-execute unless score #click_value editor matches 12001..14019 unless score #click_value editor matches 909 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 12001..14019 unless score #click_value editor matches 909 run return fail
+# 入口白名单守卫（12001..14019 为本面板全部号段；11501 = 与面板 10/18 共享的时间轴翻转）
+execute unless score #click_value editor matches 12001..14019 unless score #click_value editor matches 11501 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 12001..14019 unless score #click_value editor matches 11501 run return fail
 
 # —— 各字段 ± 调整（note_panel_adjust 依 field 判别）——
 execute if score #click_value editor matches 12001..12002 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
@@ -20,20 +20,28 @@ execute if score #click_value editor matches 12003..12004 run function rhythm_ax
 execute if score #click_value editor matches 12203..12204 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12801..12802 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12901..12902 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
-# 相对/绝对开关（787 时间 / 788 大小 / 789 位置 / 790 起始位置）
+# 相对/绝对开关（13301 时间 / 13302 大小 / 13303 位置 / 13304 起始位置 / 13305 持续时长）
 execute if score #click_value editor matches 13301 run scoreboard players set #rel_field editor 1
 execute if score #click_value editor matches 13302 run scoreboard players set #rel_field editor 2
 execute if score #click_value editor matches 13303 run scoreboard players set #rel_field editor 3
 execute if score #click_value editor matches 13304 run scoreboard players set #rel_field editor 4
-execute if score #click_value editor matches 13301..13304 run function rhythm_axe:editor/menu/note/panel/note_panel_rel_toggle
+execute if score #click_value editor matches 13305 run scoreboard players set #rel_field editor 5
+execute if score #click_value editor matches 13301..13305 run function rhythm_axe:editor/menu/note/panel/note_panel_rel_toggle
+execute if score #click_value editor matches 13301..13305 run return 0
 # 相对字段【x】重置：增量归 0（仅相对模式行显示）；单/批量都刷新面板并拦截
 execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.time
 execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
 execute store result score #rel_sp editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
+execute store result score #rel_dur editor run data get storage rhythm_axe:maps.editor editing.rel.on.duration
 execute if score #click_value editor matches 14016 run data modify storage rhythm_axe:maps.editor editing.rel.delta.time set value 0
 execute if score #click_value editor matches 14017 run data modify storage rhythm_axe:maps.editor editing.rel.delta.size set value 0
 execute if score #click_value editor matches 14018 run data modify storage rhythm_axe:maps.editor editing.rel.delta.position set value [0,0,0]
 execute if score #click_value editor matches 14019 run data modify storage rhythm_axe:maps.editor editing.rel.delta.start_pos set value [0,0,0]
+# 批量：【x】= 取消本项批量修改（清 batch_set 标记，与其它同值字段一致）
+execute if score #click_value editor matches 14016 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.time
+execute if score #click_value editor matches 14017 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.size
+execute if score #click_value editor matches 14018 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.position
+execute if score #click_value editor matches 14019 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.start_pos
 # 单音符绝对模式【x】重置：还原为打开时的值（editing.temp from editing.orig）
 execute if score #click_value editor matches 14016 if score #rel_on editor matches 0 unless data storage rhythm_axe:maps.editor editing.batch if data storage rhythm_axe:maps.editor editing.orig.time run data modify storage rhythm_axe:maps.editor editing.temp.time set from storage rhythm_axe:maps.editor editing.orig.time
 execute if score #click_value editor matches 14017 if score #rel_on editor matches 0 unless data storage rhythm_axe:maps.editor editing.batch if data storage rhythm_axe:maps.editor editing.orig.size run data modify storage rhythm_axe:maps.editor editing.temp.size set from storage rhythm_axe:maps.editor editing.orig.size
@@ -58,8 +66,8 @@ execute if score #click_value editor matches 13703 run function rhythm_axe:edito
 execute if score #click_value editor matches 13704 run function rhythm_axe:editor/menu/note/panel/note_panel_delete
 execute if score #click_value editor matches 13705 run function rhythm_axe:editor/menu/note/panel/note_panel_delete_disarm
 
-# 时间轴翻转（909）：本面板仅 return（动作在面板10/18）
-execute if score #click_value editor matches 909 run return 0
+# 时间轴翻转（11501）：本面板仅 return（动作在面板10/18）
+execute if score #click_value editor matches 11501 run return 0
 # 引导线/无视流速开关（794/795）
 execute if score #click_value editor matches 13201 run function rhythm_axe:editor/menu/note/panel/note_toggle_following_point
 execute if score #click_value editor matches 13202 run function rhythm_axe:editor/menu/note/panel/note_toggle_ignore_speed
@@ -71,10 +79,11 @@ execute if score #click_value editor matches 14001 if data storage rhythm_axe:ma
 execute if score #click_value editor matches 14001 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.note_base_life set from storage rhythm_axe:maps.editor editing.orig.note_base_life
 execute if score #click_value editor matches 14001 run data remove storage rhythm_axe:maps.editor editing.changed.base_life
 execute if score #click_value editor matches 14001 run function rhythm_axe:editor/menu/note/panel/note_panel
-# 891 持续
+# 891 持续（相对模式：增量归 0；批量绝对：清标记 + 恢复默认；单音符绝对：恢复打开时的值）
+execute if score #click_value editor matches 14002 run data modify storage rhythm_axe:maps.editor editing.rel.delta.duration set value 0
 execute if score #click_value editor matches 14002 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.duration
-execute if score #click_value editor matches 14002 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.duration set value 8
-execute if score #click_value editor matches 14002 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.duration set from storage rhythm_axe:maps.editor editing.orig.duration
+execute if score #click_value editor matches 14002 if score #rel_dur editor matches 0 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.duration set value 8
+execute if score #click_value editor matches 14002 if score #rel_dur editor matches 0 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.duration set from storage rhythm_axe:maps.editor editing.orig.duration
 execute if score #click_value editor matches 14002 run data remove storage rhythm_axe:maps.editor editing.changed.duration
 execute if score #click_value editor matches 14002 run function rhythm_axe:editor/menu/note/panel/note_panel
 # 892 密度

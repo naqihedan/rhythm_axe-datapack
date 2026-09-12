@@ -22,6 +22,14 @@ execute if score #rel_size editor matches 1 run execute store result score #rel_
 execute if score #rel_size editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_size editor matches 1 if score #temp editor matches ..10 run scoreboard players set #temp editor 10
 execute if score #rel_size editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.size float 0.01 run scoreboard players get #temp editor
+# 持续时长（相对模式：temp = 原值 + 增量，下界 0）
+scoreboard players set #rel_dur editor 0
+execute store result score #rel_dur editor run data get storage rhythm_axe:maps.editor editing.rel.on.duration
+execute if score #rel_dur editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.duration
+execute if score #rel_dur editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.duration
+execute if score #rel_dur editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
+execute if score #rel_dur editor matches 1 if score #temp editor matches ..-1 run scoreboard players set #temp editor 0
+execute if score #rel_dur editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.duration int 1 run scoreboard players get #temp editor
 # 位置/起始位置（相对模式：temp = 原值 + delta[i]，无下界钳制）
 scoreboard players set #rel_pos editor 0
 execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position

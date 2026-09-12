@@ -8,6 +8,7 @@ data remove storage rhythm_axe:maps.editor saved_cursor
 data remove storage rhythm_axe:maps.editor clipboard
 data remove storage rhythm_axe:maps.editor selection
 data remove storage rhythm_axe:maps.editor select_tool
+data remove storage rhythm_axe:maps.editor time_select
 data remove storage rhythm_axe:maps.editor playhead
 data remove storage rhythm_axe:maps.editor next_note_id
 data remove storage rhythm_axe:maps.editor playing

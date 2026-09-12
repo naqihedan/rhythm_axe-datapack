@@ -12,8 +12,9 @@ _backup*/
 *~
 *.bak
 
-# generated logs
+# generated logs / script outputs
 *.log
+_macro*
 
 # os files
 Thumbs.db
@@ -21,4 +22,3 @@ Thumbs.db
 
 # local development docs (private design notes)
 # 节奏地图开发文档/
-_macro_out.txt

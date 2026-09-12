@@ -1,10 +1,10 @@
 # 面板 18：已选定音符列表（规范v2：11401 返回 / 11402 清空返回 / 11403 批量编辑 / 11404 批量复制 / 11405 批量粘贴；
-#            100000..103999 动态行；11601/11602 翻页；909/910/914-917 翻转组）。
+#            100000..103999 动态行；11601/11602 翻页；11501/11502/11503-11506 翻转组）。
 #   动态行：值 = 100000 + 页内序×100 + 列码（复选框 0 / 编辑 3 / 复制 5 / 粘贴 6 / 删除 7；页内序 0..39）
 # sel_note_list_open 设 current_panel=18。返回用 1560/1561，本面板不含值 1。
 # 入口白名单守卫
-execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914..917 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 909 unless score #click_value editor matches 910 unless score #click_value editor matches 914..917 run return fail
+execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11509 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11509 run return fail
 
 # 【返回】1560：仅返回主菜单（不清空 selection）
 execute if score #click_value editor matches 11401 run function rhythm_axe:editor/menu/main
@@ -59,33 +59,42 @@ execute if score #click_value editor matches 100000..103999 run scoreboard playe
 execute if score #click_value editor matches 11601 run function rhythm_axe:editor/menu/note/selected/sel_note_prev_page
 execute if score #click_value editor matches 11602 run function rhythm_axe:editor/menu/note/selected/sel_note_next_page
 
-# —— 时间轴翻转（909）与镜像翻转组（910/914/915/916 开关 + 917 执行），本面板刷新 sel_note_list_open ——
-execute if score #click_value editor matches 909 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_time
-execute if score #click_value editor matches 909 run return 0
-# X 开关（910）
-execute if score #click_value editor matches 910 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.x
-execute if score #click_value editor matches 910 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.x set value 1b
-execute if score #click_value editor matches 910 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.x set value 0b
-execute if score #click_value editor matches 910 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
-execute if score #click_value editor matches 910 run return 0
-# Y 开关（914）
-execute if score #click_value editor matches 914 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.y
-execute if score #click_value editor matches 914 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.y set value 1b
-execute if score #click_value editor matches 914 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.y set value 0b
-execute if score #click_value editor matches 914 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
-execute if score #click_value editor matches 914 run return 0
-# Z 开关（915）
-execute if score #click_value editor matches 915 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.z
-execute if score #click_value editor matches 915 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.z set value 1b
-execute if score #click_value editor matches 915 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.z set value 0b
-execute if score #click_value editor matches 915 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
-execute if score #click_value editor matches 915 run return 0
-# S 开关（916）
-execute if score #click_value editor matches 916 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.s
-execute if score #click_value editor matches 916 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.s set value 1b
-execute if score #click_value editor matches 916 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.s set value 0b
-execute if score #click_value editor matches 916 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
-execute if score #click_value editor matches 916 run return 0
-# 执行翻转（917）
-execute if score #click_value editor matches 917 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_mirror
-execute if score #click_value editor matches 917 run return 0
+# —— 时间轴翻转（11501）与镜像翻转组（11502/11503/11504/11505 开关 + 11506 执行），本面板刷新 sel_note_list_open ——
+execute if score #click_value editor matches 11501 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_time
+execute if score #click_value editor matches 11501 run return 0
+# X 开关（11502）
+execute if score #click_value editor matches 11502 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.x
+execute if score #click_value editor matches 11502 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.x set value 1b
+execute if score #click_value editor matches 11502 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.x set value 0b
+execute if score #click_value editor matches 11502 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 11502 run return 0
+# Y 开关（11503）
+execute if score #click_value editor matches 11503 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.y
+execute if score #click_value editor matches 11503 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.y set value 1b
+execute if score #click_value editor matches 11503 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.y set value 0b
+execute if score #click_value editor matches 11503 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 11503 run return 0
+# Z 开关（11504）
+execute if score #click_value editor matches 11504 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.z
+execute if score #click_value editor matches 11504 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.z set value 1b
+execute if score #click_value editor matches 11504 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.z set value 0b
+execute if score #click_value editor matches 11504 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 11504 run return 0
+# S 开关（11505）
+execute if score #click_value editor matches 11505 run execute store result score #tmp editor run data get storage rhythm_axe:maps.editor mirror.s
+execute if score #click_value editor matches 11505 if score #tmp editor matches 0 run data modify storage rhythm_axe:maps.editor mirror.s set value 1b
+execute if score #click_value editor matches 11505 if score #tmp editor matches 1 run data modify storage rhythm_axe:maps.editor mirror.s set value 0b
+execute if score #click_value editor matches 11505 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+execute if score #click_value editor matches 11505 run return 0
+# 执行翻转（11506）
+execute if score #click_value editor matches 11506 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_mirror
+execute if score #click_value editor matches 11506 run return 0
+# 旋转（11507=15° / 11508=45° / 11509=90°）：写角度 cos/sin（×10000）后按 [X][Y][Z] 开关绕包围盒中心轴旋转
+execute if score #click_value editor matches 11507 run data modify storage rhythm_axe:prop rotate_cos set value 9659
+execute if score #click_value editor matches 11507 run data modify storage rhythm_axe:prop rotate_sin set value 2588
+execute if score #click_value editor matches 11508 run data modify storage rhythm_axe:prop rotate_cos set value 7071
+execute if score #click_value editor matches 11508 run data modify storage rhythm_axe:prop rotate_sin set value 7071
+execute if score #click_value editor matches 11509 run data modify storage rhythm_axe:prop rotate_cos set value 0
+execute if score #click_value editor matches 11509 run data modify storage rhythm_axe:prop rotate_sin set value 10000
+execute if score #click_value editor matches 11507..11509 run function rhythm_axe:editor/menu/note/panel/note_panel_rotate
+execute if score #click_value editor matches 11507..11509 run return 0
