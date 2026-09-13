@@ -6,4 +6,5 @@ execute if score #temp editor matches 8 run scoreboard players set note_speed op
 execute if score #temp editor matches 16 run scoreboard players set note_speed options 2
 execute unless score #temp editor matches 2 unless score #temp editor matches 4 unless score #temp editor matches 8 unless score #temp editor matches 16 run scoreboard players set note_speed options 2
 function rhythm_axe:editor/refresh
-function rhythm_axe:editor/menu/resume
+# ★ 2026-09-12：面板/列表渲染推迟到下一 tick（refresh 已经重建了整表视觉，同刻渲染会挤爆命令链）
+schedule function rhythm_axe:editor/menu/resume_next 1t

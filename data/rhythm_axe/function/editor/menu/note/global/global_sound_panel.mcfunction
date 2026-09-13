@@ -15,5 +15,5 @@ tellraw @s [\
 {"text":"【6】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10601"},"hover_event":{"action":"show_text","value":"查看并编辑组 6"}}\
 ]
 tellraw @s [\
-{"text":"【返回】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10701"},"hover_event":{"action":"show_text","value":"返回音符面板"}}\
+{"text":"【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10701"},"hover_event":{"action":"show_text","value":"返回音符面板"}}\
 ]

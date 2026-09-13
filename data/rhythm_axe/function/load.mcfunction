@@ -205,7 +205,11 @@ gamerule block_drops false
 gamerule mob_drops false
 gamerule minecraft:advance_time false
 gamerule advance_weather false
-gamerule max_command_sequence_length 200000
+# ★ 2026-09-12：200000 → 1000000。谱面涨到 ~580 音符后，单条 refresh（重建全部音符视觉）或列表渲染各自就接近 20 万条命令，
+#   「操作 + refresh + 面板渲染」同刻必然被静默截断（日志 Command execution stopped due to limit），
+#   后果是视觉半截 + 尾部 sel_rebuild 没跑（选区与数组错位 → 下一次翻转算错对称轴）。
+#   提高上限后这类「正常操作被截断」不再发生；100 万仍可作为失控递归的报警线。
+gamerule max_command_sequence_length 1000000
 #====================编辑器====================
 # 编辑器运行时计分板（#playhead/#play_speed/#metronome/#history_cursor/#timeline_length 镜像 maps.editor）
 scoreboard objectives add editor dummy

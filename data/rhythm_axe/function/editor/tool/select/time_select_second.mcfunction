@@ -34,8 +34,12 @@ data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop i
 data remove storage rhythm_axe:prop nid
 data remove storage rhythm_axe:prop idx
-# 入/出点保留（mod 时间轴继续显示范围色带与标记）；state 回 0 → 下次蹲右键开启新一轮
+# state 回 0 → 下次蹲右键开启新一轮
 data modify storage rhythm_axe:maps.editor time_select.state set value 0
 tellraw @s [{"text":"[编辑器] 出点已设为第 ","color":"yellow"},{"nbt":"time_select.out","storage":"rhythm_axe:maps.editor","color":"aqua"},{"text":" 刻；区间 ","color":"yellow"},{"score":{"name":"#ts_min","objective":"editor"},"color":"aqua"},{"text":" ~ ","color":"yellow"},{"score":{"name":"#ts_max","objective":"editor"},"color":"aqua"},{"text":" 刻内选中 ","color":"yellow"},{"score":{"name":"#sel_count","objective":"editor"},"color":"aqua"},{"text":" 个音符","color":"yellow"}]
 execute if score #sel_count editor matches 0 run tellraw @s [{"text":"[编辑器] 该区间内没有音符（已清空选中，不打开面板）","color":"red"}]
 execute unless score #sel_count editor matches 0 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+# ★ 出点已定、判定完成 → 立刻清掉入/出点：mod 时间轴上的色带与中括号随即消失
+#   （放在 tellraw 之后，因为上面的 tellraw 还要读 time_select.out）
+data remove storage rhythm_axe:maps.editor time_select.in
+data remove storage rhythm_axe:maps.editor time_select.out

@@ -6,5 +6,5 @@ tellraw @s [{"text":"当前有未保存的内容，另存前要保存吗？","co
 tellraw @s [\
 {"text":"【保存后另存】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10001"},"hover_event":{"action":"show_text","value":"先保存当前谱面再另存"}},\
 {"text":"  【直接另存】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10002"},"hover_event":{"action":"show_text","value":"丢弃未保存修改，另存当前内容"}},\
-{"text":"  【返回】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10003"},"hover_event":{"action":"show_text","value":"回到主菜单"}}\
+{"text":"  【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10003"},"hover_event":{"action":"show_text","value":"回到主菜单"}}\
 ]

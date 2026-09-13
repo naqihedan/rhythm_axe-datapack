@@ -22,6 +22,8 @@ scoreboard players set editor_timeline_gui options 0
 scoreboard players set editor_note_hitevents options 0
 # 编辑器试听：播放中经过事件点时是否执行谱面事件（events[]）指令；0=不执行 1=执行
 scoreboard players set editor_play_events options 0
+# 编辑器试听：音乐自动对齐游戏（音频偏差 >40ms 且已稳住时，把音频挪到播放头，不动播放头）；0=关 1=开
+scoreboard players set editor_audio_align options 1
 
 # 判定的三级权重
 scoreboard players set 1th_weight score_calculate 2

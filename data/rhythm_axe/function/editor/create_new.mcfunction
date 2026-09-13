@@ -35,4 +35,5 @@ $tellraw @s [{"text":"[编辑器] 已创建谱面，mapid：","color":"green"},{
 function rhythm_axe:editor/visual/seek_start
 # 显示聊天栏主菜单
 function rhythm_axe:editor/refresh
-function rhythm_axe:editor/menu/main
+# ★ 2026-09-12：菜单渲染推迟到下一 tick（refresh 已经重建了整表视觉，同刻渲染会挤爆命令链）
+schedule function rhythm_axe:editor/menu/main_next 1t

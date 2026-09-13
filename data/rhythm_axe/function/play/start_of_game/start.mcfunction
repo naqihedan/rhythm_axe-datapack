@@ -8,9 +8,17 @@
 execute if data storage rhythm_axe:runtime notes run data remove storage rhythm_axe:runtime notes
 execute if data storage rhythm_axe:runtime timing_points run data remove storage rhythm_axe:runtime timing_points
 execute if data storage rhythm_axe:runtime events run data remove storage rhythm_axe:runtime events
+# 非谱面键的运行残留（merge 不会碰它们，必须显式清）：
+#   cur_cmd —— 上一局最后一条事件命令（共享宏通道，残留会被 event/execute 宏执行，2026-09-13 修复）
+#   hit_events —— 上一局的音符击打事件（按 note_id 存，兜底清防残留）
+execute if data storage rhythm_axe:runtime cur_cmd run data remove storage rhythm_axe:runtime cur_cmd
+execute if data storage rhythm_axe:runtime hit_events run data remove storage rhythm_axe:runtime hit_events
 # 其它根字段（id/title/.../teleport/spawn_pos 等）由 merge 覆盖，无需逐个清
 $data modify storage rhythm_axe:runtime {} merge from storage rhythm_axe:maps.$(mapid)
 $data modify storage rhythm_axe:runtime mapid set value "$(mapid)"
+# 谱面格式校验（雏形；方案 B = 只警告、不阻止开局）
+# ★ 必须放在 spawn_x/y/z 兜底之前：否则"teleport 为真但缺 spawn_x"判不出来（已被兜底成 0.0）
+function rhythm_axe:play/map_check
 # 生成标题组件 runtime.title_comp（JSON 组件串直接注入；裸纯文本合成字面组件；复合/列表走 nbt+interpret）
 data remove storage rhythm_axe:prop title
 data remove storage rhythm_axe:prop title_comp
@@ -51,6 +59,8 @@ advancement revoke @a only rhythm_axe:jukebox_left_click
 advancement grant @a only rhythm_axe:jukebox_right_click
 advancement grant @a only rhythm_axe:jukebox_left_click
 # 若谱面 teleport 为真，传送到初始位置（spawn_x/y/z/yaw/pitch 标量；旧谱面缺字段时补 0）
+# ★ 2026-09-13 先清零再读：store result 失败会保留旧值（上一局的 teleport 标记）→ 谱面未定义 teleport 时会误传送
+scoreboard players set #tp_flag play_state 0
 execute store result score #tp_flag play_state run data get storage rhythm_axe:runtime teleport
 execute if data storage rhythm_axe:runtime spawn_x run data modify storage rhythm_axe:runtime spawn_x set from storage rhythm_axe:runtime spawn_x
 execute unless data storage rhythm_axe:runtime spawn_x run data modify storage rhythm_axe:runtime spawn_x set value 0.0d

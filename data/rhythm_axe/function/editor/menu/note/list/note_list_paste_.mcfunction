@@ -16,5 +16,6 @@ function rhythm_axe:editor/refresh
 data modify storage rhythm_axe:maps.editor feedback set value "已粘贴音符信息"
 # 返回来源列表：已选定(18)回已选定，否则回活跃(10)
 execute store result score #from editor run data get storage rhythm_axe:maps.editor current_panel
-execute if score #from editor matches 18 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
-execute unless score #from editor matches 18 run function rhythm_axe:editor/menu/note/list/note_list_open
+# ★ 2026-09-12：本文件已 refresh（整表重建视觉），列表渲染推迟到下一刻（否则同刻超命令链被截断）
+execute if score #from editor matches 18 run schedule function rhythm_axe:editor/menu/note/selected/sel_note_list_open_next 1t
+execute unless score #from editor matches 18 run schedule function rhythm_axe:editor/menu/note/list/note_list_open_next 1t

@@ -10,4 +10,5 @@ data modify storage rhythm_axe:maps.editor feedback set value "已删除事件�
 data remove storage rhythm_axe:maps.editor editing
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop index
-function rhythm_axe:editor/menu/event/list/event_list_open
+# ★ 2026-09-12：列表渲染推迟到下一 tick（refresh 已经重建了整表视觉）
+schedule function rhythm_axe:editor/menu/event/list/event_list_open_next 1t

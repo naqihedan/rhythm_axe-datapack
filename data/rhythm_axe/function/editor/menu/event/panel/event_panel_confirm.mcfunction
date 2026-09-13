@@ -15,4 +15,5 @@ data remove storage rhythm_axe:prop new_time
 data remove storage rhythm_axe:prop list_name
 data remove storage rhythm_axe:prop insert_mode
 data remove storage rhythm_axe:prop insert_index
-function rhythm_axe:editor/menu/event/list/event_list_open
+# ★ 2026-09-12：列表渲染推迟到下一 tick（refresh 已经重建了整表视觉）
+schedule function rhythm_axe:editor/menu/event/list/event_list_open_next 1t

@@ -1,6 +1,7 @@
-# 收集流程的 prop 键清理（copy/cut 共用）
+# 收集/删除流程的 prop 与临时下标清理（copy/cut/batch_cut/delete 共用）
 data remove storage rhythm_axe:prop note_ids
 data remove storage rhythm_axe:prop clip_action
+data remove storage rhythm_axe:prop clip_bak
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop note_index
 data remove storage rhythm_axe:prop note_id
@@ -8,3 +9,4 @@ data remove storage rhythm_axe:prop found_index
 data remove storage rhythm_axe:prop index
 data remove storage rhythm_axe:prop remove_index
 data remove storage rhythm_axe:prop remove_target
+data remove storage rhythm_axe:maps.editor clipboard.found_indices

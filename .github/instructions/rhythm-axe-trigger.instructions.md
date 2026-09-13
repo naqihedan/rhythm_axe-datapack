@@ -38,15 +38,23 @@ grep -rn "matches <值>" data/               # 谁处理的（注意范围写法
 python scripts/audit_injected_trigger_values.py    # 全局孤儿值审计
 ```
 
-⚠️ **按钮值有三种写法，只 grep `editor_click set <数字>` 会漏掉两种**：
+⚠️ **按钮值有三种写法，只 grep `editor_click set <数字>` 三种都查不全**：
 - **宏参数注入**：`data modify storage rhythm_axe:prop <key> set value N` + 宏内 `editor_click set $(<key>)`（例：位置三轴的 `bxm..bzp2` → `note_pos_row`）
 - **宏拼接**：`editor_click set 1128$(index)`（实际值 11280~11289）
+- **计算型（最易漏，而且漏了必现“该按钮不属于当前面板”）**：列表行按钮由**记分板运算**算出，文件里根本没有 `editor_click set <数字>`：
+  ```mcfunction
+  scoreboard players set #temp_cursor editor 600   # ← 旧号基数，改这里！
+  scoreboard players operation #temp editor += #temp_cursor editor
+  scoreboard players add #temp editor 1600          # ← 复选框基数
+  ```
+  → 用 `python scripts/scan_legacy_button_values.py` 抓
 
 ## 收尾必做
 
 - `/reload`（新函数/新按钮值必须重载；加载失败只进游戏日志 `Failed to load function`）
 - `scripts\check_all_macros.ps1` → 必须 0 错误
 - `python scripts/check_all_panel_coverage.py` → 应满足 `emit ⊆ 守卫 ⊆ 分支`
+- `python scripts/scan_legacy_button_values.py` → 应 0 处（抓计算型/残留型旧值，如上“计算型”那种）
 - 桥接实测点一次：`bridge.ps1 runchat "trigger editor_click set <值>" -As <玩家>`
 
 ⚠️ 上述两项**静态检查只覆盖「值级」**，查不出**条件组合漏分支**这类语义问题（例：批量+绝对模式下 `prop.xcomp` 少写一个分支会让行首 `[x]` 整条消失）——值级通过后仍需按「相对/绝对 × 单音符/批量」等模式组合逐项核对 + 实测。

@@ -1,10 +1,10 @@
-# 面板 18：已选定音符列表（规范v2：11401 返回 / 11402 清空返回 / 11403 批量编辑 / 11404 批量复制 / 11405 批量粘贴；
+# 面板 18：已选定音符列表（规范v2：11401 返回 / 11402 清空返回 / 11403 批量编辑 / 11404 批量复制 / 11408 批量剪切 / 11405 批量粘贴 / 11406 粘贴并选中 / 11407 批量删除；
 #            100000..103999 动态行；11601/11602 翻页；11501/11502/11503-11506 翻转组）。
 #   动态行：值 = 100000 + 页内序×100 + 列码（复选框 0 / 编辑 3 / 复制 5 / 粘贴 6 / 删除 7；页内序 0..39）
 # sel_note_list_open 设 current_panel=18。返回用 1560/1561，本面板不含值 1。
 # 入口白名单守卫
-execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11509 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 11401..11405 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11509 run return fail
+execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11509 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11509 run return fail
 
 # 【返回】1560：仅返回主菜单（不清空 selection）
 execute if score #click_value editor matches 11401 run function rhythm_axe:editor/menu/main
@@ -14,10 +14,16 @@ execute if score #click_value editor matches 11402 run scoreboard players set #s
 execute if score #click_value editor matches 11402 run execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
 execute if score #click_value editor matches 11402 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
 execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/main
-# 【批量编辑】1562 / 【批量复制】1563 / 【批量粘贴】1564
+# 【批量编辑】11403 / 【批量复制】11404 / 【批量粘贴】11405 / 【粘贴并选中】11406 / 【批量删除】11407
 execute if score #click_value editor matches 11403 run function rhythm_axe:editor/menu/note/batch/batch_open
 execute if score #click_value editor matches 11404 run function rhythm_axe:editor/menu/note/selected/sel_batch_copy
 execute if score #click_value editor matches 11405 run function rhythm_axe:editor/menu/note/selected/sel_batch_paste
+# 粘贴并选中（粘贴到播放头 + 清空原选中 + 选中粘贴出来的音符）
+execute if score #click_value editor matches 11406 run function rhythm_axe:editor/menu/note/selected/sel_paste_select
+# 批量删除（直接删除全部选中音符，不弹二次确认；一次快照可撤销；删完回活跃列表）
+execute if score #click_value editor matches 11407 run function rhythm_axe:editor/note/delete/batch_delete
+# 批量剪切（11408）：剪切 = 复制到剪贴板 + 删除原音符（剪贴板保留 → 可接着【批量粘贴】）
+execute if score #click_value editor matches 11408 run function rhythm_axe:editor/note/cut/batch_cut
 
 # —— 动态行（值 = 100000 + 页内序×100 + 列码）：抠出列码(#temp_cursor) 与 页内序(#temp) ——
 execute if score #click_value editor matches 100000..103999 run scoreboard players operation #temp_cursor editor = #click_value editor

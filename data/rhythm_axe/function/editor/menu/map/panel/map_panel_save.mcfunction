@@ -8,4 +8,5 @@ function rhythm_axe:editor/refresh
 data modify storage rhythm_axe:maps.editor feedback set value "已保存谱面设置"
 data remove storage rhythm_axe:maps.editor panel_temp
 data remove storage rhythm_axe:prop cursor
-function rhythm_axe:editor/menu/main
+# ★ 2026-09-12：菜单渲染推迟到下一 tick（refresh 已经重建了整表视觉，同刻渲染会挤爆命令链）
+schedule function rhythm_axe:editor/menu/main_next 1t

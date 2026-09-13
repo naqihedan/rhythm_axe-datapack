@@ -35,5 +35,9 @@ execute unless score #relp editor matches 1 run scoreboard players operation #p 
 execute unless score #relp editor matches 1 run scoreboard players operation #p editor *= 100 const
 execute unless score #relp editor matches 1 run scoreboard players add #p editor 50
 execute unless score #relp editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.position[2] double 0.01 run scoreboard players get #p editor
+# ★ 批量模式：标记「判定位置」已被改动 —— 否则 batch_apply_one 的绝对分支（if editing.batch_set.position）
+#   不会把 editing.temp.position 写回音符，表现为「面板显示了新坐标但确认后音符没变」
+execute if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.position set value 1b
+
 data modify storage rhythm_axe:maps.editor no_undo set value 1b
 function rhythm_axe:editor/menu/note/panel/note_panel

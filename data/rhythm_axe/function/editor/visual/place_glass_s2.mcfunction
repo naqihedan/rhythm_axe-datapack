@@ -11,9 +11,12 @@ execute if score #total display_calc matches ..0 run scoreboard players set #tot
 # clamp：ph 超过 total（end 帧后）时 ratio 越界 → 停在终点
 execute if score #n display_calc > #total display_calc run scoreboard players operation #n display_calc = #total display_calc
 scoreboard players operation #power display_calc = @s editor_n_power
-scoreboard players operation #easing_type display_calc = @s editor_n_easing
-execute if score #easing_type display_calc matches 1 run scoreboard players set #easing_type display_calc 2
-execute if score #easing_type display_calc matches 2 run scoreboard players set #easing_type display_calc 1
+# ★ 镜像缓动：段② = 段①反向类型（1↔2，3 不变）。⚠️ 必须先把原值读进另一个计分项再写目标 ——
+#   直接在目标上「if 1→set 2；if 2→set 1」会把刚写的 2 又改回 1（等于没镜像，2026-09-13 修）
+scoreboard players operation #easing_raw display_calc = @s editor_n_easing
+scoreboard players operation #easing_type display_calc = #easing_raw display_calc
+execute if score #easing_raw display_calc matches 1 run scoreboard players set #easing_type display_calc 2
+execute if score #easing_raw display_calc matches 2 run scoreboard players set #easing_type display_calc 1
 function rhythm_axe:utilization/display_animation/easing/power
 # 终点 end = dist×dur/lt（×100）；translation 只沿局部 z = +end（局部 +z = 运动方向，穿过判定位置）
 scoreboard players operation #end100 display_calc = @s editor_n_dist

@@ -14,25 +14,30 @@ execute if score #click_value editor matches 12201..12202 run function rhythm_ax
 execute if score #click_value editor matches 12301..12302 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12401..12402 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12501..12502 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
-execute if score #click_value editor matches 12601..12602 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
+execute if score #click_value editor matches 12601..12604 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12701..12704 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12003..12004 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
+# 判定时间【使用当前时间】(12005)：切到绝对模式 + 设为当前播放头（不在 12001..12004 内，故单独分发）
+execute if score #click_value editor matches 12005 run function rhythm_axe:editor/menu/note/panel/note_panel_use_playhead
+execute if score #click_value editor matches 12005 run return 0
 execute if score #click_value editor matches 12203..12204 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12801..12802 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12901..12902 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
-# 相对/绝对开关（13301 时间 / 13302 大小 / 13303 位置 / 13304 起始位置 / 13305 持续时长）
+# 相对/绝对开关（13301 时间 / 13302 大小 / 13303 位置 / 13304 起始位置 / 13305 持续时长 / 13306 基础寿命）
 execute if score #click_value editor matches 13301 run scoreboard players set #rel_field editor 1
 execute if score #click_value editor matches 13302 run scoreboard players set #rel_field editor 2
 execute if score #click_value editor matches 13303 run scoreboard players set #rel_field editor 3
 execute if score #click_value editor matches 13304 run scoreboard players set #rel_field editor 4
 execute if score #click_value editor matches 13305 run scoreboard players set #rel_field editor 5
-execute if score #click_value editor matches 13301..13305 run function rhythm_axe:editor/menu/note/panel/note_panel_rel_toggle
-execute if score #click_value editor matches 13301..13305 run return 0
+execute if score #click_value editor matches 13306 run scoreboard players set #rel_field editor 6
+execute if score #click_value editor matches 13301..13306 run function rhythm_axe:editor/menu/note/panel/note_panel_rel_toggle
+execute if score #click_value editor matches 13301..13306 run return 0
 # 相对字段【x】重置：增量归 0（仅相对模式行显示）；单/批量都刷新面板并拦截
 execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.time
 execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
 execute store result score #rel_sp editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
 execute store result score #rel_dur editor run data get storage rhythm_axe:maps.editor editing.rel.on.duration
+execute store result score #rel_bl editor run data get storage rhythm_axe:maps.editor editing.rel.on.base_life
 execute if score #click_value editor matches 14016 run data modify storage rhythm_axe:maps.editor editing.rel.delta.time set value 0
 execute if score #click_value editor matches 14017 run data modify storage rhythm_axe:maps.editor editing.rel.delta.size set value 0
 execute if score #click_value editor matches 14018 run data modify storage rhythm_axe:maps.editor editing.rel.delta.position set value [0,0,0]
@@ -73,8 +78,10 @@ execute if score #click_value editor matches 13201 run function rhythm_axe:edito
 execute if score #click_value editor matches 13202 run function rhythm_axe:editor/menu/note/panel/note_toggle_ignore_speed
 
 # —— 【x】字段重置：批量=清 batch_set + temp 恢复默认；单音符=temp 恢复 orig；均清 changed 并刷新 ——
-# 890 基础寿命
-execute if score #click_value editor matches 14001 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.base_life
+# 890 基础寿命（相对模式：增量归 0；批量绝对：清标记 + 恢复默认 24；单音符绝对：恢复打开时的值）
+execute if score #click_value editor matches 14001 run data modify storage rhythm_axe:maps.editor editing.rel.delta.base_life set value 0
+execute if score #click_value editor matches 14001 if score #rel_bl editor matches 0 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.base_life
+execute if score #click_value editor matches 14001 if score #rel_bl editor matches 0 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.base_life
 execute if score #click_value editor matches 14001 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.note_base_life set value 24
 execute if score #click_value editor matches 14001 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.note_base_life set from storage rhythm_axe:maps.editor editing.orig.note_base_life
 execute if score #click_value editor matches 14001 run data remove storage rhythm_axe:maps.editor editing.changed.base_life

@@ -44,6 +44,8 @@ scoreboard players set #guide_last_id play_state -1
     scoreboard players set #judgement_scale play_state 1
 
     # 生命（来自谱面 health 字段）
+    # ★ 2026-09-13 先清零再读：store result 失败会保留旧值（上一局的 health；从未设置时是“未定义”分数）
+    scoreboard players set health play_state 0
     execute store result score health play_state run data get storage rhythm_axe:runtime health
     # 伤害扣血冷却（0 = 可扣血；扣血后 = damage_cooldown，每刻递减，M2-G）
     scoreboard players set damage_cooldown play_state 0

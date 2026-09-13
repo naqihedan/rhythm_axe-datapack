@@ -54,4 +54,5 @@ execute store result bossbar rhythm_axe:editor_progress value run scoreboard pla
 function rhythm_axe:editor/visual/progress_actionbar
 # 显示聊天栏主菜单（点击 /trigger editor_click 不弹确认窗）
 function rhythm_axe:editor/refresh
-function rhythm_axe:editor/menu/main
+# ★ 2026-09-12：菜单渲染推迟到下一 tick（refresh 已经重建了整表视觉，同刻渲染会挤爆命令链）
+schedule function rhythm_axe:editor/menu/main_next 1t

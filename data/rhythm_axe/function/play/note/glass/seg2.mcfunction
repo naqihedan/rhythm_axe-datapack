@@ -17,10 +17,12 @@ scoreboard players operation #gend display_calc /= @s note_c_lt
 # 设置 display_animation 参数（段②，duration=dur；dur=0 保护为 1）
 scoreboard players operation #ANIM_DURATION display_calc = @s note_glass_dur
 execute if score #ANIM_DURATION display_calc matches ..0 run scoreboard players set #ANIM_DURATION display_calc 1
-# 镜像缓动：反向类型（1↔2，3 不变）
-scoreboard players operation #ANIM_EASING display_calc = @s note_c_easing
-execute if score #ANIM_EASING display_calc matches 1 run scoreboard players set #ANIM_EASING display_calc 2
-execute if score #ANIM_EASING display_calc matches 2 run scoreboard players set #ANIM_EASING display_calc 1
+# ★ 镜像缓动：反向类型（1↔2，3 不变）。⚠️ 必须先把原值读进另一个计分项再写目标 ——
+#   直接在目标上「if 1→set 2；if 2→set 1」会把刚写的 2 又改回 1（等于没镜像，2026-09-13 修）
+scoreboard players operation #easing_raw display_calc = @s note_c_easing
+scoreboard players operation #ANIM_EASING display_calc = #easing_raw display_calc
+execute if score #easing_raw display_calc matches 1 run scoreboard players set #ANIM_EASING display_calc 2
+execute if score #easing_raw display_calc matches 2 run scoreboard players set #ANIM_EASING display_calc 1
 scoreboard players operation #ANIM_POWER display_calc = @s note_c_power
 # 终点：translation 只动 z（x/y 保持 0 → target=0 不改变）；scale 恒 size（target=0 → 不改变）
 scoreboard players set #ANIM_TARGET_PX display_calc 0

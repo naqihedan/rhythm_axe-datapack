@@ -1,27 +1,10 @@
-# 批量修改确认：把 editing.rel.delta 增量应用到 batch_ids 每个音符（一次历史快照，可撤销）
-scoreboard players operation #from editor = #batch_from editor
-function rhythm_axe:editor/file/begin
-data modify storage rhythm_axe:maps.editor op_label set value "批量修改音符"
-data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
-scoreboard players set #bidx editor 0
-scoreboard players set #btotal editor 0
-execute store result score #btotal editor run data get storage rhythm_axe:maps.editor editing.batch_ids
-# ★ 顺序游标初始化：find_by_id 从 0 开始找第一个
-data modify storage rhythm_axe:prop batch_cursor set value 0
-function rhythm_axe:editor/menu/note/batch/batch_apply_drive
-data remove storage rhythm_axe:prop cursor
-data remove storage rhythm_axe:prop idx
-data remove storage rhythm_axe:prop note_id
-data remove storage rhythm_axe:prop found_index
-data remove storage rhythm_axe:prop index
-data remove storage rhythm_axe:prop batch_cursor
-function rhythm_axe:editor/file/commit
-function rhythm_axe:editor/refresh
-scoreboard players add #content_ver editor 1
-execute store result storage rhythm_axe:maps.editor content_ver int 1 run scoreboard players get #content_ver editor
-# 反馈：走 show_feedback（顶部显示 + 撤销按钮），带编辑数量
-data modify storage rhythm_axe:maps.editor feedback set value "已编辑"
-execute store result score #fb_count editor run data get storage rhythm_axe:maps.editor editing.batch_ids
-data modify storage rhythm_axe:prop fb_count set value 1b
-data remove storage rhythm_axe:maps.editor editing
-function rhythm_axe:editor/menu/note/panel/note_panel_return
+# ★ 2026-09-12 分刻 + 提示（处理音符数 > 50 时在聊天栏提示当前操作）：
+#   同一条命令链里的 tellraw 会和重活一起被客户端渲染 ⇒ 玩家看不到「正在…」就先卡住了，所以 > 50 时：
+#   本刻只发提示 + schedule 到下一刻；≤ 50 直接执行 <本文件>_go，不引入任何延迟。
+execute unless data storage rhythm_axe:maps.editor editing.batch_ids run return fail
+scoreboard players set #op_count editor 0
+execute store result score #op_count editor run data get storage rhythm_axe:maps.editor editing.batch_ids
+data modify storage rhythm_axe:prop op_label set value "批量修改音符"
+function rhythm_axe:editor/util/op_announce with storage rhythm_axe:prop
+execute if score #op_big editor matches 1 run schedule function rhythm_axe:editor/menu/note/batch/batch_confirm_next 1t
+execute if score #op_big editor matches 0 run function rhythm_axe:editor/menu/note/batch/batch_confirm_go

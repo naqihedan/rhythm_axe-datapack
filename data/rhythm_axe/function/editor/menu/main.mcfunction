@@ -60,43 +60,32 @@ tellraw @s [\
     {"text":"  【删除谱面】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10404"},"hover_event":{"action":"show_text","value":"把谱面移入回收站（可找回）"}},\
     {"text":"  【回收站】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10405"},"hover_event":{"action":"show_text","value":"查看回收站（可还原/彻底删除）"}}\
 ]
-# 时间控件行（播放按钮按状态显示 ▶/⏸）
+# 时间控件行（播放 ▶/⏸ 按状态显示）+ 速度按钮：同一行，按钮组件经 prop 注入宏 play_row
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor playing
-execute if score #temp editor matches 1 run tellraw @s [\
-    {"text":"<<<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 20"},"hover_event":{"action":"show_text","value":"后退一小节"}},\
-    {"text":" << ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 21"},"hover_event":{"action":"show_text","value":"后退一拍"}},\
-    {"text":"<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 22"},"hover_event":{"action":"show_text","value":"后退一刻"}},\
-    {"text":" ⏸ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"暂停"}},\
-    {"text":">","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 24"},"hover_event":{"action":"show_text","value":"前进一刻"}},\
-    {"text":" >> ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 25"},"hover_event":{"action":"show_text","value":"前进一拍"}},\
-    {"text":">>>","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 26"},"hover_event":{"action":"show_text","value":"前进一小节"}}\
-]
-execute unless score #temp editor matches 1 run tellraw @s [\
-    {"text":"<<<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 20"},"hover_event":{"action":"show_text","value":"后退一小节"}},\
-    {"text":" << ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 21"},"hover_event":{"action":"show_text","value":"后退一拍"}},\
-    {"text":"<","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 22"},"hover_event":{"action":"show_text","value":"后退一刻"}},\
-    {"text":" ▶ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"播放"}},\
-    {"text":">","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 24"},"hover_event":{"action":"show_text","value":"前进一刻"}},\
-    {"text":" >> ","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 25"},"hover_event":{"action":"show_text","value":"前进一拍"}},\
-    {"text":">>>","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 26"},"hover_event":{"action":"show_text","value":"前进一小节"}}\
-]
-# 速度按钮（显示当前速度）
+data modify storage rhythm_axe:prop pb set value '{"text":" ▶ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"播放"}}'
+execute if score #temp editor matches 1 run data modify storage rhythm_axe:prop pb set value '{"text":" ⏸ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"暂停"}}'
+# 速度按钮（显示当前速度；默认 100% 兜底，防 play_speed 异常值导致宏参数缺失而整行不渲染）
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor play_speed 100
-execute if score #temp editor matches 25 run tellraw @s [{"text":"【25%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 50%"}}]
-execute if score #temp editor matches 50 run tellraw @s [{"text":"【50%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 75%"}}]
-execute if score #temp editor matches 75 run tellraw @s [{"text":"【75%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 100%"}}]
-execute if score #temp editor matches 100 run tellraw @s [{"text":"【100%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 25%"}}]
-# 节拍器：26.1 下 if data ... value 1b 解析报错 → 用复合标签 {metronome:1b} 判断（常见问题：布尔值用复合标签匹配）
-execute if data storage rhythm_axe:maps.editor {metronome:1b} run tellraw @s [\
-    {"text":"【返回开头】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 28"},"hover_event":{"action":"show_text","value":"播放头回到 0 刻"}},\
-    {"text":"  【节拍器：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击关闭节拍器"}},\
-    {"text":"  【跳到结尾】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 29"},"hover_event":{"action":"show_text","value":"播放头跳到谱面结束时间"}}\
-]
-execute unless data storage rhythm_axe:maps.editor {metronome:1b} run tellraw @s [\
-    {"text":"【返回开头】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 28"},"hover_event":{"action":"show_text","value":"播放头回到 0 刻"}},\
-    {"text":"  【节拍器：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击开启节拍器"}},\
-    {"text":"  【跳到结尾】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 29"},"hover_event":{"action":"show_text","value":"播放头跳到谱面结束时间"}}\
-]
+data modify storage rhythm_axe:prop speed_btn set value '{"text":"【100%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 25%"}}'
+execute if score #temp editor matches 25 run data modify storage rhythm_axe:prop speed_btn set value '{"text":"【25%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 50%"}}'
+execute if score #temp editor matches 50 run data modify storage rhythm_axe:prop speed_btn set value '{"text":"【50%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 75%"}}'
+execute if score #temp editor matches 75 run data modify storage rhythm_axe:prop speed_btn set value '{"text":"【75%】","color":"light_purple","click_event":{"action":"run_command","command":"/trigger editor_click set 27"},"hover_event":{"action":"show_text","value":"切换到 100%"}}'
+function rhythm_axe:editor/menu/play_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop pb
+data remove storage rhythm_axe:prop speed_btn
+# 播放进度条行（51 格 '='：已播放黄绿 / 播放头黄 / 未播放灰；第 51 格点击直跳结尾）
+data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
+function rhythm_axe:editor/menu/progress/line with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop cursor
+# 节拍器行：节拍器开关 + 播放进度「当前刻/最终刻」（刻数用 #prog_head / #prog_end，由 progress/line 一并算好）
+# 26.1 下 if data ... value 1b 解析报错 → 用复合标签 {metronome:1b} 判断（常见问题：布尔值用复合标签匹配）
+data modify storage rhythm_axe:prop met set value '{"text":"【节拍器：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击开启节拍器"}}'
+execute if data storage rhythm_axe:maps.editor {metronome:1b} run data modify storage rhythm_axe:prop met set value '{"text":"【节拍器：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击关闭节拍器"}}'
+data modify storage rhythm_axe:prop end set value '{"text":"/","color":"gray"},{"score":{"name":"#prog_end","objective":"editor"},"color":"white"},{"text":" 刻","color":"gray"}'
+execute unless score #prog_end editor matches 1.. run data modify storage rhythm_axe:prop end set value '{"text":"/","color":"gray"},{"text":"未定义","color":"red"},{"text":" 刻","color":"gray"}'
+function rhythm_axe:editor/menu/metronome_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop met
+data remove storage rhythm_axe:prop end
 # 音符流速（读改全局 note_speed；调低显示更多音符、调高聚焦一小段；调整后刷新世界音符状态）
 execute store result score #temp editor run scoreboard players get note_speed options
 tellraw @s [\

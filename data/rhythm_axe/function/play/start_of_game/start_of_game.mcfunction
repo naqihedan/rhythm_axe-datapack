@@ -25,6 +25,10 @@ execute if score is_running play_state matches 0 if function rhythm_axe:play/sta
             },\
         {"text":"前往链接下载并安装必要mod！","color":"white"}\
         ]
-# 没有正在运行的谱面 且 mod 已安装 → 开始
+# 谱面不存在 → 阻止开始（判据 = 运行存储 maps.<mapid>.id，与编辑器 editor/open 一致）
+#   ★ 2026-09-13 新增：旧行为下源存储不存在时 merge 静默失败，但函数照常跑完 →
+#   进入一个无音符、无 end_time 的空局，而且永远不会自动结束。
+$execute if score is_running play_state matches 0 unless data storage rhythm_axe:maps.$(mapid) id run tellraw @a [{"text":"[提示] ","color":"yellow"},{"text":"找不到谱面 ","color":"gray"},{"text":"$(mapid)","color":"gold"},{"text":"，无法开始游戏。请确认谱面 id 是否正确。","color":"gray"}]
+# 没有正在运行的谱面 且 谱面存在 且 mod 已安装 → 开始
 scoreboard players set #dbg play_state 2
-$execute if score is_running play_state matches 0 unless function rhythm_axe:play/start_of_game/mod_test run function rhythm_axe:play/start_of_game/start {mapid:"$(mapid)"}
+$execute if score is_running play_state matches 0 if data storage rhythm_axe:maps.$(mapid) id unless function rhythm_axe:play/start_of_game/mod_test run function rhythm_axe:play/start_of_game/start {mapid:"$(mapid)"}

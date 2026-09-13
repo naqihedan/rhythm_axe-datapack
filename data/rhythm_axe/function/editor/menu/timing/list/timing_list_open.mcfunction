@@ -19,5 +19,5 @@ data remove storage rhythm_axe:prop is_red
 data remove storage rhythm_axe:prop prev
 tellraw @s [\
 {"text":"【新增一个时间点】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10180"},"hover_event":{"action":"show_text","value":"在播放头位置新增时间点"}},\
-{"text":"  【返回】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}\
+{"text":"  【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}\
 ]

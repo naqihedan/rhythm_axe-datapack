@@ -14,4 +14,4 @@ scoreboard players set #trash_shown editor 0
 data modify storage rhythm_axe:prop index set value 0
 function rhythm_axe:editor/menu/trash/trash_panel_row with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop index
-tellraw @s [{"text":"【返回】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}]
+tellraw @s [{"text":"【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}]

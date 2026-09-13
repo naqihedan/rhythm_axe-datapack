@@ -3,4 +3,5 @@
 execute store result storage rhythm_axe:prop time int 1 run scoreboard players get #playhead editor
 function rhythm_axe:editor/note/paste/paste
 data remove storage rhythm_axe:prop time
-function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+# ★ 列表推迟到下一刻渲染：粘贴（含 refresh 重建全部视觉）与列表渲染同 tick 会撞 200000
+schedule function rhythm_axe:editor/menu/note/selected/sel_note_list_open_next 1t

@@ -5,3 +5,5 @@ $data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[-1].id set 
 $data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[-1].time set value $(new_time)
 # 粘贴不继承选中状态（selected 是编辑器状态，非音符数据）
 $data remove storage rhythm_axe:maps.editor history[$(cursor)].notes[-1].selected
+# ★【粘贴并选中】：prop.paste_select=1b 时给刚粘贴的音符打上选中标记（普通「批量粘贴」不设该字段 → 仍是未选中）
+$execute if data storage rhythm_axe:prop paste_select run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[-1].selected set value 1b

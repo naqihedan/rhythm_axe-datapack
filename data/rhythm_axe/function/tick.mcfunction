@@ -13,6 +13,10 @@ execute as @a[scores={editor_click=1..}] run function rhythm_axe:editor/menu/con
 # 播放中每 tick 播放头 +1、更新 bossbar、到尾自动停
 execute if data storage rhythm_axe:maps.editor active run function rhythm_axe:editor/playback/advance
 
+# ========== 编辑器：时间范围选择的出点跟手 ==========
+# 暂停中 + 已设入点（等出点）时，出点始终 = 播放头（快进/快退、跳到开头/结尾、暂停那一刻都由这一行覆盖）
+execute if data storage rhythm_axe:maps.editor active unless data storage rhythm_axe:maps.editor {playing:1b} run function rhythm_axe:editor/tool/select/time_select_out_sync
+
 # ========== 编辑器：物品栏工具游标 ==========
 # 手持音符工具时维护 ^^^3 游标（右键放置音符）
 execute as @a[tag=editor_active] at @s run function rhythm_axe:editor/tool/cursor_tick

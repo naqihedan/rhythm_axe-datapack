@@ -10,4 +10,5 @@ $execute store result storage rhythm_axe:maps.editor history[$(cursor)].events[$
 function rhythm_axe:editor/file/commit
 function rhythm_axe:editor/refresh
 data modify storage rhythm_axe:maps.editor feedback set value "已粘贴事件信息"
-function rhythm_axe:editor/menu/event/list/event_list_open
+# ★ 2026-09-12：列表渲染推迟到下一 tick（refresh 已经重建了整表视觉）
+schedule function rhythm_axe:editor/menu/event/list/event_list_open_next 1t

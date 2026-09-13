@@ -1,4 +1,5 @@
 # 音符面板字段调整（spec-v2 号段）：12001 时间-1 / 12002 时间+1 / 12003 时间-tpb / 12004 时间+tpb / 12101 类型循环 0-4
+# （12005【使用当前时间】不在此文件：由 panel11 直接分发到 note_panel_use_playhead）
 # 判定时间：[--]/[++] = ±当前播放头所在时间点 tpb；[-]/[+] = ±1 刻
 # 绝对模式改 temp.time（下界 0）；相对模式改 editing.rel.delta.time（可负，确认时统一钳制）
 scoreboard players set #rel_on editor 0
@@ -65,12 +66,23 @@ execute if score #click_value editor matches 12502 run scoreboard players add #t
 execute if score #rel_on editor matches 0 if score #click_value editor matches 12501..12502 if score #temp editor matches ..10 run scoreboard players set #temp editor 10
 execute if score #rel_on editor matches 0 if score #click_value editor matches 12501..12502 run execute store result storage rhythm_axe:maps.editor editing.temp.size float 0.01 run scoreboard players get #temp editor
 execute if score #rel_on editor matches 1 if score #click_value editor matches 12501..12502 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.size int 1 run scoreboard players get #temp editor
-# 基础寿命 note_base_life（776/777，下界 1）
-execute if score #click_value editor matches 12601..12602 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.note_base_life
-execute if score #click_value editor matches 12601 run scoreboard players remove #temp editor 1
-execute if score #click_value editor matches 12602 run scoreboard players add #temp editor 1
-execute if score #click_value editor matches 12601..12602 if score #temp editor matches ..1 run scoreboard players set #temp editor 1
-execute if score #click_value editor matches 12601..12602 run execute store result storage rhythm_axe:maps.editor editing.temp.note_base_life int 1 run scoreboard players get #temp editor
+# 基础寿命 note_base_life（12601/12602 单步 ±1；12603/12604 按拍 ±tpb；下界 1）
+# 绝对模式改 temp.note_base_life（下界 1）；相对模式改 editing.rel.delta.base_life（可负，确认时统一钳制）
+scoreboard players set #rel_bl editor 0
+execute store result score #rel_bl editor run data get storage rhythm_axe:maps.editor editing.rel.on.base_life
+execute if score #click_value editor matches 12601..12604 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.note_base_life
+execute if score #rel_bl editor matches 1 if score #click_value editor matches 12601..12604 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.rel.delta.base_life
+scoreboard players set #time_step editor 1
+execute if score #click_value editor matches 12603..12604 run function rhythm_axe:editor/menu/note/panel/note_time_tpb
+execute if score #click_value editor matches 12601 run scoreboard players operation #temp editor -= #time_step editor
+execute if score #click_value editor matches 12602 run scoreboard players operation #temp editor += #time_step editor
+execute if score #click_value editor matches 12603 run scoreboard players operation #temp editor -= #time_step editor
+execute if score #click_value editor matches 12604 run scoreboard players operation #temp editor += #time_step editor
+execute if score #rel_bl editor matches 0 if score #click_value editor matches 12601..12604 if score #temp editor matches ..1 run scoreboard players set #temp editor 1
+execute if score #rel_bl editor matches 0 if score #click_value editor matches 12601..12604 run execute store result storage rhythm_axe:maps.editor editing.temp.note_base_life int 1 run scoreboard players get #temp editor
+execute if score #rel_bl editor matches 1 if score #click_value editor matches 12601..12604 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.base_life int 1 run scoreboard players get #temp editor
+# 批量：基础寿命被改时打 batch_set.base_life 标记（供【x】状态判断）
+execute if score #click_value editor matches 12601..12604 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.base_life set value 1b
 # 缓动类型 anim_easing（778/779，循环 1-3）
 execute if score #click_value editor matches 12701..12702 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.anim_easing
 execute if score #click_value editor matches 12701 run scoreboard players remove #temp editor 1

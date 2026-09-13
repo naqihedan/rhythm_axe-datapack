@@ -6,7 +6,10 @@
 #   → 拆到 execute_next（新快照 idx）预置 cur_cmd 后再递归回本函数
 #arg: ev_idx, cmd_idx, cur_cmd
 # 宏展开执行（谱师输入的命令字符串；执行者保持调用者）
-$execute if data storage rhythm_axe:runtime cur_cmd run execute positioned 0.0 0.0 0.0 run $(cur_cmd)
+# ★ 2026-09-13：前置条件改用「该事件的 commands[cmd_idx] 确实存在」（而非 `if data cur_cmd`）。
+#   cur_cmd 是共享宏通道，data modify 失败会保留旧值；以 commands 下标存在为准可结构性
+#   杜绝「事件点无命令却执行上一条/上一局残留命令」。
+$execute if data storage rhythm_axe:runtime events[$(ev_idx)].commands[$(cmd_idx)] run execute positioned 0.0 0.0 0.0 run $(cur_cmd)
 # 命令游标+1
 $execute if data storage rhythm_axe:runtime events[$(ev_idx)].commands[$(cmd_idx)] run scoreboard players add #ev_cmd_idx play_state 1
 execute store result storage rhythm_axe:runtime cmd_idx int 1 run scoreboard players get #ev_cmd_idx play_state

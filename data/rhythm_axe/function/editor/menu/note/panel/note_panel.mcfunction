@@ -175,113 +175,66 @@ execute if score #temp editor matches 4 unless score #batch_mode editor matches 
 {"text":" 染色玻璃 ","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-# 判定时间：绝对模式显示 temp.time（下界 0 时减号禁用）；相对模式显示增量（加减均可）
+# 判定时间行：组件化渲染 note_time_row（宏叶子）。行尾固定【使用当前时间】(12005)。
+#   相对模式：显示增量（加减均可）；绝对模式：显示 temp.time（下界 0 时减号变红禁用）
 scoreboard players set #rel_on editor 0
 execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.time
 execute store result score #disp_time editor run data get storage rhythm_axe:maps.editor editing.temp.time
 execute if score #rel_on editor matches 1 run execute store result score #disp_time editor run data get storage rhythm_axe:maps.editor editing.rel.delta.time
-execute if score #rel_on editor matches 1 unless score #disp_time editor matches 0 run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14016"},"hover_event":{"action":"show_text","value":"取消本项修改（增量归 0）"}},\
-{"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 13301"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\
-{"text":"判定时间：","color":"white"},\
-{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12003"},"hover_event":{"action":"show_text","value":"判定时间 -tpb"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12001"},"hover_event":{"action":"show_text","value":"判定时间 -1 刻"}},\
-{"score":{"name":"#disp_time","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12002"},"hover_event":{"action":"show_text","value":"判定时间 +1 刻"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12004"},"hover_event":{"action":"show_text","value":"判定时间 +tpb"}}\
-]
-execute if score #rel_on editor matches 1 if score #disp_time editor matches 0 run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：增量归 0"}},\
-{"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 13301"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\
-{"text":"判定时间：","color":"white"},\
-{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12003"},"hover_event":{"action":"show_text","value":"判定时间 -tpb"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12001"},"hover_event":{"action":"show_text","value":"判定时间 -1 刻"}},\
-{"score":{"name":"#disp_time","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12002"},"hover_event":{"action":"show_text","value":"判定时间 +1 刻"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12004"},"hover_event":{"action":"show_text","value":"判定时间 +tpb"}}\
-]
-# 绝对模式：temp.time != orig.time → 已修改（红 [x]）；否则灰
+# 已修改标志（绝对模式用）：批量看 batch_set、单音符比 temp vs orig
 scoreboard players set #mod_time editor 0
-# 批量 + 绝对：看 batch_set 标记（批量模式没有 editing.orig）
 execute if score #rel_on editor matches 0 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.time run scoreboard players set #mod_time editor 1
-# 单音符 + 绝对：temp vs orig
 execute if score #batch_mode editor matches 0 run execute store result score #orig_t editor run data get storage rhythm_axe:maps.editor editing.orig.time
 execute if score #rel_on editor matches 0 if score #batch_mode editor matches 0 unless score #disp_time editor = #orig_t editor run scoreboard players set #mod_time editor 1
-# 绝对模式，time ≤ 0（红/灰按是否修改）
-execute if score #rel_on editor matches 0 if score #mod_time editor matches 1 if score #disp_time editor matches ..0 run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14016"},"hover_event":{"action":"show_text","value":"取消本项修改（还原为打开时的值）"}},\
-{"text":"[~]","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13301"},"hover_event":{"action":"show_text","value":"绝对模式：直接设为设定值；点击切换为相对"}},\
-{"text":"判定时间：","color":"white"},\
-{"text":"[--]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 12003"},"hover_event":{"action":"show_text","value":"判定时间 -tpb（当前播放头时间点）"}},\
-{"text":"[-]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 12001"},"hover_event":{"action":"show_text","value":"判定时间 -1 刻（最少 0）"}},\
-{"score":{"name":"#disp_time","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12002"},"hover_event":{"action":"show_text","value":"判定时间 +1 刻"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12004"},"hover_event":{"action":"show_text","value":"判定时间 +tpb（当前播放头时间点）"}}\
-]
-execute if score #rel_on editor matches 0 unless score #mod_time editor matches 1 if score #disp_time editor matches ..0 run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"[~]","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13301"},"hover_event":{"action":"show_text","value":"绝对模式：直接设为设定值；点击切换为相对"}},\
-{"text":"判定时间：","color":"white"},\
-{"text":"[--]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 12003"},"hover_event":{"action":"show_text","value":"判定时间 -tpb（当前播放头时间点）"}},\
-{"text":"[-]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 12001"},"hover_event":{"action":"show_text","value":"判定时间 -1 刻（最少 0）"}},\
-{"score":{"name":"#disp_time","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12002"},"hover_event":{"action":"show_text","value":"判定时间 +1 刻"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12004"},"hover_event":{"action":"show_text","value":"判定时间 +tpb（当前播放头时间点）"}}\
-]
-# 绝对模式，time ≥ 1（红/灰按是否修改）
-execute if score #rel_on editor matches 0 if score #mod_time editor matches 1 if score #disp_time editor matches 1.. run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14016"},"hover_event":{"action":"show_text","value":"取消本项修改（还原为打开时的值）"}},\
-{"text":"[~]","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13301"},"hover_event":{"action":"show_text","value":"绝对模式：直接设为设定值；点击切换为相对"}},\
-{"text":"判定时间：","color":"white"},\
-{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12003"},"hover_event":{"action":"show_text","value":"判定时间 -tpb（当前播放头时间点）"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12001"},"hover_event":{"action":"show_text","value":"判定时间 -1 刻（最少 0）"}},\
-{"score":{"name":"#disp_time","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12002"},"hover_event":{"action":"show_text","value":"判定时间 +1 刻"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12004"},"hover_event":{"action":"show_text","value":"判定时间 +tpb（当前播放头时间点）"}}\
-]
-execute if score #rel_on editor matches 0 unless score #mod_time editor matches 1 if score #disp_time editor matches 1.. run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"[~]","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13301"},"hover_event":{"action":"show_text","value":"绝对模式：直接设为设定值；点击切换为相对"}},\
-{"text":"判定时间：","color":"white"},\
-{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12003"},"hover_event":{"action":"show_text","value":"判定时间 -tpb（当前播放头时间点）"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12001"},"hover_event":{"action":"show_text","value":"判定时间 -1 刻（最少 0）"}},\
-{"score":{"name":"#disp_time","objective":"editor"},"color":"white"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12002"},"hover_event":{"action":"show_text","value":"判定时间 +1 刻"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12004"},"hover_event":{"action":"show_text","value":"判定时间 +tpb（当前播放头时间点）"}}\
-]
-# 基础寿命（全类型；行首[x]= 已修改红可点重置(890)/未修改灰；批量未修改显示 -）
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.base_life run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14001"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"基础寿命：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12601"},"hover_event":{"action":"show_text","value":"基础寿命 -1（最少 1）"}},\
-{"nbt":"editing.temp.note_base_life","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12602"},"hover_event":{"action":"show_text","value":"基础寿命 +1"}}\
-]
-execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.base_life run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"基础寿命：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12601"},"hover_event":{"action":"show_text","value":"基础寿命 -1（最少 1）"}},\
-{"text":"-","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12602"},"hover_event":{"action":"show_text","value":"基础寿命 +1"}}\
-]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.base_life run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14001"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
-{"text":"      ","color":"white"},\
-{"text":"基础寿命：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12601"},"hover_event":{"action":"show_text","value":"基础寿命 -1（最少 1）"}},\
-{"nbt":"editing.temp.note_base_life","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12602"},"hover_event":{"action":"show_text","value":"基础寿命 +1"}}\
-]
-execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.base_life run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"基础寿命：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12601"},"hover_event":{"action":"show_text","value":"基础寿命 -1（最少 1）"}},\
-{"nbt":"editing.temp.note_base_life","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12602"},"hover_event":{"action":"show_text","value":"基础寿命 +1"}}\
-]
+# [x] 重置
+execute if score #rel_on editor matches 1 unless score #disp_time editor matches 0 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14016\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（增量归 0）\"}}"
+execute if score #rel_on editor matches 1 if score #disp_time editor matches 0 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：增量归 0\"}}"
+execute if score #rel_on editor matches 0 if score #mod_time editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14016\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（还原为打开时的值）\"}}"
+execute if score #rel_on editor matches 0 unless score #mod_time editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
+# [~] 相对/绝对
+data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13301\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"相对模式：在原值基础上增减；点击切换为绝对\"}}"
+execute if score #rel_on editor matches 0 run data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13301\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"绝对模式：直接设为设定值；点击切换为相对\"}}"
+# [--][-]（绝对且 time<=0 时减号变红=禁用）
+execute if score #rel_on editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻\"}}"
+execute if score #rel_on editor matches 0 if score #disp_time editor matches ..0 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻（最少 0）\"}}"
+execute if score #rel_on editor matches 0 if score #disp_time editor matches 1.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻（最少 0）\"}}"
+# [+] [++]
+execute if score #rel_on editor matches 1 run data modify storage rhythm_axe:prop pcomp set value "{\"text\":\" [+]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12002\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +1 刻\"}},{\"text\":\"[++]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12004\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +tpb\"}}"
+execute if score #rel_on editor matches 0 run data modify storage rhythm_axe:prop pcomp set value "{\"text\":\" [+]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12002\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +1 刻\"}},{\"text\":\"[++]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12004\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +tpb（当前播放头时间点）\"}}"
+function rhythm_axe:editor/menu/note/panel/note_time_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop xcomp
+data remove storage rhythm_axe:prop tcomp
+data remove storage rhythm_axe:prop mcomp
+data remove storage rhythm_axe:prop pcomp
+# 基础寿命（全类型；支持相对/绝对 + 按拍 ±tpb；组件化渲染 note_bl_row 宏叶子）
+scoreboard players set #rel_bl editor 0
+execute store result score #rel_bl editor run data get storage rhythm_axe:maps.editor editing.rel.on.base_life
+scoreboard players set #disp_bl editor 0
+execute store result score #disp_bl editor run data get storage rhythm_axe:maps.editor editing.temp.note_base_life
+execute if score #rel_bl editor matches 1 run execute store result score #disp_bl editor run data get storage rhythm_axe:maps.editor editing.rel.delta.base_life
+# 已修改标志：相对=增量非 0；批量绝对=batch_set 标记；单音符绝对=changed 标记
+scoreboard players set #mod_bl editor 0
+execute if score #rel_bl editor matches 1 unless score #disp_bl editor matches 0 run scoreboard players set #mod_bl editor 1
+execute if score #rel_bl editor matches 0 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.base_life run scoreboard players set #mod_bl editor 1
+execute if score #rel_bl editor matches 0 if score #batch_mode editor matches 0 if data storage rhythm_axe:maps.editor editing.changed.base_life run scoreboard players set #mod_bl editor 1
+# [x] 组件（红=已修改，点击 14001 重置；灰=未修改）
+data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
+execute if score #mod_bl editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（相对=增量归 0 / 绝对=恢复原值）\"}}"
+# [~] 组件（黄=相对，灰=绝对；点击 13306 切换）
+data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13306\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"绝对模式：直接设为设定值；点击切换为相对\"}}"
+execute if score #rel_bl editor matches 1 run data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13306\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"相对模式：在原值基础上增减；点击切换为绝对\"}}"
+# [--]/[-] 组件（绝对模式且当前值 ≤1 时减号禁用显示红色；相对模式增量可负）
+data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -1（最少 1）\"}}"
+execute if score #rel_bl editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -1\"}}"
+execute if score #rel_bl editor matches 0 if score #disp_bl editor matches 2.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -1（最少 1）\"}}"
+# 数值组件（相对=增量，绝对=设定值）
+data modify storage rhythm_axe:prop vcomp set value "{\"score\":{\"name\":\"#disp_bl\",\"objective\":\"editor\"},\"color\":\"gold\"}"
+# 渲染（全类型都显示）
+function rhythm_axe:editor/menu/note/panel/note_bl_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop xcomp
+data remove storage rhythm_axe:prop tcomp
+data remove storage rhythm_axe:prop mcomp
+data remove storage rhythm_axe:prop vcomp
 # 引导线（仅 0/1/2 型：音符盒/木板/唱片机；开=当前音符与前一个 0/1/2 音符生成引导线；默认开启）
 scoreboard players set #fp_tmp editor 0
 execute store result score #fp_tmp editor run data get storage rhythm_axe:maps.editor editing.temp.following_point
@@ -359,7 +312,10 @@ execute if score #batch_mode editor matches 0 unless score #cv editor = #ov_c ed
 # [x] 组件（红=已修改/灰=未修改）
 data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
 execute if score #mod_c editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14015\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（重置为未修改，显示 -）\"}}"
-# 颜色名（按 #cv 取值）
+# 颜色名（按 #cv 取值；批量模式下「没改过」时整行显示 -，见下方覆盖）
+scoreboard players set #clr_set editor 0
+execute if score #batch_mode editor matches 0 run scoreboard players set #clr_set editor 1
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.color run scoreboard players set #clr_set editor 1
 execute if score #cv editor matches 1 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 白 \",\"color\":\"white\"}"
 execute if score #cv editor matches 2 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 灰 \",\"color\":\"gray\"}"
 execute if score #cv editor matches 3 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 淡灰 \",\"color\":\"#9d9d97\"}"
@@ -376,6 +332,9 @@ execute if score #cv editor matches 13 run data modify storage rhythm_axe:prop c
 execute if score #cv editor matches 14 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 紫 \",\"color\":\"#8932b8\"}"
 execute if score #cv editor matches 15 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 品红 \",\"color\":\"#c74ebd\"}"
 execute if score #cv editor matches 16 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 粉 \",\"color\":\"#ff00ea\"}"
+# ★ 批量模式且颜色未被改过 → 显示 -（与 击打音效/动画类型 等一致；确认时也不会写入）。
+#   放在 16 条颜色名之后覆盖：这样不用给每条都加 #clr_set 守卫（后写覆盖更不易漏）。
+execute if score #clr_set editor matches 0 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" - \",\"color\":\"gold\"}"
 # 渲染颜色行（仅 3/4 型且有颜色）
 execute if score #temp editor matches 3..4 if score #cv editor matches 1.. run function rhythm_axe:editor/menu/note/panel/note_color_row with storage rhythm_axe:prop
 # 清理
@@ -697,86 +656,37 @@ data remove storage rhythm_axe:prop bzp2
 data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop tcomp
 data remove storage rhythm_axe:prop paux
-# 动画类型（缓动类型+强度，全类型；行首[x]= 重置899；红色可点/灰色未修改）
+# 动画类型行（缓动类型 + 强度 同一行）：组件化渲染 note_anim_row（宏叶子）。
+# 显示规则与其它「同值字段」一致：批量模式下**没改的那一半显示 -**（类型/强度各自独立判断），
+# 单音符模式显示实际值；行首 [x]=14010（红=已修改可点重置 / 灰=未修改）。
 scoreboard players set #mod_e editor 0
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_easing run scoreboard players set #mod_e editor 1
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_power run scoreboard players set #mod_e editor 1
 execute if score #batch_mode editor matches 0 if data storage rhythm_axe:maps.editor editing.changed.anim_easing run scoreboard players set #mod_e editor 1
 execute if score #batch_mode editor matches 0 if data storage rhythm_axe:maps.editor editing.changed.anim_power run scoreboard players set #mod_e editor 1
-# ★ 缓动行显示必须先读 anim_easing 到 #temp：上方 #temp 被复用为 type（此处须重新取缓动类型 1/2/3），否则缓动行按 type 值错位/消失
-execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.anim_easing
-# 缓入（已修改）
-execute if score #temp editor matches 1 if score #mod_e editor matches 1 run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14010"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"动画类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12701"},"hover_event":{"action":"show_text","value":"上一个缓动（1缓入/2缓出/3缓入缓出）"}},\
-{"text":" 缓入 ","color":"gold"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12702"},"hover_event":{"action":"show_text","value":"下一个缓动"}},\
-{"text":" [-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12703"},"hover_event":{"action":"show_text","value":"强度 -1（1-5，1=线性）"}},\
-{"nbt":"editing.temp.anim_power","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12704"},"hover_event":{"action":"show_text","value":"强度 +1"}}\
-]
-# 缓入（未修改）
-execute if score #temp editor matches 1 if score #mod_e editor matches 0 run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"动画类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12701"},"hover_event":{"action":"show_text","value":"上一个缓动（1缓入/2缓出/3缓入缓出）"}},\
-{"text":" 缓入 ","color":"gold"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12702"},"hover_event":{"action":"show_text","value":"下一个缓动"}},\
-{"text":" [-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12703"},"hover_event":{"action":"show_text","value":"强度 -1（1-5，1=线性）"}},\
-{"nbt":"editing.temp.anim_power","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12704"},"hover_event":{"action":"show_text","value":"强度 +1"}}\
-]
-# 缓出（已修改）
-execute if score #temp editor matches 2 if score #mod_e editor matches 1 run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14010"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"动画类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12701"},"hover_event":{"action":"show_text","value":"上一个缓动（1缓入/2缓出/3缓入缓出）"}},\
-{"text":" 缓出 ","color":"gold"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12702"},"hover_event":{"action":"show_text","value":"下一个缓动"}},\
-{"text":" [-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12703"},"hover_event":{"action":"show_text","value":"强度 -1（1-5，1=线性）"}},\
-{"nbt":"editing.temp.anim_power","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12704"},"hover_event":{"action":"show_text","value":"强度 +1"}}\
-]
-# 缓出（未修改）
-execute if score #temp editor matches 2 if score #mod_e editor matches 0 run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"动画类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12701"},"hover_event":{"action":"show_text","value":"上一个缓动（1缓入/2缓出/3缓入缓出）"}},\
-{"text":" 缓出 ","color":"gold"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12702"},"hover_event":{"action":"show_text","value":"下一个缓动"}},\
-{"text":" [-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12703"},"hover_event":{"action":"show_text","value":"强度 -1（1-5，1=线性）"}},\
-{"nbt":"editing.temp.anim_power","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12704"},"hover_event":{"action":"show_text","value":"强度 +1"}}\
-]
-# 缓入缓出（已修改）
-execute if score #temp editor matches 3 if score #mod_e editor matches 1 run tellraw @s [\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14010"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"动画类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12701"},"hover_event":{"action":"show_text","value":"上一个缓动（1缓入/2缓出/3缓入缓出）"}},\
-{"text":" 缓入缓出 ","color":"gold"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12702"},"hover_event":{"action":"show_text","value":"下一个缓动"}},\
-{"text":" [-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12703"},"hover_event":{"action":"show_text","value":"强度 -1（1-5，1=线性）"}},\
-{"nbt":"editing.temp.anim_power","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12704"},"hover_event":{"action":"show_text","value":"强度 +1"}}\
-]
-# 缓入缓出（未修改）
-execute if score #temp editor matches 3 if score #mod_e editor matches 0 run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"动画类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12701"},"hover_event":{"action":"show_text","value":"上一个缓动（1缓入/2缓出/3缓入缓出）"}},\
-{"text":" 缓入缓出 ","color":"gold"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12702"},"hover_event":{"action":"show_text","value":"下一个缓动"}},\
-{"text":" [-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12703"},"hover_event":{"action":"show_text","value":"强度 -1（1-5，1=线性）"}},\
-{"nbt":"editing.temp.anim_power","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":"[+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12704"},"hover_event":{"action":"show_text","value":"强度 +1"}}\
-]
+# 行首 [x]：红=已修改（可点重置）/ 灰=未修改
+execute if score #mod_e editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14010\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（重置为未修改，显示 -）\"}}"
+execute if score #mod_e editor matches 0 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
+# 缓动类型文字：单音符=实际值；批量=只在被改过时显示实际值，否则显示 -
+scoreboard players set #anim_e editor 0
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_easing run scoreboard players set #anim_e editor 1
+execute if score #batch_mode editor matches 0 run scoreboard players set #anim_e editor 1
+scoreboard players set #anim_t editor 0
+execute if score #anim_e editor matches 1 run execute store result score #anim_t editor run data get storage rhythm_axe:maps.editor editing.temp.anim_easing
+execute if score #anim_t editor matches 1 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" 缓入 \",\"color\":\"gold\"}"
+execute if score #anim_t editor matches 2 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" 缓出 \",\"color\":\"gold\"}"
+execute if score #anim_t editor matches 3 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" 缓入缓出 \",\"color\":\"gold\"}"
+execute if score #anim_t editor matches 0 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" - \",\"color\":\"gold\"}"
+# 缓动强度：单音符=实际值；批量=只在被改过时显示实际值，否则显示 -
+scoreboard players set #anim_p editor 0
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_power run scoreboard players set #anim_p editor 1
+execute if score #batch_mode editor matches 0 run scoreboard players set #anim_p editor 1
+execute if score #anim_p editor matches 1 run data modify storage rhythm_axe:prop pcomp set value "{\"nbt\":\"editing.temp.anim_power\",\"storage\":\"rhythm_axe:maps.editor\",\"color\":\"white\"}"
+execute if score #anim_p editor matches 0 run data modify storage rhythm_axe:prop pcomp set value "{\"text\":\"-\",\"color\":\"gold\"}"
+function rhythm_axe:editor/menu/note/panel/note_anim_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop xcomp
+data remove storage rhythm_axe:prop ecomp
+data remove storage rhythm_axe:prop pcomp
 # 击打音效（行首[x]= 已修改红可点重置(904)/未修改灰；批量未修改显示 -）
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hitsound run tellraw @s [\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14011"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\

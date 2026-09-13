@@ -72,7 +72,11 @@ execute if score auto play_state matches 0 run scoreboard players operation high
 execute if score auto play_state matches 0 run function rhythm_axe:play/end_of_game/save_highest with storage rhythm_axe:runtime
 
 # 血量换算百分比（health / 谱面最大血量 × 100）
+# ★ 2026-09-13 先清零再读（同 health / #tp_flag 的 store result 残留问题）：谱面未定义 health 时
+#   store 失败会让 #max_health 带着上一局的脏值 → 百分比乱；现在归 0 并跳过除法（除 0 会被游戏拒绝）
+scoreboard players set percentage_health score_calculate 0
+scoreboard players set #max_health score_calculate 0
 scoreboard players operation percentage_health score_calculate = health play_state
 scoreboard players operation percentage_health score_calculate *= 100 const
 execute store result score #max_health score_calculate run data get storage rhythm_axe:runtime health
-scoreboard players operation percentage_health score_calculate /= #max_health score_calculate
+execute if score #max_health score_calculate matches 1.. run scoreboard players operation percentage_health score_calculate /= #max_health score_calculate

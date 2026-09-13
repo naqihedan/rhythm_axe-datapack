@@ -3,27 +3,18 @@
 # 前置：current_panel（=10 活跃列表 / 18 已选定列表）；处理对象 = selection（当前选中音符 id 列表）
 # 流程：① file/begin ② 算选中音符 time 的 min/max ③ 逐个音符 find→改 time→remove→按新 time 重插 ④ commit+refresh+反馈
 # ★ 2026-09-07 按钮移到活跃/已选定列表底部行，翻转对象改为 selection（不再用 editing.batch_ids）
-execute store result score #from editor run data get storage rhythm_axe:maps.editor current_panel
-function rhythm_axe:editor/file/begin
-data modify storage rhythm_axe:maps.editor op_label set value "时间轴翻转"
-data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
-# ① 计算 min/max（#flip_min 大数起，#flip_max 0 起；time 恒 >=0）
-scoreboard players set #flip_min editor 2147483647
-scoreboard players set #flip_max editor 0
-data modify storage rhythm_axe:prop flip_cursor set value 0
-scoreboard players set #flip_i editor 0
-execute store result score #flip_total editor run data get storage rhythm_axe:maps.editor selection
-function rhythm_axe:editor/menu/note/panel/note_panel_flip_scan_drive
-# ② 逐个翻转 + 重排
-scoreboard players set #flip_i editor 0
-function rhythm_axe:editor/menu/note/panel/note_panel_flip_apply_drive
-# ③ 收尾（commit 快照 + 刷新 + 反馈）
-function rhythm_axe:editor/file/commit
-function rhythm_axe:editor/refresh
-scoreboard players add #content_ver editor 1
-execute store result storage rhythm_axe:maps.editor content_ver int 1 run scoreboard players get #content_ver editor
-data modify storage rhythm_axe:maps.editor feedback set value "已翻转时间轴"
-data remove storage rhythm_axe:maps.editor editing
-data remove storage rhythm_axe:prop cursor
-data remove storage rhythm_axe:prop flip_cursor
-function rhythm_axe:editor/menu/note/panel/note_panel_return
+# ★ 2026-09-12 加固：
+#   ① 无选中直接返回。否则 selection 为空时 `#flip_total` 的 store 失败会保留上一轮的旧值，
+#      而 prop.note_id 也是旧的 ⇒ 扫描"找到"同一个旧音符 ⇒ min=max ⇒ 对称轴跑到 max（用户实测到的现象）。
+#   ② 清掉上一轮可能残留的扫描/插入游标，保证从干净状态开始。
+execute unless data storage rhythm_axe:maps.editor selection[0] run tellraw @s [{"text":"[编辑器] 没有选中的音符","color":"red"}]
+execute unless data storage rhythm_axe:maps.editor selection[0] run return fail
+# ★ 2026-09-12 分刻 + 提示（处理音符数 > 50 时在聊天栏提示当前操作）：
+#   同一条命令链里的 tellraw 会和重活一起被客户端渲染 ⇒ 玩家看不到「正在…」就先卡住了，所以 > 50 时：
+#   本刻只发提示 + schedule 到下一刻；≤ 50 直接执行 <本文件>_go，不引入任何延迟。
+scoreboard players set #op_count editor 0
+execute store result score #op_count editor run data get storage rhythm_axe:maps.editor selection
+data modify storage rhythm_axe:prop op_label set value "翻转时间轴"
+function rhythm_axe:editor/util/op_announce with storage rhythm_axe:prop
+execute if score #op_big editor matches 1 run schedule function rhythm_axe:editor/menu/note/panel/note_panel_flip_time_next 1t
+execute if score #op_big editor matches 0 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_time_go

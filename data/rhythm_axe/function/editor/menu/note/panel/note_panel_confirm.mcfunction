@@ -30,6 +30,14 @@ execute if score #rel_dur editor matches 1 run execute store result score #rel_d
 execute if score #rel_dur editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
 execute if score #rel_dur editor matches 1 if score #temp editor matches ..-1 run scoreboard players set #temp editor 0
 execute if score #rel_dur editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.duration int 1 run scoreboard players get #temp editor
+# 基础寿命（相对模式：temp = 原值 + 增量，下界 1）
+scoreboard players set #rel_bl editor 0
+execute store result score #rel_bl editor run data get storage rhythm_axe:maps.editor editing.rel.on.base_life
+execute if score #rel_bl editor matches 1 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.note_base_life
+execute if score #rel_bl editor matches 1 run execute store result score #rel_dt editor run data get storage rhythm_axe:maps.editor editing.rel.delta.base_life
+execute if score #rel_bl editor matches 1 run scoreboard players operation #temp editor += #rel_dt editor
+execute if score #rel_bl editor matches 1 if score #temp editor matches ..0 run scoreboard players set #temp editor 1
+execute if score #rel_bl editor matches 1 run execute store result storage rhythm_axe:maps.editor editing.temp.note_base_life int 1 run scoreboard players get #temp editor
 # 位置/起始位置（相对模式：temp = 原值 + delta[i]，无下界钳制）
 scoreboard players set #rel_pos editor 0
 execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
@@ -86,4 +94,6 @@ data remove storage rhythm_axe:prop new_time
 data remove storage rhythm_axe:prop list_name
 data remove storage rhythm_axe:prop insert_mode
 data remove storage rhythm_axe:prop insert_index
-function rhythm_axe:editor/menu/note/panel/note_panel_return
+# ★ 2026-09-12：回面板改为「下一刻渲染」——本文件前面已有 refresh（整表重建视觉）+ 逐音符遍历，
+#   再同刻渲染列表会超命令链被截断（尾部丢的是视觉/选区重建）。语义不变，面板晚 1 tick 出现。
+schedule function rhythm_axe:editor/menu/note/panel/note_panel_return_next 1t

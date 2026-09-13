@@ -67,7 +67,15 @@ $execute if score #rele editor matches 1 run execute store result storage rhythm
 $execute unless score #rele editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.start_pos run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].start_pos set from storage rhythm_axe:maps.editor editing.temp.start_pos
 # 同值字段（仅应用有 batch_set 标记的，避免默认值覆盖）
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.type run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].type set from storage rhythm_axe:maps.editor editing.temp.type
-$execute if data storage rhythm_axe:maps.editor editing.batch_set.base_life run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life set from storage rhythm_axe:maps.editor editing.temp.note_base_life
+# 基础寿命（整数，下界 1）：相对=原值+增量；绝对=有 batch_set 标记时写同值
+scoreboard players set #rele_b editor 0
+execute store result score #rele_b editor run data get storage rhythm_axe:maps.editor editing.rel.on.base_life
+$execute if score #rele_b editor matches 1 run execute store result score #t editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life
+execute if score #rele_b editor matches 1 run execute store result score #d editor run data get storage rhythm_axe:maps.editor editing.rel.delta.base_life
+execute if score #rele_b editor matches 1 run scoreboard players operation #t editor += #d editor
+execute if score #rele_b editor matches 1 if score #t editor matches ..0 run scoreboard players set #t editor 1
+$execute if score #rele_b editor matches 1 run execute store result storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life int 1 run scoreboard players get #t editor
+$execute unless score #rele_b editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.base_life run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].note_base_life set from storage rhythm_axe:maps.editor editing.temp.note_base_life
 # 持续时长（整数刻，下界 0）：相对=原值+增量；绝对=有 batch_set 标记时写同值
 scoreboard players set #rele_d editor 0
 execute store result score #rele_d editor run data get storage rhythm_axe:maps.editor editing.rel.on.duration
@@ -79,6 +87,8 @@ $execute if score #rele_d editor matches 1 run execute store result storage rhyt
 $execute unless score #rele_d editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.duration run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].duration set from storage rhythm_axe:maps.editor editing.temp.duration
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.color run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].color set from storage rhythm_axe:maps.editor editing.temp.color
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.density run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].density set from storage rhythm_axe:maps.editor editing.temp.density
+# 动画类型行：缓动类型与强度**各自独立** —— 面板上没改的那一半显示 -，也不写入；
+# 所以「只点强度」只会改强度，各音符保留自己的缓动类型（与 击打音效/类型 等「同值字段」一致）。
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.anim_easing run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].anim_easing set from storage rhythm_axe:maps.editor editing.temp.anim_easing
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.anim_power run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].anim_power set from storage rhythm_axe:maps.editor editing.temp.anim_power
 $execute if data storage rhythm_axe:maps.editor editing.batch_set.hitsound run data modify storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].hitsound set from storage rhythm_axe:maps.editor editing.temp.hitsound
