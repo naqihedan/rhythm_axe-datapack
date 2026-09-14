@@ -1,7 +1,7 @@
 # 给整套编辑器物品工具栏（container.0-8）：选择工具 + 时间控件 + 音符工具 + 事件/时间点工具
 #   container.0 金斧头 选择工具 | container.1 时钟/命令方块矿车 事件点/时间点工具(站=事件点、蹲=时间点)
-#   container.2 绿宝石 暂停/播放 | container.3 金锭 前进一刻(蹲下快退) | container.4 音符盒 | container.5 木板
-#   container.6 唱片机 | container.7 红染色玻璃 | container.8 黄绿混凝土
+#   container.2 绿宝石 暂停/播放 | container.3 金锭 前进一刻(蹲下快退) | container.4 音符盒(蹲下→木板) | container.5 木板(蹲下→音符盒)
+#   container.6 唱片机 | container.7 红染色玻璃(蹲下→混凝土) | container.8 黄绿混凝土(蹲下→染色玻璃)
 # 可食用 + use_remainder 返还 + custom_data；右键由 use__ 分派（editor_tool_*）
 # 音符类型 type：0=音符盒 1=木板 2=唱片机 3=混凝土(黄绿) 4=玻璃(红)
 # 事件/时间点工具：站立=事件点工具(命令方块矿车)、蹲下=时间点工具(时钟)；右键添加对应点并打开设置面板
@@ -61,23 +61,23 @@ item replace entity @s container.3 with minecraft:stick[\
 item replace entity @s container.4 with minecraft:stick[\
     item_model="minecraft:note_block",\
     consumable={animation:none,consume_seconds:0.05f,has_consume_particles:false,sound:"minecraft:intentionally_empty"},\
-    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:note_block",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【音符盒】\",\"color\":\"gold\",\"bold\":true}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_noteblock:true}}},\
+    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:note_block",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【音符盒】\",\"color\":\"gold\",\"bold\":true,\"extra\":[{\"text\":\"  蹲下切换为木板\",\"color\":\"gray\",\"italic\":true}]}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_noteblock:true,editor_tool_note_pair:true,editor_tool_state:0}}},\
     enchantment_glint_override=true,\
     attack_range={max_reach:1.5f,max_creative_reach:1.5f},\
     attribute_modifiers=[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],\
-    item_name={"text":"【音符盒】","color":"gold","bold":true},\
-    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_noteblock:true}\
+    item_name={"text":"【音符盒】","color":"gold","bold":true,"extra":[{"text":"  蹲下切换为木板","color":"gray","italic":true}]},\
+    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_noteblock:true,editor_tool_note_pair:true,editor_tool_state:0}\
 ] 1
 # 木板（type 1；持有时实体交互距离 1.5）
 item replace entity @s container.5 with minecraft:stick[\
     item_model="minecraft:birch_planks",\
     consumable={animation:none,consume_seconds:0.05f,has_consume_particles:false,sound:"minecraft:intentionally_empty"},\
-    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:birch_planks",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【木板】\",\"color\":\"gold\",\"bold\":true}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_plank:true}}},\
+    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:birch_planks",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【木板】\",\"color\":\"gold\",\"bold\":true,\"extra\":[{\"text\":\"  蹲下切换为音符盒\",\"color\":\"gray\",\"italic\":true}]}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_plank:true,editor_tool_note_pair:true,editor_tool_state:0}}},\
     enchantment_glint_override=true,\
     attack_range={max_reach:1.5f,max_creative_reach:1.5f},\
     attribute_modifiers=[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],\
-    item_name={"text":"【木板】","color":"gold","bold":true},\
-    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_plank:true}\
+    item_name={"text":"【木板】","color":"gold","bold":true,"extra":[{"text":"  蹲下切换为音符盒","color":"gray","italic":true}]},\
+    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_plank:true,editor_tool_note_pair:true,editor_tool_state:0}\
 ] 1
 # 唱片机（type 2；持有时实体交互距离 1.5）
 item replace entity @s container.6 with minecraft:stick[\
@@ -94,22 +94,23 @@ item replace entity @s container.6 with minecraft:stick[\
 item replace entity @s container.7 with minecraft:stick[\
     item_model="minecraft:red_stained_glass",\
     consumable={animation:none,consume_seconds:0.05f,has_consume_particles:false,sound:"minecraft:intentionally_empty"},\
-    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:red_stained_glass",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【染色玻璃】\",\"color\":\"red\",\"bold\":true}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_glass:true}}},\
+    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:red_stained_glass",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【染色玻璃】\",\"color\":\"red\",\"bold\":true,\"extra\":[{\"text\":\"  蹲下切换为混凝土\",\"color\":\"gray\",\"italic\":true}]}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_glass:true,editor_tool_note_pair:true,editor_tool_state:0}}},\
     enchantment_glint_override=true,\
     attack_range={max_reach:1.5f,max_creative_reach:1.5f},\
     attribute_modifiers=[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],\
-    item_name={"text":"【染色玻璃】","color":"red","bold":true},\
-    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_glass:true}\
+    item_name={"text":"【染色玻璃】","color":"red","bold":true,"extra":[{"text":"  蹲下切换为混凝土","color":"gray","italic":true}]},\
+    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_glass:true,editor_tool_note_pair:true,editor_tool_state:0}\
 ] 1
 # 黄绿混凝土（type 3；持有时实体交互距离 1.5）
 item replace entity @s container.8 with minecraft:stick[\
     item_model="minecraft:lime_concrete",\
     consumable={animation:none,consume_seconds:0.05f,has_consume_particles:false,sound:"minecraft:intentionally_empty"},\
-    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:lime_concrete",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【混凝土】\",\"color\":\"green\",\"bold\":true}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_concrete:true}}},\
+    use_remainder={id:"minecraft:stick",components:{item_model:"minecraft:lime_concrete",attack_range:{max_reach:1.5f,max_creative_reach:1.5f},attribute_modifiers:[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],item_name:"{\"text\":\"【混凝土】\",\"color\":\"green\",\"bold\":true,\"extra\":[{\"text\":\"  蹲下切换为染色玻璃\",\"color\":\"gray\",\"italic\":true}]}",custom_data:{editor_tool:true,editor_tool_note:true,editor_tool_note_concrete:true,editor_tool_note_pair:true,editor_tool_state:0}}},\
     enchantment_glint_override=true,\
     attack_range={max_reach:1.5f,max_creative_reach:1.5f},\
     attribute_modifiers=[{type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},{type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}],\
-    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_concrete:true}\
+    item_name={"text":"【混凝土】","color":"green","bold":true,"extra":[{"text":"  蹲下切换为染色玻璃","color":"gray","italic":true}]},\
+    custom_data={editor_tool:true,editor_tool_note:true,editor_tool_note_concrete:true,editor_tool_note_pair:true,editor_tool_state:0}\
 ] 1
 
 tellraw @s [{"text":"[编辑器] 已将物品工具栏设为编辑工具组","color":"yellow"}]

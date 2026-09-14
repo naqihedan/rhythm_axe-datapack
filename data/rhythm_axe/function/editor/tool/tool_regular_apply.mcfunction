@@ -16,3 +16,6 @@ execute if data entity @s SelectedItem.components."minecraft:custom_data".editor
 
 # 5) 选择工具（【选择工具】金斧头 ↔【时间段选择】钻斧头）：标记 editor_tool_select 存在
 execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select run function rhythm_axe:editor/tool/tool_select_update
+
+# 6) 音符工具配对切换（音符盒 ↔ 木板、染色玻璃 ↔ 混凝土）：标记 editor_tool_note_pair 存在
+execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note_pair run function rhythm_axe:editor/tool/tool_note_update
