@@ -3,8 +3,12 @@
 # ★ 2026-08-25 重构（同 note_list_row 幽灵修复）：26.x 宏函数在递归栈中段会从中间点重跑剩余代码，
 #   故所有遍历递归由普通函数 note_find_alive_advance 驱动；本函数用 #is_alive / #note_found 标志。
 scoreboard players set #is_alive editor 1
-scoreboard players set #note_total editor 0
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes run execute store result score #note_total editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes
+# ★ 2026-09-14 性能：整表长度只在**遍历起点（下标 0）**读一次。
+#   原来每轮循环都 `data get ... notes`（取长度却把整个列表序列化成反馈文本，上千音符 ≈ 260KB/轮）。
+#   （长度在一次遍历中不会变，读一次即可）
+$scoreboard players set #len_i editor $(index)
+execute if score #len_i editor matches 0 run scoreboard players set #note_total editor 0
+$execute if score #len_i editor matches 0 run execute store result score #note_total editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes
 # 无效音符（缺 id）→ 不算存活
 $execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].id run scoreboard players set #is_alive editor 0
 # 存活判定：出生刻 = time - note_base_life×16/note_speed（ignore_note_speed→time-base_life），线性再提前4刻；playhead < 出生刻 → 未出生

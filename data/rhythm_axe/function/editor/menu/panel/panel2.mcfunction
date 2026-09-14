@@ -1,6 +1,7 @@
 # 面板 2：谱面设置。规范v2：值 = 行号×100 + 行内按钮号（行号 100 起）。
 # 文本字段行：标题10001/作者10101/音乐10201/预览10301/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
 # spawn 行107: 10701..10706 = X-/X+/Y-/Y+/Z-/Z+；角度行109: 10901..10904 = yaw-/yaw+/pitch-/pitch+
+# 行108 整理音符顺序 10801（notes 按 time 升序重排，修复批量改判定时间造成的逆序）
 # 行110 人数 11001/11002；行111 血量 11101/11102；行112 进度条色 11201/11202
 # 行113 用玩家 11301 位置 / 11302 角度；行114 保存11401 / 取消11402
 # map_panel_open 设 current_panel=2。
@@ -77,3 +78,6 @@ execute if score #click_value editor matches 11302 run function rhythm_axe:edito
 # —— 保存/取消（行15）：1501 保存 / 1502 取消 ——
 execute if score #click_value editor matches 11401 run function rhythm_axe:editor/menu/map/panel/map_panel_save
 execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/map/panel/map_panel_cancel
+
+# —— 行108：【整理音符顺序】（trigger 10801，2026-09-14）——
+execute if score #click_value editor matches 10801 run function rhythm_axe:editor/menu/note/order_fix

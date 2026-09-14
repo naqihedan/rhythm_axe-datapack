@@ -1,4 +1,3 @@
-# 存活音符：拆字段生成实体（build_），再递归下一个（spawn_next_ 推进 #vis_idx）
+# 存活音符：拆字段生成实体（build_）。推进由 spawn_drive 负责（本函数不再递归）
 #arg: note_idx
 function rhythm_axe:editor/visual/build_ with storage rhythm_axe:prop
-function rhythm_axe:editor/visual/spawn_next_ with storage rhythm_axe:prop

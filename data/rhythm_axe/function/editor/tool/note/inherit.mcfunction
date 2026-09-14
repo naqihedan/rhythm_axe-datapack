@@ -7,9 +7,11 @@ execute store result score #inh_type editor run data get storage rhythm_axe:prop
 execute store result score #inh_time editor run data get storage rhythm_axe:prop time
 scoreboard players set #inh_best_time editor -2147483648
 scoreboard players set #inh_idx editor 0
-scoreboard players set #inh_total editor 0
+scoreboard players set #inh_ex editor 1
+# ★ 清掉上次命中残留：命中与否以 prop.inherit_idx 是否存在为准
+data remove storage rhythm_axe:prop inherit_idx
 execute store result storage rhythm_axe:prop index int 1 run scoreboard players get #inh_idx editor
 execute store result storage rhythm_axe:prop cursor int 1 run data get storage rhythm_axe:maps.editor history_cursor
 function rhythm_axe:editor/tool/note/inherit_drive
 # 找到 → 复制属性（宏叶子）
-execute if score #inh_found editor matches 1 run function rhythm_axe:editor/tool/note/inherit_copy with storage rhythm_axe:prop
+execute if data storage rhythm_axe:prop inherit_idx run function rhythm_axe:editor/tool/note/inherit_copy with storage rhythm_axe:prop

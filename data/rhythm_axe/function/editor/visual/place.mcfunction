@@ -53,10 +53,10 @@ scoreboard players operation #it3 editor /= @s editor_n_dist
 scoreboard players operation #it3 editor *= -1 const
 scoreboard players operation #iz editor += #it3 editor
 # 配对同 note_id 的交互实体写 Pos（×1000 → double）
+# ★ 2026-09-14 性能：原 7 条「各自遍历一遍全部 interaction 实体」的命令（Pos×3 + editor_should_*×4）
+#   合并为 1 次选择器 + place_inter_apply 内全部 @s。place 每 tick 每音符都跑，原为 O(n²)/tick。
 scoreboard players operation #iid editor = @s note_id
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run execute store result entity @s Pos[0] double 0.001 run scoreboard players get #ix editor
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run execute store result entity @s Pos[1] double 0.001 run scoreboard players get #iy editor
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run execute store result entity @s Pos[2] double 0.001 run scoreboard players get #iz editor
+execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run function rhythm_axe:editor/visual/place_inter_apply
 # ★ 2026-09-04 修复：展示实体 Pos 用 store result 写（与交互实体同款实测生效；summon 里 data modify set from 写实体 Pos 失效，
 #   Pos 留在 0,0,0 → 远距离音符展示实体停在原点/错位）。Pos = 判定位置（恒定，×1000），锚定不随帧变。
 execute store result entity @s Pos[0] double 0.001 run scoreboard players get @s editor_n_px
@@ -64,10 +64,7 @@ execute store result entity @s Pos[1] double 0.001 run scoreboard players get @s
 execute store result entity @s Pos[2] double 0.001 run scoreboard players get @s editor_n_pz
 # ★ 快照"应该在的位置"到交互实体（Axiom 偏移检测用；每次 place 覆写）
 #   交互实体实际 Pos 被 Axiom 移动后，其与 editor_should_x/y/z 的差 = 手动偏移，shift+左击时读到判定位置
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run data merge entity @s {data:{editor_should_x:0.0d,editor_should_y:0.0d,editor_should_z:0.0d}}
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run execute store result entity @s data.editor_should_x double 0.001 run scoreboard players get #ix editor
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run execute store result entity @s data.editor_should_y double 0.001 run scoreboard players get #iy editor
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run execute store result entity @s data.editor_should_z double 0.001 run scoreboard players get #iz editor
+#   （写入已合并进 place_inter_apply 的 1 次选择器）
 # 存展示实体当前视觉中心（×1000；y 恢复中心 = 交互脚底 + size/2；引导线/后续读取用）
 scoreboard players operation @s editor_n_vx = #ix editor
 scoreboard players operation @s editor_n_vy = #iy editor

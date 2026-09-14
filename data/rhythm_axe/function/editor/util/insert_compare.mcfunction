@@ -1,3 +1,4 @@
+# [已废弃 2026-09-14 D1b] 旧版线性插入点查找的子函数；insert_find 已改为指数+二分，不再调用
 #arg:cursor,index,list_name
 # 比较：元素 time > 新 time → 在此插入；否则游标 +1 继续找
 $execute store result score #insert_time editor run data get storage rhythm_axe:maps.editor history[$(cursor)].$(list_name)[$(index)].time

@@ -37,3 +37,27 @@
   这条上限从此只当**失控递归的报警线**；但「重活 + 渲染」仍不要同刻（同刻会卡顿，谱面再翻倍还会重现）。重活（整表 `refresh` 重建视觉、逐音符 `find_by_id`、列表渲染）不要和操作本身挤在同一 tick：把后续渲染 `schedule ... 1t`（`_next` 包装里必须 `execute as @a[tag=editor_active]`），或分刻处理。实例：`翻转时间`(11501) 曾因此把 `refresh` 的重建砍掉 → 音符在世界上消失、但 `notes[].time` 翻转正确。
 - **「顺序游标」型扫描/应用必须带兜底**：`selection` 的顺序是「按 notes 下标递增」时才成立（`sel_rebuild` 保证），但一旦乱序（历史数据、残留状态、上一步移过位置），顺序游标就会**静默漏掉音符**。所有这类叶子（`flip_scan_leaf` / `flip_apply_leaf` / `flip_pos_*` / `rotate_*` / `flip_start_*`）都要写「未命中 → `index` 置 0 再全扫一次」。漏掉的下场：min/max 只剩部分音符（`min == max` 时对称轴直接跑到 max，音符被翻到 `2·max−old` 飞出去）。
 - **重操作入口要清残留 prop + 空选中提前返回**：`#flip_total` / `prop.note_id` 这类「上一轮留下的值」会让后续扫描“找到”旧音符（`store result` 失败时分数/字段保留旧值，不会清零）。写法：入口先 `execute unless data storage rhythm_axe:maps.editor selection[0] run return fail`，再 `data remove` 掉 `note_id/found_index/index/insert_index/flip_cursor` 等。
+
+# 性能方面
+
+> 2026-09-14 一批优化（用户报告「快进快退/中段放音符越来越卡」）留下的经验。**核心结论：这个数据包的瓶颈从来不是「算法」，而是「MC 命令本身有多贵」。**
+
+- **宏函数（`$` 行）是性能第一杀手**：`function f with storage` **每次调用都要展开并编译 f 里所有 `$` 行**——**与是否执行到无关**（提前 `return` 省不掉）。所以「每元素/每实体调用一次的宏叶子」成本 ∝ `$` 行数 × 调用次数。
+  - 反例：`spawn_one_` 曾用 9 行宏逐个 `data get … notes[$(i)].xxx`，976 音符 = 8784 行宏展开。
+  - **正解**：只留 **1 行宏**把整个元素复制进临时键，其余全部用非宏 `data get storage rhythm_axe:prop <tmp>.xxx`：
+    `$data modify storage rhythm_axe:prop note set from storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)]`
+    ⚠️ 需要「存在性探测」的场合必须**先 `data remove` 临时键**再复制，否则复制失败会残留上一轮旧值 → 误判（见 `guide_find_next_leaf` 头部注释）。
+- **`data get storage X <列表路径>`（不带下标）= 把整个列表序列化成文本**：`execute store result … run data get storage … notes` 也一样（store 只改结果，不改反馈生成）。
+  - 反例：`sel_rebuild_len` 用 `data get … notes` 取**长度** → 每次 `refresh` 白序列化 976 音符 ≈260KB，删掉后 `refresh` 直接从 0.46s 掉到 0.15s。
+  - **正解**：用「逐元素存在性探测」当循环终止条件：`$execute store success score #has editor run data get … notes[$(i)].id`（见 `menu/note/selected/sel_rebuild_probe`）。
+  - **仍待修**（不在 `refresh` 路径，但「保存 / 取消全选」时会卡）：`editor/file/save_strip_selected`、`editor/menu/note/selected/sel_clear_all`。
+- **纯宏递归链会「幽灵重跑」**：`spawn_note_` → `spawn_one_` → `spawn_next_` 三个宏函数互相调用时，实测下标会多走 **1.47 倍**（从 100 起走到 1384，正常应止于 976）——既慢，又让遍历结束时记录的下标失真。
+  - **正解**：一律「**普通驱动器 + 宏叶子单步**」——驱动器（普通函数，可安全自递归）负责取下标/推进/判断结束，宏叶子只处理当前一个元素。参考 `visual/spawn_drive`、`menu/note/selected/sel_rebuild_drive`、`visual/guide_state_find_drive`。
+- **别在「每元素循环」里放 `@e[...]` 选择器**：每条 `@e[tag=editor_n_$(nid),…]` 都要遍历全世界实体。若对同一批实体要连做 N 条命令，合并成 1 次 `execute as @e[…] run function …`，函数内全用 `@s`（见 `visual/fill_disp`、`fill_inter`、`place_inter_apply`）。
+  ⚠️ **但动手前必须先问清数量级**：当时以为编辑器同时有几百个音符实体，实际**只有几个到几十个存活**（用户提醒）→ 那轮「合并选择器」收益有限，白折腾一轮。**先问「同一时刻有多少个」（存活实体数 / 列表长度 / 调用次数）再动手。**
+- **「只遍历窗口内元素」是最大的剩余优化，但有正确性风险**：`refresh` 必须把全部音符过一遍，其中 99% 只是「看一眼发现不用管」。要跳过它们必须提前知道「每个音符会在播放头前方多久出生」（`note_base_life × 16 / note_speed`，**每个音符可自定义**，本谱面就有 `note_base_life: 24`）。猜小 = **漏渲染音符**。要做只能走「编辑时统计上界并缓存」的安全版（代价：编辑后的刷新 +30%）。**2026-09-14 用户决定暂不做。**
+- **纯移动播放头的刷新可以跳过选区重建**：`refresh` 末尾的 `sel_rebuild` 只在「音符数组可能变化」时才需要。`playback/seek_fwd`、`seek_back`、`menu/jump/jump_start`、`jump_end_`、`menu/progress/click` 都会先设 `prop.refresh_skip_sel=1b`，refresh 用 `execute unless data storage rhythm_axe:prop refresh_skip_sel` 跳过（末尾统一 `data remove`）。**新增这类「只动播放头」的入口时记得带上这一行。**
+- **性能实测口径（bridge）**：① 返回体会带回**函数内每条命令的文本**——大函数（3 万条命令）能到 2.4MB / 0.9s，**那不是真实 mspt**；② 测量值随「当前播放头附近存活音符数」波动（同一份代码实测 0.093 / 0.112 / 0.143 s）→ **只比相对值、取多次最小值；绝对值以玩家 HUD 为准**；③ 服务端上下文里 `@e` 只搜 overworld，要么 `execute as @a[tag=editor_active] at @s run …`，要么 `execute in <维度>`。
+- **改完必查**：`scripts\check_all_macros.ps1`（宏）＋ `/reload` 后看日志有没有 `Failed to load function`（注释行漏写 `#` 会被当命令，脚本查不出来）。
+- 本轮成绩（供参照）：`refresh` 0.903s → **0.112s**（seek 模式 0.093s）；每音符命令数 ~45 → **~9**；`sel_rebuild` 0.030 → 0.018s。
+

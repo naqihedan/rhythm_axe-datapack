@@ -89,6 +89,10 @@ scoreboard players set #nz editor 0
 execute if score #vzneg editor matches 1 if score #vzi editor matches 0 run scoreboard players set #nz editor 1
 execute if score #vzneg editor matches 1 run scoreboard players operation #vzi editor *= -1 const
 function rhythm_axe:editor/menu/map/ops/map_spawn_row
+
+# 行108【整理音符顺序】：notes 按 time 升序重排（修复批量改判定时间造成的局部逆序）；trigger 10801
+tellraw @s [{"text":"音符顺序：","color":"gray"},{"text":"【整理音符顺序】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10801"},"hover_event":{"action":"show_text","value":"把音符数组按判定时间升序重排（修复批量改时间造成的顺序错乱）；一次快照可撤销"}}]
+
 # 初始角度（偏航）：一行 标签 [-] 值 [+]（±180°，按值域钳制红绿，一位小数负零加前导 -）
 # ★ 修负数值颠倒/补数：绝对值拆分 + 独立符号。
 execute store result score #v editor run data get storage rhythm_axe:maps.editor panel_temp.spawn_yaw 1000

@@ -5,5 +5,7 @@ $execute unless data storage rhythm_axe:maps.editor history[$(cursor)].end_time 
 $data modify storage rhythm_axe:maps.editor playhead set from storage rhythm_axe:maps.editor history[$(cursor)].end_time
 execute store result score #playhead editor run data get storage rhythm_axe:maps.editor playhead
 function rhythm_axe:editor/playback/pause
+# ★ 只移动播放头，不改音符 → 跳过 refresh 里的 selection 重建（省一整趟遍历）
+data modify storage rhythm_axe:prop refresh_skip_sel set value 1b
 function rhythm_axe:editor/refresh
 execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][编辑器]","color":"gray"},{"text":" 已跳到结尾（","color":"green"},{"score":{"name":"#playhead","objective":"editor"},"color":"aqua"},{"text":"刻）","color":"green"}]

@@ -3,8 +3,12 @@
 # 存活 → append 存活序(#alive_c) + #alive_c+1；非存活 → append -1
 # 存活判定与 note_list_row2 / note_find_alive 完全一致（出生刻/消失刻公式）
 # 先算 #note_total（供驱动器判断越界）
-scoreboard players set #note_total editor 0
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes run execute store result score #note_total editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes
+# ★ 2026-09-14 性能：整表长度只在**遍历起点（下标 0）**读一次。
+#   原来每轮循环都 `data get ... notes`（取长度却把整个列表序列化成反馈文本，上千音符 ≈ 260KB/轮）。
+#   （长度在一次遍历中不会变，读一次即可）
+$scoreboard players set #len_i editor $(alive_idx)
+execute if score #len_i editor matches 0 run scoreboard players set #note_total editor 0
+$execute if score #len_i editor matches 0 run execute store result score #note_total editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes
 scoreboard players set #is_alive editor 1
 $execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(alive_idx)].id run scoreboard players set #is_alive editor 0
 # 出生刻

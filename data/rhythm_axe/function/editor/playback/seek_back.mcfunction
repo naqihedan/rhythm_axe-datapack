@@ -19,6 +19,8 @@ execute store result storage rhythm_axe:maps.editor playhead int 1 run scoreboar
 scoreboard players operation #playhead editor = #temp editor
 # 同步播放进度 bossbar value（播放时由 advance_ 每 tick 更新，暂停状态下的跳转需手动刷新）
 execute store result bossbar rhythm_axe:editor_progress value run scoreboard players get #playhead editor
+# ★ 只移动播放头，不改音符 → 跳过 refresh 里的 selection 重建（省一整趟遍历）
+data modify storage rhythm_axe:prop refresh_skip_sel set value 1b
 function rhythm_axe:editor/refresh
 execute if data storage rhythm_axe:maps.editor {playing:1b} run function rhythm_axe:editor/playback/resync
 # 时间控件刷新一次播放进度 actionbar

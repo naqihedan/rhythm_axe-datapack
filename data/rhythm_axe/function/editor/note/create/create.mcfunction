@@ -82,9 +82,16 @@ data modify storage rhythm_axe:prop index set value 0
 data remove storage rhythm_axe:prop insert_mode
 function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"append"} run function rhythm_axe:editor/note/create/create_append with storage rhythm_axe:prop
+# ★ 2026-09-14 性能：发布新音符的数组下标，供 place 打开属性面板用（省掉一次 O(n) find_by_id 扫描）
+#   insert 模式 = insert_index；append 模式 = insert_find 走到底时的 index（= 追加前数组长度）
+execute if data storage rhythm_axe:prop {insert_mode:"insert"} run data modify storage rhythm_axe:prop new_index set from storage rhythm_axe:prop insert_index
+execute if data storage rhythm_axe:prop {insert_mode:"append"} run data modify storage rhythm_axe:prop new_index set from storage rhythm_axe:prop index
 execute if data storage rhythm_axe:prop {insert_mode:"insert"} run function rhythm_axe:editor/note/create/create_insert with storage rhythm_axe:prop
 function rhythm_axe:editor/file/commit
-function rhythm_axe:editor/refresh
+# ★ 2026-09-14 性能 A：追加到末尾（放置音符的常见情形）→ 走「增量刷新」
+#   （不 kill 展示实体、不重建引导线全表、不重建选区，O(1)）；中段插入仍走全量 refresh
+execute if data storage rhythm_axe:prop {insert_mode:"append"} run function rhythm_axe:editor/visual/refresh_note_added
+execute if data storage rhythm_axe:prop {insert_mode:"insert"} run function rhythm_axe:editor/refresh
 
 # 清理 prop
 data remove storage rhythm_axe:prop time

@@ -17,5 +17,7 @@ execute store result storage rhythm_axe:maps.editor playhead int 1 run scoreboar
 scoreboard players operation #playhead editor = #prog_i editor
 execute store result bossbar rhythm_axe:editor_progress value run scoreboard players get #playhead editor
 function rhythm_axe:editor/playback/pause
+# ★ 只移动播放头，不改音符 → 跳过 refresh 里的 selection 重建（省一整趟遍历）
+data modify storage rhythm_axe:prop refresh_skip_sel set value 1b
 function rhythm_axe:editor/refresh
 schedule function rhythm_axe:editor/menu/main_next 1t

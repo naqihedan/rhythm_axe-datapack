@@ -5,8 +5,12 @@
 #   本函数只判定并输出当前音符；跳过与否用 #show_row 标志（不用不可靠的宏 return）。
 scoreboard players set #show_row editor 1
 # 计算列表长度（供驱动器判断越界）
-scoreboard players set #note_total editor 0
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes run execute store result score #note_total editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes
+# ★ 2026-09-14 性能：整表长度只在**遍历起点（下标 0）**读一次。
+#   原来每轮循环都 `data get ... notes`（取长度却把整个列表序列化成反馈文本，上千音符 ≈ 260KB/轮）。
+#   （长度在一次遍历中不会变，读一次即可）
+$scoreboard players set #len_i editor $(index)
+execute if score #len_i editor matches 0 run scoreboard players set #note_total editor 0
+$execute if score #len_i editor matches 0 run execute store result score #note_total editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes
 # 无效音符（缺 id：data remove 遗留的半坏元素）→ 不显示
 $execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].id run scoreboard players set #show_row editor 0
 # 存活窗口：出生刻 = time - note_base_life×16/note_speed（ignore_note_speed→time-base_life），线性再提前4刻；playhead < 出生刻 → 未出生

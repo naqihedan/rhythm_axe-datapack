@@ -11,6 +11,17 @@ execute store result score #btotal editor run data get storage rhythm_axe:maps.e
 # ★ 顺序游标初始化：find_by_id 从 0 开始找第一个
 data modify storage rhythm_axe:prop batch_cursor set value 0
 function rhythm_axe:editor/menu/note/batch/batch_apply_drive
+
+# ★ 2026-09-14 D1：批量修改的「判定时间」是**原地改 time**（batch_apply_one），只改选中子集 → 一挪动就跨过未选中的邻居 → 局部逆序（回退量 = 增量）。
+#   这里立刻做一次相邻交换修复（成本 ∝ 逆序数），保证 notes 仍按 time 升序：
+#   逆序会连累 insert_find（插入点错）、二分选区、出生游标、列表顺序。
+#   判断「这次批量改了判定时间」：绝对模式看 batch_set.time，相对模式看 rel.on.time（byte 0b 对 if data 也为真，故用计分板取值判断）
+scoreboard players set #ord_need editor 0
+execute if data storage rhythm_axe:maps.editor editing.batch_set.time run scoreboard players set #ord_need editor 1
+scoreboard players set #ord_rel editor 0
+execute store result score #ord_rel editor run data get storage rhythm_axe:maps.editor editing.rel.on.time
+execute if score #ord_rel editor matches 1 run scoreboard players set #ord_need editor 1
+execute if score #ord_need editor matches 1 run function rhythm_axe:editor/util/order_repair
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop idx
 data remove storage rhythm_axe:prop note_id

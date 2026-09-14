@@ -27,17 +27,12 @@ function rhythm_axe:editor/note/create/create
 # ★ 工具创建接 feedback 机制：打开面板时显示"已创建音符"+【撤销】按钮
 data modify storage rhythm_axe:maps.editor feedback set value "已创建音符"
 # ⑥ 打开新音符的属性控制面板（返回：从已选定列表来回已选定列表，否则回活跃音符列表）
-# 新音符 id = next_note_id - 1（create 已自增）
-execute store result score #tmp_nid editor run data get storage rhythm_axe:maps.editor next_note_id
-scoreboard players remove #tmp_nid editor 1
+# ★ 2026-09-14 性能：新音符的数组下标由 create 直接给出（insert_find 的插入点 / 追加时的旧长度），
+#   不再用 find_by_id 按 id 全表扫描（973 音符时单次 100ms 级）
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
-execute store result storage rhythm_axe:prop note_id int 1 run scoreboard players get #tmp_nid editor
-data modify storage rhythm_axe:prop index set value 0
-data remove storage rhythm_axe:prop found_index
-function rhythm_axe:editor/util/find_by_id
-execute if data storage rhythm_axe:prop found_index run data modify storage rhythm_axe:prop index set from storage rhythm_axe:prop found_index
-execute if data storage rhythm_axe:prop found_index run function rhythm_axe:editor/menu/note/panel/note_panel_open_ with storage rhythm_axe:prop
+execute if data storage rhythm_axe:prop new_index run data modify storage rhythm_axe:prop index set from storage rhythm_axe:prop new_index
+execute unless data storage rhythm_axe:prop new_index run tellraw @s [{"text":"[编辑器] 内部错误：缺少 new_index，无法定位刚创建的音符","color":"red"}]
+execute if data storage rhythm_axe:prop new_index run function rhythm_axe:editor/menu/note/panel/note_panel_open_ with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop index
-data remove storage rhythm_axe:prop note_id
-data remove storage rhythm_axe:prop found_index
+data remove storage rhythm_axe:prop new_index
