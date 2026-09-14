@@ -1,7 +1,4 @@
-# 混凝土工具右键：返还物品（主手/副手）+ 设音符类型(3) + 放置音符（@s=玩家）
-# 主手返还（沿用槽内物品原身份重建；state=-1 → 下一 tick 由 tool_note_update 按实际蹲下状态重绘外观）
-execute if items entity @s weapon.mainhand *[custom_data~{editor_tool:true}] run function rhythm_axe:editor/tool/note/return_main
-# 副手返还（主手无工具时，沿用槽内物品原身份重建）
-execute unless items entity @s weapon.mainhand *[custom_data~{editor_tool:true}] if items entity @s weapon.offhand *[custom_data~{editor_tool:true}] run function rhythm_axe:editor/tool/note/return_off
+# 混凝土工具右键：设音符类型(3) + 放置音符（@s=玩家）
+# 创造模式使用可食用物品不消耗，无需返还；物品外观由 tool_regular_apply 按蹲下状态维护
 # 设置音符类型并放置
 function rhythm_axe:editor/tool/note/place {note_type:3}
