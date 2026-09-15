@@ -303,24 +303,27 @@ $execute if score #note_type play_state matches 4 run execute store result entit
 $execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_id $(id)
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_id $(id)
 
-# ===== 音符间引导线（M2-todo）：0/1/2 且 following_point=true → 连到上一个 0/1/2 =====
-# following_point 缺省 0（关闭，与编辑器一致）；为 true 且有上一个存活 0/1/2 → 生成引导线连接前后
-# ★ 指针 #guide_last_id 记录"排序后数组前一个 0/1/2"（生成顺序 = 数组顺序；3/4 跳过不更新）
-scoreboard players set #is_following_point play_state 0
-execute if data storage rhythm_axe:runtime cur_note.following_point run execute store result score #is_following_point play_state run data get storage rhythm_axe:runtime cur_note.following_point
-# 把上一个 0/1/2 的 id 存入 cur_note.guide_prev 作为宏参数（spawn 用）
-execute if score #note_type play_state matches 0..2 if score #is_following_point play_state matches 1 run execute store result storage rhythm_axe:runtime cur_note.guide_prev int 1 run scoreboard players get #guide_last_id play_state
+# ===== 音符间引导线：★ 2026-09-15 改为「按 **A 端** following_point 判定」（与编辑器一致）=====
+# 语义：在前一个 0/1/2 音符 A 上开启 following_point → 画 A→（数组顺序上它后面第一个 0/1/2）的引导线；
+#       后一个音符 B 是否开启**不影响**（与编辑器 editor/visual/guide_build_for_ 一致）
+# ★ 指针 #guide_last_id / #guide_last_fp 记录「数组顺序上前一个 0/1/2」的 id 与该音符自己的 following_point
+#   （3/4 不更新指针 → 与编辑器的「跳过 3/4，B 取下一个 0/1/2」一致）
+# 生成条件：A 开启 + 上一个展示实体仍存活 + n = B.time - A.time >= 1
+execute if score #note_type play_state matches 0..2 if score #guide_last_fp play_state matches 1 run execute store result storage rhythm_axe:runtime cur_note.guide_prev int 1 run scoreboard players get #guide_last_id play_state
 # 记录时间参数：time_prev = 前一个音符判定时刻、n = 当前判定时刻 - 前一个判定时刻（收缩公式用）
-execute if score #note_type play_state matches 0..2 if score #is_following_point play_state matches 1 run execute as @e[type=item_display,tag=note_display] if score @s note_id = #guide_last_id play_state run execute store result score #guide_tp play_state run scoreboard players get @s note_time
-execute if score #note_type play_state matches 0..2 if score #is_following_point play_state matches 1 run execute store result score #guide_tt play_state run data get storage rhythm_axe:runtime cur_note.time
+execute if score #note_type play_state matches 0..2 if score #guide_last_fp play_state matches 1 run execute as @e[type=item_display,tag=note_display] if score @s note_id = #guide_last_id play_state run execute store result score #guide_tp play_state run scoreboard players get @s note_time
+execute if score #note_type play_state matches 0..2 if score #guide_last_fp play_state matches 1 run execute store result score #guide_tt play_state run data get storage rhythm_axe:runtime cur_note.time
 scoreboard players operation #guide_n play_state = #guide_tt play_state
 scoreboard players operation #guide_n play_state -= #guide_tp play_state
-execute if score #note_type play_state matches 0..2 if score #is_following_point play_state matches 1 if score #guide_last_id play_state matches 0.. if score #guide_n play_state matches 1.. run execute store result storage rhythm_axe:runtime cur_note.guide_tp int 1 run scoreboard players get #guide_tp play_state
-execute if score #note_type play_state matches 0..2 if score #is_following_point play_state matches 1 if score #guide_last_id play_state matches 0.. if score #guide_n play_state matches 1.. run execute store result storage rhythm_axe:runtime cur_note.guide_n int 1 run scoreboard players get #guide_n play_state
+execute if score #note_type play_state matches 0..2 if score #guide_last_fp play_state matches 1 if score #guide_last_id play_state matches 0.. if score #guide_n play_state matches 1.. run execute store result storage rhythm_axe:runtime cur_note.guide_tp int 1 run scoreboard players get #guide_tp play_state
+execute if score #note_type play_state matches 0..2 if score #guide_last_fp play_state matches 1 if score #guide_last_id play_state matches 0.. if score #guide_n play_state matches 1.. run execute store result storage rhythm_axe:runtime cur_note.guide_n int 1 run scoreboard players get #guide_n play_state
 # 生成：仅当上一个展示实体仍存活（as @e 匹配 note_id 才执行）且 n>=1；spawn 宏上下文 = cur_note
-execute if score #note_type play_state matches 0..2 if score #is_following_point play_state matches 1 if score #guide_last_id play_state matches 0.. if score #guide_n play_state matches 1.. run execute as @e[type=item_display,tag=note_display] if score @s note_id = #guide_last_id play_state run function rhythm_axe:play/note/guide/spawn with storage rhythm_axe:runtime cur_note
-# 更新指针 = 当前音符 id（仅 0/1/2；3/4 不参与引导线，保持指针不变）
+execute if score #note_type play_state matches 0..2 if score #guide_last_fp play_state matches 1 if score #guide_last_id play_state matches 0.. if score #guide_n play_state matches 1.. run execute as @e[type=item_display,tag=note_display] if score @s note_id = #guide_last_id play_state run function rhythm_axe:play/note/guide/spawn with storage rhythm_axe:runtime cur_note
+# 更新指针（仅 0/1/2）：id + 该音符自己的 following_point；3/4 保持指针不变
 $execute if score #note_type play_state matches 0..2 run scoreboard players set #guide_last_id play_state $(id)
+scoreboard players set #guide_last_fp_new play_state 0
+execute if score #note_type play_state matches 0..2 if data storage rhythm_axe:runtime cur_note.following_point run execute store result score #guide_last_fp_new play_state run data get storage rhythm_axe:runtime cur_note.following_point
+execute if score #note_type play_state matches 0..2 run scoreboard players operation #guide_last_fp play_state = #guide_last_fp_new play_state
 
 # 交互实体补加类型 tag（必须在本行，因为 summon interaction 在此之前才生成交互实体）
 $execute if score #note_type play_state matches 0 run tag @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] add note_noteblock

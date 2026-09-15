@@ -38,6 +38,9 @@ scoreboard players set #timing_cursor play_state 0
 scoreboard players set #event_cursor play_state 0
 # 音符间引导线："上一个 0/1/2 音符"指针（-1 = 无上一个；3/4 不参与引导线）
 scoreboard players set #guide_last_id play_state -1
+# ★ 2026-09-15 引导线改按 A 端判定：记录前一个 0/1/2 音符的 following_point（0=关闭）
+scoreboard players set #guide_last_fp play_state 0
+scoreboard players set #guide_last_fp_new play_state 0
 
 # 判定相关计数
     # 当前判定缩放
