@@ -1,3 +1,5 @@
+# [已废弃 2026-09-15 一条曲线模型] 段①拉伸：place_concrete 已改为整条曲线一次计算，不再调用本文件
+# 保留仅供回滚对照
 # 混凝土段①（短/长通用）：头动尾停拉伸。尾端恒 = -s/2-d；len = len_target×easing；中心 = 尾端+len/2
 # 时长 = seg1_end - birth = min(dur,有效寿命)；#half_sz/#seg1_end/#L100 由 place_concrete 传入（#L100 已修正流速）
 scoreboard players operation #n display_calc = #playhead editor

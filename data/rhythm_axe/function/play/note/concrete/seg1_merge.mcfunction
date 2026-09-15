@@ -5,27 +5,21 @@
 # ★ 只 merge 一次（随后移除 pending tag）；客户端在 interpolation_duration 内从出生位置插值到段①终点
 # ★ 记录插值起点 tick（note_c_seg1_s = 当前 #ct）→ concrete/tick 算交互实体段①进度用
 
-# 长 hold center = -dist/2（★ 2026-08-26 尾端往回退 size/2 → 中心 = -d/2，不再 +size/2）
-execute if score @s note_c_m > @s note_c_lt run scoreboard players operation #c1z display_calc = @s note_c_dist
-execute if score @s note_c_m > @s note_c_lt run scoreboard players operation #c1z display_calc *= -1 const
-execute if score @s note_c_m > @s note_c_lt run scoreboard players operation #c1z display_calc /= 2 const
-# 短 hold z1 = -dist×(2lt-m)/(2lt) - size/2（★ 2026-08-26 尾端往回退：+size/2 → -size/2；必须带 <= 条件，否则覆盖长 hold 的 #c1z）
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc = @s note_c_lt
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc *= 2 const
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc -= @s note_c_m
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc *= @s note_c_dist
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc /= @s note_c_lt
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc /= 2 const
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc *= -1 const
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c_tmp display_calc = @s note_c_size
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c_tmp display_calc /= 2 const
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #c1z display_calc -= #c_tmp display_calc
-# 长度（★ 2026-08-26 尾端往回退 size/2）：短=dist×m/lt、长=dist+size（头端到位 s/2 需多走 size）
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #clen display_calc = @s note_c_dist
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #clen display_calc *= @s note_c_m
-execute if score @s note_c_m <= @s note_c_lt run scoreboard players operation #clen display_calc /= @s note_c_lt
+# ---- 段①终点（★ 2026-09-15 一条曲线模型）----
+# 短 hold（m≤lt）：u_h = m/lt → len = Δ·m/lt ；长 hold（m>lt）：u_h 已到顶 → len = Δ（满长）
+# Δ = dist + size（×100，头端/尾端行程）；center = P0 + len/2 = len/2 - dist - size/2（P0 = -dist-size/2）
+scoreboard players operation #clen display_calc = @s note_c_dist
+scoreboard players operation #clen display_calc += @s note_c_size
+scoreboard players operation #clen display_calc *= @s note_c_m
+scoreboard players operation #clen display_calc /= @s note_c_lt
 execute if score @s note_c_m > @s note_c_lt run scoreboard players operation #clen display_calc = @s note_c_dist
 execute if score @s note_c_m > @s note_c_lt run scoreboard players operation #clen display_calc += @s note_c_size
+scoreboard players operation #c1z display_calc = #clen display_calc
+scoreboard players operation #c1z display_calc /= 2 const
+scoreboard players operation #c1z display_calc -= @s note_c_dist
+scoreboard players operation #c_tmp display_calc = @s note_c_size
+scoreboard players operation #c_tmp display_calc /= 2 const
+scoreboard players operation #c1z display_calc -= #c_tmp display_calc
 # 组装终点 transformation（translation 只动 z；scale 保持 size_x/size_y、z=len1/满长）
 data modify storage rhythm_axe:motion m set value {}
 data modify storage rhythm_axe:motion m.transformation set value {translation:[0.0,0.0,0.0]}

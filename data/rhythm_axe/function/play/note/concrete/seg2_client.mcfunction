@@ -17,19 +17,17 @@ execute store result entity @s interpolation_duration int 1 run scoreboard playe
 data modify entity @s start_interpolation set value 0
 # 停止 display_animation 逐帧驱动（防残留 step 覆盖插值）
 scoreboard players set @s anim_status 0
-# 段②终点 z2 = -dist×m/(2lt) + size/2（×100）
-scoreboard players operation #c2z display_calc = @s note_c_m
-scoreboard players operation #c2z display_calc *= @s note_c_dist
-scoreboard players operation #c2z display_calc /= @s note_c_lt
-scoreboard players operation #c2z display_calc /= 2 const
-scoreboard players operation #c2z display_calc *= -1 const
-scoreboard players operation #c_tmp display_calc = @s note_c_size
-scoreboard players operation #c_tmp display_calc /= 2 const
-scoreboard players operation #c2z display_calc += #c_tmp display_calc
-# 长度 len1 = dist×m/lt（段①终点值，恒定）
+# ---- 段②终点（★ 2026-09-15 一条曲线模型）----
+# t=lt：头端恰好到 s/2、长度不变 → len = Δ·m/lt（同段①终点）；center = s/2 - len/2
 scoreboard players operation #clen display_calc = @s note_c_dist
+scoreboard players operation #clen display_calc += @s note_c_size
 scoreboard players operation #clen display_calc *= @s note_c_m
 scoreboard players operation #clen display_calc /= @s note_c_lt
+scoreboard players operation #c2z display_calc = @s note_c_size
+scoreboard players operation #c2z display_calc /= 2 const
+scoreboard players operation #c_tmp display_calc = #clen display_calc
+scoreboard players operation #c_tmp display_calc /= 2 const
+scoreboard players operation #c2z display_calc -= #c_tmp display_calc
 # 组装终点 transformation（translation 只动 z；scale 保持 size_x/size_y、z=len1）
 data modify storage rhythm_axe:motion m set value {}
 data modify storage rhythm_axe:motion m.transformation set value {translation:[0.0,0.0,0.0]}

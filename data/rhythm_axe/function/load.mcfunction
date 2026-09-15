@@ -50,6 +50,8 @@ scoreboard players set 490000 const 490000
 scoreboard players set 562500 const 562500
 scoreboard players set 5000 const 5000
 scoreboard players set 10000 const 10000
+# ★ 2026-09-15 混凝土一条曲线模型用：(g+gt)×Δ 再 /20000 求长条中心（漏注册会让那行静默失败 → 中心值暴涨）
+scoreboard players set 20000 const 20000
 scoreboard players set 2812 const 2812
 scoreboard players set 10006 const 10006
 scoreboard players set 15708 const 15708

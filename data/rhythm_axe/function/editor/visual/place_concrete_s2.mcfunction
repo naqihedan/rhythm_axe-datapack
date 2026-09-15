@@ -1,3 +1,5 @@
+# [已废弃 2026-09-15 一条曲线模型] 段②平移/静止：place_concrete 已改为整条曲线一次计算，不再调用本文件
+# 保留仅供回滚对照
 # 混凝土段②：短 hold 整体平移（头端 -s/2-d+len1 → s/2，len 恒 len1）；长 hold 静止（中心=s/2-len/2，len=d+s）
 # 短 hold（dur<=有效寿命）：平移；#half_sz/#seg1_end/#seg2_end/#L100 由 place_concrete 传入（#L100 已修正流速）
 execute if score @s editor_n_dur <= @s editor_n_lt run scoreboard players operation #n display_calc = #playhead editor
