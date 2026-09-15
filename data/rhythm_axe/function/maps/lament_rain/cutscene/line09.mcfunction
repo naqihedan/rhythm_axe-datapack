@@ -1,2 +1,3 @@
-# 《Lament Rain》20-6 过场 · 09/12 · 3855 刻 · 虔
-tellraw @a [{"text":"【虔】 ","color":"gold","bold":true},{"text":"殸的『死』是一个残忍的奇迹。","color":"gold"},{"text":"你们不过是殸的奴隶，而殸也不过是你们的奴隶。","color":"gold"}]
+# 过场 line09 —— 虔（刻 4152，第 9 句）
+# 由 maps/lament_rain/cutscene/apply_editor 以「一步操作」写入编辑器
+tellraw @a [{"text":"【虔】 ","color":"gold","bold":true},{"text":"计划的内容不重要，只有结果重要——那就是『重生』。","color":"gold"}]

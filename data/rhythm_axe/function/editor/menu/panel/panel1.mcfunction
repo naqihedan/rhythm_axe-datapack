@@ -6,6 +6,7 @@
 # 行104: 10401 保存 / 10402 退出 / 10403 另存 / 10404 删除谱面 / 10405 回收站
 # 行105: 10501 节拍器
 # 行106: 10601/10602 流速减/加；10603..10606 流速设 2/4/8/16
+# 行108: 10801 整理音符顺序（notes 按 time 升序重排；2026-09-15 从面板 2 迁来，保存谱面时也会自动执行一遍）
 # 行1150: 115001..115051 播放进度条 51 格（前 50 格等分 end_time，第 51 格跳结尾；值 = 1150×100 + 两位格号，前导零避开共用组 11501..11509）
 # 注：20..29 时间控件由 consume 顶层处理；8/9 撤销重做、903 亦顶层。value 1=返回主菜单(供其它面板/刷新用)。
 # main.mcfunction 设 current_panel=1。
@@ -33,6 +34,9 @@ execute if score #click_value editor matches 10403 run function rhythm_axe:edito
 execute if score #click_value editor matches 10404 run function rhythm_axe:editor/menu/map/panel/map_delete_confirm
 execute if score #click_value editor matches 10405 run function rhythm_axe:editor/menu/trash/trash_panel_open
 execute if score #click_value editor matches 10501 run function rhythm_axe:editor/menu/metronome_toggle
+
+# 行108【整理音符顺序】（10801；2026-09-15 从谱面设置面板迁到主菜单，值不变）
+execute if score #click_value editor matches 10801 run function rhythm_axe:editor/menu/note/order_fix
 
 # 行106：音符流速（10601 降低 / 10602 提高，下界 1；10603..10606 直接设值）
 execute if score #click_value editor matches 10601 run scoreboard players remove note_speed options 1

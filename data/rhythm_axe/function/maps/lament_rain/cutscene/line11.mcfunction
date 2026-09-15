@@ -1,2 +1,3 @@
-# 《Lament Rain》20-6 过场 · 11/12 · 3960 刻 · 旁白
-tellraw @a [{"text":"肺中的气息被抽去了；宇宙的风暴被换来了。……与其说是「战斗」，不如说是「自取灭亡」。","color":"gray","italic":true}]
+# 过场 line11 —— 旁白（刻 4440，第 11 句）
+# 由 maps/lament_rain/cutscene/apply_editor 以「一步操作」写入编辑器
+tellraw @a [{"text":"金色的丝被斩断，坠落如雨——那是「哀寂之雨」。","color":"gray","italic":true}]

@@ -1,2 +1,3 @@
-# 《Lament Rain》20-6 过场 · 07/12 · 3765 刻 · 虔
-tellraw @a [{"text":"【虔】 ","color":"gold","bold":true},{"text":"我觉得祂需要我去这么做。","color":"gold"},{"text":"……而且，你们不会喜欢我给出的答案。","color":"gray","italic":true}]
+# 过场 line07 —— L（刻 4056，第 7 句）
+# 由 maps/lament_rain/cutscene/apply_editor 以「一步操作」写入编辑器
+tellraw @a [{"text":"【L】 ","color":"light_purple","bold":true},{"text":"你说对了。","color":"light_purple"}]

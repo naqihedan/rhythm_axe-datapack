@@ -60,6 +60,12 @@ tellraw @s [\
     {"text":"  【删除谱面】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10404"},"hover_event":{"action":"show_text","value":"把谱面移入回收站（可找回）"}},\
     {"text":"  【回收站】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10405"},"hover_event":{"action":"show_text","value":"查看回收站（可还原/彻底删除）"}}\
 ]
+# 音符顺序行（行108）：notes 按 time 升序重排 —— 修复批量改判定时间造成的局部逆序
+# ★ 2026-09-15 从谱面设置面板迁来（值不变 = 10801）；保存谱面时也会自动执行一遍，本按钮供手动排查
+tellraw @s [\
+    {"text":"音符顺序：","color":"gray"},\
+    {"text":"【整理音符顺序】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10801"},"hover_event":{"action":"show_text","value":"把音符数组按判定时间升序重排（修复批量改时间造成的顺序错乱）；保存谱面时会自动执行"}}\
+]
 # 时间控件行（播放 ▶/⏸ 按状态显示）+ 速度按钮：同一行，按钮组件经 prop 注入宏 play_row
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor playing
 data modify storage rhythm_axe:prop pb set value '{"text":" ▶ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"播放"}}'

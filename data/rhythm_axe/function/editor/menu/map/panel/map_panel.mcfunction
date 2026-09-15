@@ -90,8 +90,8 @@ execute if score #vzneg editor matches 1 if score #vzi editor matches 0 run scor
 execute if score #vzneg editor matches 1 run scoreboard players operation #vzi editor *= -1 const
 function rhythm_axe:editor/menu/map/ops/map_spawn_row
 
-# 行108【整理音符顺序】：notes 按 time 升序重排（修复批量改判定时间造成的局部逆序）；trigger 10801
-tellraw @s [{"text":"音符顺序：","color":"gray"},{"text":"【整理音符顺序】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10801"},"hover_event":{"action":"show_text","value":"把音符数组按判定时间升序重排（修复批量改时间造成的顺序错乱）；一次快照可撤销"}}]
+# 行108【整理音符顺序】：已于 2026-09-15 迁到主菜单（值不变仍为 10801，发射点见 main.mcfunction，分支见 panel1）
+#   原因：它是「数据维护」而非谱面设置，且保存谱面时已会自动执行一遍
 
 # 初始角度（偏航）：一行 标签 [-] 值 [+]（±180°，按值域钳制红绿，一位小数负零加前导 -）
 # ★ 修负数值颠倒/补数：绝对值拆分 + 独立符号。

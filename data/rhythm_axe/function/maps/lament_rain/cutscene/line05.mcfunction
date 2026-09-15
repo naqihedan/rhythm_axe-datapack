@@ -1,2 +1,3 @@
-# 《Lament Rain》20-6 过场 · 05/12 · 3675 刻 · 虔
-tellraw @a [{"text":"【虔】 ","color":"gold","bold":true},{"text":"啊……我明白了。殸跟你们说话了，对吧。","color":"gold"}]
+# 过场 line05 —— 尼尔（刻 3864，第 5 句）
+# 由 maps/lament_rain/cutscene/apply_editor 以「一步操作」写入编辑器
+tellraw @a [{"text":"【尼尔】 ","color":"aqua","bold":true},{"text":"虔……这真的是殸的旨意吗？","color":"aqua"}]
