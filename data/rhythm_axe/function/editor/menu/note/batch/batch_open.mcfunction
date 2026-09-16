@@ -12,6 +12,12 @@ data remove storage rhythm_axe:prop slc_out
 data remove storage rhythm_axe:prop slc_idx
 data remove storage rhythm_axe:prop clean_cursor
 execute store result score #sel_count editor run data get storage rhythm_axe:maps.editor selection
+# ★ 2026-09-16：清掉上一次「单音符面板」残留的字段（batch_open 不整块重建 editing）。
+#   残留的 orig_index / delete_armed 会让「批量模式下误点单音符按钮」真的动到某个音符。
+data remove storage rhythm_axe:maps.editor editing.orig_index
+data remove storage rhythm_axe:maps.editor editing.delete_armed
+data remove storage rhythm_axe:maps.editor editing.changed
+data remove storage rhythm_axe:maps.editor editing.orig
 data modify storage rhythm_axe:maps.editor editing.batch set value 1b
 data modify storage rhythm_axe:maps.editor editing.batch_ids set from storage rhythm_axe:maps.editor selection
 execute store result score #batch_n editor run data get storage rhythm_axe:maps.editor editing.batch_ids

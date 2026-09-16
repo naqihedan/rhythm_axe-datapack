@@ -372,9 +372,11 @@ $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score @s note_c_seg_count matches 1 run scoreboard players operation @s note_c_seg_end = @s note_c_dur
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score @s note_c_seg_count matches 1 run scoreboard players operation @s note_c_seg_end *= -1 const
 # ===== 混凝土判定区域 marker =====
-# 判定区域：判定点沿前进方向 4 格长、1 格宽、3 格高（不受 size 影响）
+# 判定区域（不受 size 影响）：
+#   水平距离 > 1：判定点沿前进方向 4 格长、1 格宽；竖直以判定点为中心上下各 4 格（2026-09-16 起对称）
+#   水平距离 ≤ 1：水平以判定点为中心 3×3；竖直从判定点向上 4 格
 # 水平距离 > 1：marker 在判定点 + Rotation(yaw)=运动方向，检测时用本地 ^ 逐格探 4 格
-# 水平距离 ≤ 1：marker 在判定点，检测时用 3×3×3
+# 水平距离 ≤ 1：marker 在判定点，检查 3 宽 × 4 高 × 3 深
 # marker yaw（实体）= atan2(-dir_x, dir_z)（#num = -dir_x = start_x，#den = dir_z = -start_z）
 scoreboard players operation #num display_calc = #dir_x play_state
 scoreboard players operation #num display_calc *= -1 const

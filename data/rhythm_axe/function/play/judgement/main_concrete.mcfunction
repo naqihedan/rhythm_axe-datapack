@@ -5,7 +5,9 @@
 #   - 段末该段从未进过判定区域 → 该段 miss；miss 不中断
 #   - 保护1 首段过早离开：记录窗口 l∈[1,3x] 在区域内→记录寿命；首段段末不在区域且已记录→按记录寿命判级
 #   - 保护2 末段过短：末段长 = dur%density（0则=density）< 3x → 延长 3x，延长段按 level(l+dur) 判级
-# 判定区域：判定点沿前进方向 4 格长、1 宽、3 高（marker 常驻，见 summon）
+# 判定区域（marker 常驻，见 summon）：
+#   水平距离 > 1：沿前进方向 4 格长、1 格宽；竖直以判定点为中心上下各 4 格（共 8 格）
+#   水平距离 ≤ 1：水平以判定点为中心 3×3；竖直从判定点向上 4 格
 
 # 记录 note_id 用于配对本长条的 marker
 scoreboard players operation #nid play_state = @s note_id
@@ -27,12 +29,15 @@ scoreboard players operation #neg_dur play_state *= -1 const
 # ★ 自动模式（2026-08-09）：auto=1 时玩家始终在判定区域 → #in_zone 直接置 1，跳过 marker 遍历
 scoreboard players set #in_zone play_state 0
 execute if score auto play_state matches 1 run scoreboard players set #in_zone play_state 1
-# 远距离（水平 > 1）：marker 在判定点，沿本地 ^（yaw=运动方向）逐格探 4 格，每格检测 1×3×1
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^0 positioned ~-0.5 ~ ~-0.5 if entity @a[dx=0,dy=3,dz=0] run scoreboard players set #in_zone play_state 1
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^1 positioned ~-0.5 ~ ~-0.5 if entity @a[dx=0,dy=3,dz=0] run scoreboard players set #in_zone play_state 1
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^2 positioned ~-0.5 ~ ~-0.5 if entity @a[dx=0,dy=3,dz=0] run scoreboard players set #in_zone play_state 1
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^3 positioned ~-0.5 ~ ~-0.5 if entity @a[dx=0,dy=3,dz=0] run scoreboard players set #in_zone play_state 1
-# 近距离（水平 ≤ 1）：marker 在判定点，检测 3×3×3（文档：以判定点为中心半径1.5格、高3格）
+# 远距离（水平 > 1）：marker 在判定点，沿本地 ^（yaw=运动方向）逐格探 4 格，每格检测 1 宽 × 8 高 × 1 深
+# ★ 2026-09-16 竖直改为对称（用户要求"往上有多高往下有多低"）：锚点 y 下移 4 格 + dy 3→7
+#   → 竖直覆盖 = 以判定点为中心、上下各 4 格（上界与改前一致，未抬高）
+#   ⚠ 引擎里 dx/dy/dz=N 覆盖 N+1 格（实测 marker 验证）→ 原 dy=3 实为向上 4 格、向下 0 格，文档旧写的"3 高"不准
+execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^0 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^1 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^2 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^3 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+# 近距离（水平 ≤ 1）：marker 在判定点，检测 3 宽 × 4 高 × 3 深（水平以判定点为中心半径1.5格；竖直从判定点向上 4 格，本分支未改）
 # ★ dx=2 = 3 格宽：positioned ~-1.5 后 dx=2 覆盖 [-1.5,+1.5]（dx=N 表示宽度 N+1 格）
 execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone_near] if score @s note_id = #nid play_state at @s positioned ~-1.5 ~ ~-1.5 if entity @a[dx=2,dy=3,dz=2] run scoreboard players set #in_zone play_state 1
 

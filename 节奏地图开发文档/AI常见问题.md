@@ -16,6 +16,14 @@
   - 代价（本次实例）：`save_strip_selected` 的取长度、`save_strip_leaf` 的剔除都这么写 → **保存时「剔除 selected」从来没生效**，还会每次保存刷「无法实例化」错误、把编辑器的 `selected` 原样写进正式谱面。
   - 自查：`grep -rn "\$(mapid)\.[a-z]" data/`、`grep -rn "maps\.editor\.[a-z]" data/`。
 
+# 判定区域（选择器体积参数）方面
+
+- **`@e[x=,y=,z=,dx=,dy=,dz=]` 里 `d=N` 覆盖的是 N+1 格，不是 N 格**（2026-09-16 用零尺寸 marker 逐点实测）：
+  原点 `y=300` + `dy=3` → 覆盖 `[300, 304]`（marker 在 `303.9` 命中、`304.1` 不命中、`299.5` **不**命中 ⇒ 只向上、不向下）；原点 `x=3000` + `dx=1` → 覆盖 `[3000, 3002]`。
+  → 写「高 3 格」这类注释/文档时最容易把 `dy` 直接当格数（混凝土判定区域就因此长期写错成「3 高」，实际是向上 4 格）。要么按 `d+1` 换算，要么直接写清覆盖区间。
+- **bridge 实测实体选择器前，目标区块必须已加载**：往未加载区块 `summon` 会正常返回「召唤了新的标记」，但选择器**完全找不到**它（`if entity`、`distance=..` 全部失败），表现是「所有测试都是 0」。先 `forceload add <x> <z>`（用完 `forceload remove`），或把测试点放在玩家附近。
+- 零尺寸 AABB 的实体（`marker`）是最好用的「点探针」：它能被某个 `d=0` 的盒子选中 ⇒ 那一格被覆盖。扫边界时一个点一条命令即可。
+
 # 编辑器按钮（trigger）方面
 
 > 完整规范（触发链 / 编号规则 spec v2 / 号段分配总表 / 新增按钮 checklist）见 `编辑器.md` 的《trigger值》一节。以下是高频踩坑：
@@ -30,6 +38,10 @@
 - **宏函数「少一个宏参」= 整个函数静默不执行**：`#arg:a,b` 而调用方只写了 `prop.a`（`b` 在计分板里）→ 调用方会失败，连函数第一行 `scoreboard players set ...` 都不跑，表现是「点了没反应、日志里什么都没有」。教训：**能被宏参数化的才放宏参，已经在计分板/数组里的就直接用计分板读**（`editor/util/op_announce` 原来把音符数当宏参，改成读 `#op_count` 就正常了）。
 - **>50 音符的重操作要「先提示、后干活」**：入口拆成 `<操作>`（前置：提示 + 分刻）/ `<操作>_go`（干活）/ `<操作>_next`（跨刻切回玩家上下文）三件套，提示用 `editor/util/op_announce with storage rhythm_axe:prop`（写 `prop.op_label` + 计分板 `#op_count`）。原因见上一条：同刻的 `tellraw` 玩家看不到。
 - **别在玩家正在游玩时做破坏性 bridge 测试**：模拟点击前先确认 `selection` / `current_panel`；像 `trigger editor_click set 8`（撤销）会**真的**回退玩家历史一步（实测把游标 49 退到 48）。优先选无副作用路径：直接调目标函数、或用「空选中」的守卫分支来验证。
+- **聊天栏里的「旧按钮」永远可点**：`clear_lines` 只是推 10 行空行（滚动），被推上去的旧面板行仍在聊天栏里，其 `click_event` 依然有效。所以「面板重绘之后点到上一块面板的按钮」是**正常可达状态**，每个 handler 都必须**按状态自守**（`unless data … editing.batch`、`unless data … editing.orig_index`），**不能只靠「面板上没画这个按钮」**。
+  - 2026-09-16 实例（用户报「批量编辑面板的确认按钮点了可能会删单个音符」）：单音符【确认】`note_panel_confirm` 是「按 `editing.orig_index` 把那个元素 remove 掉、再用 `editing.temp` 重插」，而 `batch_open` **不整块重建 `editing`**，单音符会话残留的 `orig_index` 会带进批量会话；一旦在批量面板里点到 **13703/13704/13705**（批量面板并不渲染它们，只能来自旧行/残留状态）就会顺着单音符删除链拿残留的 `editing.temp.id` / `prop.index` 去动**别的**音符。
+  - 修法（三件套，缺一不可）：① `panel11` 把 13703/13704/13705（以及 13701/13702 兜底）全部加 `unless data … editing.batch`；② `note_panel_confirm` / `note_panel_delete` 开头**前置守卫**（缺 `editing.orig_index` / `editing.temp.id` 就红字提示 + `return fail`，一条数据都不动、不落快照）；③ `note_panel_confirm_` 摘除前做**身份校验**（`notes[index].id` == `editing.temp.id`，两个 id 先置 `-1` 哨兵，读取失败也算不一致）→ 数组被改过（order_repair/粘贴/翻转/撤销）导致下标失效时不会误删。
+  - 通用教训：**凡「按下标 remove 再重插」的写法，下标和内容都要校验**（下标会因先前的任何数组改动而失效）；**凡「按会话字段改数据」的 handler，都先校验会话字段齐全**。
 - **「重活 + 渲染」分刻清单（2026-09-12 起，改了别再合回去）**：
   · 已分刻：`主菜单`(menu/main_next)、`返回当前面板`(menu/resume_next)、`事件列表`(event_list_open_next)、`时间点列表`(timing_list_open_next)、
     `翻转时间`/`翻转镜像`/`旋转`（各自的 `_finish_next`/`_return_next`）、`音符设置确认`、`批量确认`、`批量删除`、`行内粘贴`、

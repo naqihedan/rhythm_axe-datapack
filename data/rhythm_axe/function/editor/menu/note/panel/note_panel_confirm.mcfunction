@@ -1,5 +1,15 @@
 # 确认音符修改：把暂存 editing.temp 写回工作副本（移除原元素后按新 time 重插，一次历史快照）
 # 先读来源面板（file/begin 会 consume 掉 editing.panel_from），确认后从哪来回哪去
+# ★ 2026-09-16 安全守兵（防「确认按钮误删一个音符」）：本路径会按 editing.orig_index 去 remove 一个音符、
+#   再用 editing.temp 顶替它。若会话已失效（缺 orig_index / 缺 temp.id，或当前其实是批量会话），
+#   继续执行就会拿**残留的 prop.index** 去删别人的音符（且 tmp_elem 可能缺失 → 删了不补）。
+#   任一前置不成立 → 一条数据都不动、不落快照，直接中止。
+execute unless data storage rhythm_axe:maps.editor editing.orig_index run tellraw @s [{"text":"[编辑器] 音符面板已失效（缺少音符下标），已取消确认","color":"red"}]
+execute unless data storage rhythm_axe:maps.editor editing.orig_index run return fail
+execute unless data storage rhythm_axe:maps.editor editing.temp.id run tellraw @s [{"text":"[编辑器] 音符面板已失效（缺少音符 id），已取消确认","color":"red"}]
+execute unless data storage rhythm_axe:maps.editor editing.temp.id run return fail
+execute if data storage rhythm_axe:maps.editor editing.batch run tellraw @s [{"text":"[编辑器] 当前是批量编辑会话（请用批量确认），已取消","color":"red"}]
+execute if data storage rhythm_axe:maps.editor editing.batch run return fail
 execute store result score #from editor run data get storage rhythm_axe:maps.editor editing.panel_from
 function rhythm_axe:editor/file/begin
 data modify storage rhythm_axe:maps.editor op_label set value "修改音符"

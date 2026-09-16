@@ -57,7 +57,7 @@ execute if score #click_value editor matches 14016..14017 run return 0
 execute if score #click_value editor matches 14018..14019 run function rhythm_axe:editor/menu/note/panel/note_panel
 execute if score #click_value editor matches 14018..14019 run return 0
 
-# —— 批量确认/取消（editing.batch 时拦截 763/764；用 #batch_do 标志，因 batch_confirm 会移除 editing.batch）——
+# —— 批量确认/取消（editing.batch 时拦截 13701/13702；用 #batch_do 标志，因 batch_confirm 会移除 editing.batch）——
 scoreboard players set #batch_do editor 0
 execute if score #click_value editor matches 13701 if data storage rhythm_axe:maps.editor editing.batch run scoreboard players set #batch_do editor 1
 execute if score #click_value editor matches 13702 if data storage rhythm_axe:maps.editor editing.batch run scoreboard players set #batch_do editor 1
@@ -65,11 +65,14 @@ execute if score #batch_do editor matches 1 if score #click_value editor matches
 execute if score #batch_do editor matches 1 if score #click_value editor matches 13702 run function rhythm_axe:editor/menu/note/batch/batch_cancel
 execute if score #batch_do editor matches 1 run return fail
 # —— 单音符确认/取消/删除 ——
-execute if score #click_value editor matches 13701 run function rhythm_axe:editor/menu/note/panel/note_panel_confirm
-execute if score #click_value editor matches 13702 run function rhythm_axe:editor/menu/note/panel/note_panel_cancel
-execute if score #click_value editor matches 13703 run function rhythm_axe:editor/menu/note/panel/note_panel_delete_arm
-execute if score #click_value editor matches 13704 run function rhythm_axe:editor/menu/note/panel/note_panel_delete
-execute if score #click_value editor matches 13705 run function rhythm_axe:editor/menu/note/panel/note_panel_delete_disarm
+# ★ 2026-09-16：全部加 unless editing.batch 守兵。批量面板只渲染【取消】【确认】两个按钮，点到
+#   13703/13704/13705 只可能是聊天栏里**上一块面板的旧行**（清屏只推空行、旧按钮仍可点）→
+#   一旦放行，单音符删除链会拿残留的 editing.temp.id / editing.orig_index 去动**别的**音符。
+execute if score #click_value editor matches 13701 unless data storage rhythm_axe:maps.editor editing.batch run function rhythm_axe:editor/menu/note/panel/note_panel_confirm
+execute if score #click_value editor matches 13702 unless data storage rhythm_axe:maps.editor editing.batch run function rhythm_axe:editor/menu/note/panel/note_panel_cancel
+execute if score #click_value editor matches 13703 unless data storage rhythm_axe:maps.editor editing.batch run function rhythm_axe:editor/menu/note/panel/note_panel_delete_arm
+execute if score #click_value editor matches 13704 unless data storage rhythm_axe:maps.editor editing.batch run function rhythm_axe:editor/menu/note/panel/note_panel_delete
+execute if score #click_value editor matches 13705 unless data storage rhythm_axe:maps.editor editing.batch run function rhythm_axe:editor/menu/note/panel/note_panel_delete_disarm
 
 # 时间轴翻转（11501）：本面板仅 return（动作在面板10/18）
 execute if score #click_value editor matches 11501 run return 0
