@@ -35,6 +35,8 @@ data remove storage rhythm_axe:maps.editor timing_clip
 data remove storage rhythm_axe:maps.editor event_clip
 data remove storage rhythm_axe:maps.editor note_clip
 data remove storage rhythm_axe:maps.editor pending_mapid
+# 锚点实体（镜像/旋转中心；编辑器会话状态、不进谱面）：退出编辑器 / 切换谱面 / 打开谱面时清除
+kill @e[tag=editor_anchor]
 scoreboard players reset #playhead editor
 scoreboard players reset #metronome editor
 scoreboard players reset #history_cursor editor

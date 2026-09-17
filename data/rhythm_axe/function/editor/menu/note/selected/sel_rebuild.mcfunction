@@ -7,6 +7,9 @@ data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.edit
 scoreboard players set #sel_has editor 1
 scoreboard players set #sel_i editor 0
 function rhythm_axe:editor/menu/note/selected/sel_rebuild_drive
+# ★ 2026-09-17 锚点：选区重建后同步「镜像/旋转中心」锚点（中心 = 选中判定位置的包围盒中心；被手动改过则不再跟随）
+#   必须在删掉 prop.cursor 之前调用（锚点的兜底扫描要用它找音符下标）
+function rhythm_axe:editor/menu/note/anchor/anchor_sync
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop i
 data remove storage rhythm_axe:prop nid

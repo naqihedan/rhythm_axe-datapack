@@ -1,4 +1,5 @@
-# 执行镜像翻转（按钮 917，底部第二行【翻转】按钮）：按 #mirror_x/y/z 开关对选中音符 position 绕包围盒中心镜像；#mirror_s 开时按 X/Y/Z 对 start_pos 绕判定位置镜像
+# 执行镜像翻转（按钮 11506，底部【翻转】按钮）：按 #mirror_x/y/z 开关对选中音符 position 绕锚点镜像；#mirror_s 开时按 X/Y/Z 对 start_pos 绕判定位置镜像
+#   ★ 2026-09-17：中心 = 锚点（默认跟随选中包围盒中心，可被手动挪动），见 menu/note/anchor/anchor_get
 # 四个开关仅在点击翻转前切换状态（910/914/915/916），本函数读取开关状态执行。
 # 前置：selection；#from=current_panel；prop.cursor 指向工作副本
 # ★ 2026-09-12 分刻 + 提示（处理音符数 > 50 时在聊天栏提示当前操作）：

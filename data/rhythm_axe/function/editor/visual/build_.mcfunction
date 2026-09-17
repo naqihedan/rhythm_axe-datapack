@@ -61,6 +61,13 @@ scoreboard players operation #n_hp editor = #n_type editor
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].hit_particles run execute store result score #n_hp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].hit_particles
 execute store result storage rhythm_axe:prop hitsound int 1 run scoreboard players get #n_hs editor
 execute store result storage rhythm_axe:prop hit_particles int 1 run scoreboard players get #n_hp editor
+# ★ 2026-09-17 选中状态（黄光）：生成时就带上 —— 原来只有 refresh 末尾的 sel_glow_drive 补光，
+#   于是**播放中新出生的选中音符没有黄光**（实体是 tick_birth 新建的，没人给它补）。
+#   这里算出 prop.sel，由 fill_disp / fill_inter 以 @s 应用（均为非宏函数，零宏展开开销），用后即删。
+#   ⚠️ 必须「未选中就不写」：fill_disp 用 `if data ... sel` 做存在性判断，
+#      而 `store result ... int 1` 在未选中时会写 0b（键存在）⇒ 会把黄光发给所有音符（实测踩过）。
+data remove storage rhythm_axe:prop sel
+$execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].selected run data modify storage rhythm_axe:prop sel set value 1b
 $data modify storage rhythm_axe:prop idx set value $(note_idx)
 execute if score #note_valid editor matches 1 run function rhythm_axe:editor/visual/summon_ with storage rhythm_axe:prop
 # 用后即删宏参数（避免 prop 残留污染其他调用）
@@ -90,3 +97,4 @@ data remove storage rhythm_axe:prop power
 data remove storage rhythm_axe:prop hitsound
 data remove storage rhythm_axe:prop hit_particles
 data remove storage rhythm_axe:prop idx
+data remove storage rhythm_axe:prop sel

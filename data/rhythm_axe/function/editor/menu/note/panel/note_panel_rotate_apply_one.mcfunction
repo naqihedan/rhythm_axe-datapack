@@ -1,5 +1,5 @@
 #arg:cursor,index
-# 旋转应用单个音符（宏叶子）：读 position[0/1/2]（×100）→ 按 #flip_axis 绕包围盒中心 #rc0/1/2 旋转 → 写回
+# 旋转应用单个音符（宏叶子）：读 position[0/1/2]（×100）→ 按 #flip_axis 绕锚点 #rc0/1/2 旋转 → 写回
 # 右手定则（逆时针）：绕X: y'=rc1+(dy·cos−dz·sin)/1e4, z'=rc2+(dy·sin+dz·cos)/1e4
 #                     绕Y: x'=rc0+(dx·cos+dz·sin)/1e4, z'=rc2+(−dx·sin+dz·cos)/1e4
 #                     绕Z: x'=rc0+(dx·cos−dy·sin)/1e4, y'=rc1+(dx·sin+dy·cos)/1e4

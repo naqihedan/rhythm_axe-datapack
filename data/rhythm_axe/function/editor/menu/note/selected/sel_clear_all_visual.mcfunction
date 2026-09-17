@@ -5,3 +5,5 @@ function rhythm_axe:editor/menu/note/selected/sel_clear_all
 scoreboard players set #sel_count editor 0
 execute as @e[type=item_display,tag=editor_note] run data modify entity @s Glowing set value 0b
 execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
+# ★ 2026-09-17 锚点（镜像/旋转中心）：选区清空 = 用不着锚点 → 一并清除
+function rhythm_axe:editor/menu/note/anchor/anchor_clear

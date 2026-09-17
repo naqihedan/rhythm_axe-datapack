@@ -108,3 +108,10 @@ execute store result score @s editor_n_sy run data get storage rhythm_axe:prop s
 execute store result score @s editor_n_sz run data get storage rhythm_axe:prop start_z 1000
 # size×1000：交互实体 Y 定位需减 size/2（interaction 在方块底部，展示实体中心在判定 Y 处）
 execute store result score @s editor_n_size run data get storage rhythm_axe:prop size 1000
+
+# ===== 选中音符：生成即带黄色发光（与 select_mark_glow 同款：Glowing + glow_color_override=16776960）=====
+#   前置：build_ 在音符带 selected 时写了 prop.sel（用后即删）⇒ 此处只做存在性判断。
+#   这样**播放中新出生 / 重建**的选中音符也有黄光（原来只有 refresh 末尾的 sel_glow_drive 补光，
+#   播放中新出生实体走 tick_birth → build_ → summon_ 这条路，没人给它补）。
+execute if data storage rhythm_axe:prop sel run data modify entity @s Glowing set value 1b
+execute if data storage rhythm_axe:prop sel run data modify entity @s glow_color_override set value 16776960

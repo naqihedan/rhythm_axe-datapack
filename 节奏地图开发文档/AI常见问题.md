@@ -11,10 +11,11 @@
 - 使用截图功能识别游戏内容图像（AI的识图模型烂的要死不如不用）
 - **`data modify … set from <来源路径不存在>` 会「失败并保留旧值」，不会清零**：凡是「先 `set from` 再拿来用」的宏通道值都要防这一手。典型后果（2026-09-13 修复）：事件点 `commands` 为空数组时 `cur_cmd` 沿用上一条/上一局命令，`execute` 的 `if data cur_cmd` 成立 → 宏 `$(cur_cmd)` 执行了残留命令，表现为「跑第二张图时冒出第一张图的事件」。解法：要么先 `data remove` 掉旧值，要么把执行条件写成「来源下标确实存在」（`if data … events[$(ev_idx)].commands[$(cmd_idx)]`）。同一坑在编辑器侧（`editor/visual/event_go_`）早已用 `data remove cur_cmd` 规避——两处要对齐。
 - **「刷新残留值」与「使用残留值」的守卫必须对称**（上一条的推广）：`store result score #x …` 失败时 `#x` 保留旧值，如果**刷新时**守卫是 `if data 来源字段`、而**使用时**守卫是 `if score #x = <期望值>`，两者就不是同一个条件 → 来源缺失时仍可能用残留值走到「使用」分支。凡这类 `#x`（`#birth`、`#ev_time`、`#tp_time` 等）都要么①每次使用前先置**哨兵值**（如 `scoreboard players set #birth play_state 2147483647`，`note/spawn` 就是这么做），要么②把使用守卫改写成与来源同源的「存在性」判断（`event/execute` 改成 `if data … commands[cmd_idx]`）。
-- **`storage` 的「带点 ID」和路径之间必须有空格**（2026-09-15 修复）：MC 把资源位置里的点号当合法字符**贪婪**吃掉，所以 `data get storage rhythm_axe:maps.$(mapid).notes` 会被解析成「存储 ID = `rhythm_axe:maps.<mapid>.notes`」（一个不存在的存储），而不是「存储 `maps.<mapid>` + 路径 `notes`」；若路径后紧跟 `[`（如 `.notes[$(i)].selected`），则直接是**命令解析失败**（报错 `参数后应有空格分隔，但发现了紧邻的数据`）→ 宏函数**无法实例化**（报错 `无法实例化函数 xxx`）。
+- **`storage` 的「带点 ID」和路径之间必须有空格**（2026-09-15 修复）：MC 把资源位置里的点号当合法字符**贪婪**吃掉，所以 `data get storage rhythm_axe:maps.$(mapid).notes` 会被解析成「存储 ID = `rhythm_axe:maps.<mapid>.notes`」（一个不存在的存储），而不是「存储 `maps.<mapid>` + 路径 `notes`」；若路径后紧跟 `[`（如 `.notes[$(index)].selected`），则直接是**命令解析失败**（报错 `参数后应有空格分隔，但发现了紧邻的数据`）→ 宏函数**无法实例化**（报错 `无法实例化函数 xxx`）。
   - 正确写法：`data get storage rhythm_axe:maps.$(mapid) notes[$(i)].selected`（ID 与路径之间留空格）；同理 `storage rhythm_axe:maps.editor history[$(i)].notes`。
   - 代价（本次实例）：`save_strip_selected` 的取长度、`save_strip_leaf` 的剔除都这么写 → **保存时「剔除 selected」从来没生效**，还会每次保存刷「无法实例化」错误、把编辑器的 `selected` 原样写进正式谱面。
   - 自查：`grep -rn "\$(mapid)\.[a-z]" data/`、`grep -rn "maps\.editor\.[a-z]" data/`。
+- **「变化检测 / 手动改过」的基准必须是一个自己不会变的量**（2026-09-17 锚点踩坑）：判「用户有没有手动挪过锚点」如果拿**当前包围盒中心**当基准，那么**选区一变中心就变**而锚点还停在旧中心 ⇒ 每次换选区都被误判成「用户动过」（实测：选完第一个音符再选第二个就变蓝）。正确做法 = **把「上次自动摆放的位置」记下来**（锚点把 `data.anchor_cx/cy/cz` 存在自己身上），再拿实体当前 Pos 与它比。同类风险：凡 `当前值 != 期望值 ⇒ 判定用户改过` 的写法，先问「期望值自己会不会变」。
 
 # 判定区域（选择器体积参数）方面
 

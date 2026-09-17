@@ -1,16 +1,18 @@
-# 旋转（按 X/Y/Z 轴绕包围盒中心旋转 position） —— 真正干活的实现
+# 旋转（按 X/Y/Z 轴绕锚点旋转 position） —— 真正干活的实现
 # 由 note_panel_rotate.mcfunction 分发进来：处理音符数 ≤ 50 → 本刻直调；> 50 → 由 note_panel_rotate_next.mcfunction 跨刻调用。
 execute store result score #from editor run data get storage rhythm_axe:maps.editor current_panel
 function rhythm_axe:editor/file/begin
 data modify storage rhythm_axe:maps.editor op_label set value "旋转音符"
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
+# ★ 2026-09-17 锚点：旋转中心 = 锚点实体位置（锚点不存在时 anchor_get 兜底算出包围盒中心 = 改动前的行为）
+function rhythm_axe:editor/menu/note/anchor/anchor_get
 execute store result score #mirror_x editor run data get storage rhythm_axe:maps.editor mirror.x
 execute store result score #mirror_y editor run data get storage rhythm_axe:maps.editor mirror.y
 execute store result score #mirror_z editor run data get storage rhythm_axe:maps.editor mirror.z
 execute store result score #mirror_s editor run data get storage rhythm_axe:maps.editor mirror.s
 execute store result score #rot_cos editor run data get storage rhythm_axe:prop rotate_cos
 execute store result score #rot_sin editor run data get storage rhythm_axe:prop rotate_sin
-# 按开启轴依次旋转（每轴独立算包围盒中心）
+# 按开启轴依次旋转（#rc0/1/2 = 锚点，已由上面的 anchor_get 填好；各轴共用同一个中心点）
 execute if score #mirror_x editor matches 1 run scoreboard players set #flip_axis editor 0
 execute if score #mirror_x editor matches 1 run function rhythm_axe:editor/menu/note/panel/note_panel_rotate_axis
 execute if score #mirror_x editor matches 1 if score #mirror_s editor matches 1 run function rhythm_axe:editor/menu/note/panel/note_panel_rotate_start

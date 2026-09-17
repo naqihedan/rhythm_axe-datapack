@@ -1,15 +1,17 @@
-# 镜像翻转（按 X/Y/Z/S 开关绕包围盒中心镜像） —— 真正干活的实现
+# 镜像翻转（按 X/Y/Z/S 开关绕锚点镜像） —— 真正干活的实现
 # 由 note_panel_flip_mirror.mcfunction 分发进来：处理音符数 ≤ 50 → 本刻直调；> 50 → 由 note_panel_flip_mirror_next.mcfunction 跨刻调用。
 execute store result score #from editor run data get storage rhythm_axe:maps.editor current_panel
 function rhythm_axe:editor/file/begin
 data modify storage rhythm_axe:maps.editor op_label set value "镜像翻转音符"
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
+# ★ 2026-09-17 锚点：镜像中心 = 锚点实体位置（锚点不存在时 anchor_get 兜底算出包围盒中心 = 改动前的行为）
+function rhythm_axe:editor/menu/note/anchor/anchor_get
 # 读开关状态（storage mirrors.editor mirror.* 缺省视为关=0）
 execute store result score #mirror_x editor run data get storage rhythm_axe:maps.editor mirror.x
 execute store result score #mirror_y editor run data get storage rhythm_axe:maps.editor mirror.y
 execute store result score #mirror_z editor run data get storage rhythm_axe:maps.editor mirror.z
 execute store result score #mirror_s editor run data get storage rhythm_axe:maps.editor mirror.s
-# X/Y/Z 判定位置镜像（绕包围盒中心，new=min+max-old；各自独立算 min/max）
+# X/Y/Z 判定位置镜像（绕锚点 #rc0/1/2，new = 2×anchor − old；各轴共用同一个锚点）
 execute if score #mirror_x editor matches 1 run scoreboard players set #flip_axis editor 0
 execute if score #mirror_x editor matches 1 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_pos
 execute if score #mirror_y editor matches 1 run scoreboard players set #flip_axis editor 1

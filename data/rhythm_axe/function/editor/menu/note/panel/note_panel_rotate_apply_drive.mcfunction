@@ -1,4 +1,4 @@
-# 旋转：逐个选中音符按 #flip_axis 绕包围盒中心旋转 position（普通函数驱动器，防宏递归幽灵）
+# 旋转：逐个选中音符按 #flip_axis 绕锚点 #rc0/1/2 旋转 position（普通函数驱动器，防宏递归幽灵）
 # 前置：#flip_i / #flip_total、#rc0/1/2（中心）、#rot_cos/#rot_sin（×10000）、prop.cursor、prop.flip_cursor
 execute if score #flip_i editor < #flip_total editor run execute store result storage rhythm_axe:prop idx int 1 run scoreboard players get #flip_i editor
 execute if score #flip_i editor < #flip_total editor run function rhythm_axe:editor/menu/note/panel/note_panel_rotate_apply_leaf with storage rhythm_axe:prop

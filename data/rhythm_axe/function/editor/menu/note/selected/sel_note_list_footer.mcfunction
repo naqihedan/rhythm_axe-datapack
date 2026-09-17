@@ -77,13 +77,16 @@ execute if score #mirror_s editor matches 1 run data modify storage rhythm_axe:p
 # f6 执行翻转（默认灰，有选中启用）
 data modify storage rhythm_axe:prop f6 set value "{\"text\":\"【镜像判定位置】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
 execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop f6 set value "{\"text\":\"【镜像判定位置】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11506\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"根据开启的镜像开关，对选中音符执行空间镜像翻转\"}}"
-# f7/f8/f9 旋转按钮（灰=无选中；有选中启用；点击按 [X][Y][Z] 开关绕包围盒中心轴旋转）
+# f7/f8/f9 旋转按钮（灰=无选中；有选中启用；点击按 [X][Y][Z] 开关绕锚点轴旋转）
 data modify storage rhythm_axe:prop f7 set value "{\"text\":\"【15°】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
-execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop f7 set value "{\"text\":\"【15°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11507\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕包围盒中心旋转 15°（S 开则同旋转起始位置）\"}}"
+execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop f7 set value "{\"text\":\"【15°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11507\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕锚点旋转 15°（S 开则同旋转起始位置）\"}}"
 data modify storage rhythm_axe:prop f8 set value "{\"text\":\"【45°】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
-execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop f8 set value "{\"text\":\"【45°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11508\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕包围盒中心旋转 45°（S 开则同旋转起始位置）\"}}"
+execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop f8 set value "{\"text\":\"【45°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11508\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕锚点旋转 45°（S 开则同旋转起始位置）\"}}"
 data modify storage rhythm_axe:prop f9 set value "{\"text\":\"【90°】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
-execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop f9 set value "{\"text\":\"【90°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11509\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕包围盒中心旋转 90°（S 开则同旋转起始位置）\"}}"
+execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop f9 set value "{\"text\":\"【90°】\",\"color\":\"gold\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11509\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"按开启的 X/Y/Z 轴，把选中音符判定位置绕锚点旋转 90°（S 开则同旋转起始位置）\"}}"
+# f10 锚点重置【⌖】（任何时候可点）：红=锚点自动跟随中（= 包围盒中心）/ 蓝=锚点已被手动改过
+data modify storage rhythm_axe:prop f10 set value "{\"text\":\"【⌖】\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11510\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"重置锚点位置（镜像/旋转的中心回到选中音符判定位置的包围盒中心）\"}}"
+execute if entity @e[tag=editor_anchor_manual] run data modify storage rhythm_axe:prop f10 set value "{\"text\":\"【⌖】\",\"color\":\"blue\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11510\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"锚点已被改过（蓝色）——点击重置回选中音符判定位置的包围盒中心\"}}"
 # 输出两行 + 清理临时组件
 function rhythm_axe:editor/menu/note/selected/sel_note_list_bottom with storage rhythm_axe:prop
 function rhythm_axe:editor/menu/note/list/note_flip_bottom with storage rhythm_axe:prop
@@ -104,3 +107,4 @@ data remove storage rhythm_axe:prop f6
 data remove storage rhythm_axe:prop f7
 data remove storage rhythm_axe:prop f8
 data remove storage rhythm_axe:prop f9
+data remove storage rhythm_axe:prop f10

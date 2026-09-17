@@ -9,3 +9,6 @@ execute store result score #fi_tmp editor run data get storage rhythm_axe:prop n
 scoreboard players operation @s note_id = #fi_tmp editor
 execute store result score #fi_tmp editor run data get storage rhythm_axe:prop idx
 scoreboard players operation @s editor_n_idx = #fi_tmp editor
+# ★ 2026-09-17 选中音符：交互实体也补 editor_note_selected 标签（播放中新出生/重建的实体同样要能右击取消选中）。
+#   前置：build_ 在音符带 selected 时写了 prop.sel（用后即删）⇒ 此处只做存在性判断。
+execute if data storage rhythm_axe:prop sel run tag @s add editor_note_selected
