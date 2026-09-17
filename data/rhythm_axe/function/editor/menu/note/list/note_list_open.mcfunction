@@ -1,6 +1,12 @@
 # 音符列表：只显示当前存活的音符（每行 4 按钮；按钮值规范 v2 = 100000 + 页内序×100 + 列码 3/5/6/7，见 note_list_row2）
-# 剪贴板会话：打开列表即清空本面板剪贴板（复制内容只在本会话内有效，离开面板再进入即失效）
-data remove storage rhythm_axe:maps.editor note_clip
+# 剪贴板会话：只有「从面板外进入列表」时才清空（判定 = 进入前 current_panel 不是 10）。
+# ★ 2026-09-17：原来无条件清空，导致面板内任何一次原地刷新（翻页/勾选/全选/取消选中/翻转开关/批量操作收尾，
+#   以及暂停继续·调速·跳转触发的 resume 重绘）都会顺手把刚复制的 note_clip 清掉 → 现在一律保留。
+#   本函数稍后会把 current_panel 置 10，故必须先判定；离开列表（回主菜单、进面板 11 等）后 current_panel 不再是 10
+#   → 再次进入即失效；退出编辑器时由 clear_state 清空。
+scoreboard players reset #clip_panel editor
+execute store result score #clip_panel editor run data get storage rhythm_axe:maps.editor current_panel
+execute unless score #clip_panel editor matches 10 run data remove storage rhythm_axe:maps.editor note_clip
 function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
 data modify storage rhythm_axe:maps.editor current_panel set value 10

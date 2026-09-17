@@ -5,6 +5,6 @@ function rhythm_axe:editor/playback/pause
 data modify storage rhythm_axe:prop refresh_skip_sel set value 1b
 function rhythm_axe:editor/refresh
 execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][编辑器]","color":"gray"},{"text":" 已回到开头","color":"green"}]
-# 任意面板可用：返回当前面板（resume）而非强制主菜单
+# 任意面板可用：返回当前面板（只有面板 1/10 需要随播放头重绘）
 # ★ 2026-09-12：面板/列表渲染推迟到下一 tick（refresh 已经重建了整表视觉，同刻渲染会挤爆命令链）
-schedule function rhythm_axe:editor/menu/resume_next 1t
+function rhythm_axe:editor/menu/resume_playback_next

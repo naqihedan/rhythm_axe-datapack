@@ -6,5 +6,5 @@ execute if score #temp editor matches 50 run data modify storage rhythm_axe:maps
 execute if score #temp editor matches 75 run data modify storage rhythm_axe:maps.editor play_speed set value 1.0f
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor playing
 execute if score #temp editor matches 1 run function rhythm_axe:editor/playback/play
-# 任意面板可用：返回当前面板（resume）而非强制主菜单
-function rhythm_axe:editor/menu/resume
+# 任意面板可用：返回当前面板（速度按钮在面板 1、存活窗口在面板 10，其余面板无需重绘）
+function rhythm_axe:editor/menu/resume_playback

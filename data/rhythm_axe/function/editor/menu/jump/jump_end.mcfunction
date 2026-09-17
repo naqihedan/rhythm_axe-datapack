@@ -2,5 +2,5 @@
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 function rhythm_axe:editor/menu/jump/jump_end_ with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop cursor
-# 任意面板可用：返回当前面板（resume）而非强制主菜单
-function rhythm_axe:editor/menu/resume
+# 任意面板可用：返回当前面板（只有面板 1/10 需要随播放头重绘）
+function rhythm_axe:editor/menu/resume_playback

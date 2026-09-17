@@ -31,6 +31,7 @@ execute if score #playhead editor matches 0 if data storage rhythm_axe:editor.ru
 # 暂停后刷新主菜单：⏸ 变 ▶，避免用户再点"暂停"被 toggle 成重新播放（"暂停不暂停"根因）
 execute if score #playhead editor >= #temp editor run data modify storage rhythm_axe:maps.editor playing set value 0b
 execute if score #playhead editor >= #temp editor as @a[tag=editor_active] run function rhythm_axe:editor/playback/pause
-execute if score #playhead editor >= #temp editor as @a[tag=editor_active] run function rhythm_axe:editor/menu/resume
+# 暂停后重绘面板：⏸ 变 ▶（只有面板 1/10 需要，见 menu/resume_playback）
+execute if score #playhead editor >= #temp editor as @a[tag=editor_active] run function rhythm_axe:editor/menu/resume_playback
 # 世界音符实时显示：新出生 + 已有实体移动/清理（暂停时不调用本函数）
 function rhythm_axe:editor/visual/tick
