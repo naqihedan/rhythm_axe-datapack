@@ -1,11 +1,11 @@
 # 面板 10：音符活跃列表（规范v2：1 返回；100000..103999 动态行；11301..11307 固定控件；11601/11602 翻页）。
 #   动态行：值 = 100000 + 页内序×100 + 列码（复选框 0 / 编辑 3 / 复制 5 / 粘贴 6 / 删除 7；页内序 0..39）
 #   固定：11301 批量编辑 / 11302 批量复制 / 11308 批量剪切 / 11303 批量粘贴 / 11306 粘贴并选中 / 11307 批量删除 / 11304 全选 / 11305 取消选中 / 11601 上一页 / 11602 下一页
-#   翻转组沿用固定值 11501(翻转时间) / 11502,11503,11504,11505(X/Y/Z/S 开关) / 11506(执行翻转) / 11507,11508,11509(15°/45°/90°旋转) / 11510(锚点重置【⌖】)（面板 10/18 共用）
+#   翻转组沿用固定值 11501(翻转时间) / 11502,11503,11504,11505(X/Y/Z/S 开关) / 11506(执行翻转) / 11507,11508,11509(15°/45°/90°旋转) / 11510(锚点重置【⌖】) / 11511(应用锚点变换)（面板 10/18 共用）
 # note_list_open 设 current_panel=10。本面板刷新用 note_list_*。
 # 入口白名单守卫
-execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11510 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11510 run return fail
+execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11511 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11511 run return fail
 
 execute if score #click_value editor matches 1 run function rhythm_axe:editor/menu/main
 # —— 动态行（值 = 100000 + 页内序×100 + 列码）：先抠列码（#temp = (click-100000) % 100）再分发 ——
@@ -87,3 +87,7 @@ execute if score #click_value editor matches 11507..11509 run return 0
 # 锚点重置（11510）【⌖】：清掉锚点（含「被改过」标记）→ 按选中包围盒中心重建（回到自动跟随）→ 重绘本面板
 execute if score #click_value editor matches 11510 run function rhythm_axe:editor/menu/note/anchor/anchor_reset
 execute if score #click_value editor matches 11510 run return 0
+# 应用锚点变换（11511）：把锚点的旋转+相对包围盒中心的位移当刚体变换套到选中音符判定位置（S 开则 start_pos 同旋转）
+#   应用后锚点完全重置（位置回新中心 + 旋转归零 + 清 manual）⇒ 面板上【⌖】变回红
+execute if score #click_value editor matches 11511 run function rhythm_axe:editor/menu/note/panel/note_panel_anchor_apply
+execute if score #click_value editor matches 11511 run return 0

@@ -1,18 +1,18 @@
 # 面板 18：已选定音符列表（规范v2：11401 返回 / 11402 清空返回 / 11403 批量编辑 / 11404 批量复制 / 11408 批量剪切 / 11405 批量粘贴 / 11406 粘贴并选中 / 11407 批量删除；
-#            100000..103999 动态行；11601/11602 翻页；11501/11502/11503-11506 翻转组 / 11507-11509 旋转组 / 11510 锚点重置）。
+#            100000..103999 动态行；11601/11602 翻页；11501/11502/11503-11506 翻转组 / 11507-11509 旋转组 / 11510 锚点重置 / 11511 应用锚点变换）。
 #   动态行：值 = 100000 + 页内序×100 + 列码（复选框 0 / 编辑 3 / 复制 5 / 粘贴 6 / 删除 7；页内序 0..39）
 # sel_note_list_open 设 current_panel=18。返回用 1560/1561，本面板不含值 1。
 # 入口白名单守卫
-execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11510 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11510 run return fail
+execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11511 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11511 run return fail
 
 # 【返回】1560：仅返回主菜单（不清空 selection）
 execute if score #click_value editor matches 11401 run function rhythm_axe:editor/menu/main
-# 【清空选中并返回】1561
-execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/note/selected/sel_clear_all
-execute if score #click_value editor matches 11402 run scoreboard players set #sel_count editor 0
-execute if score #click_value editor matches 11402 run execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
-execute if score #click_value editor matches 11402 run execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
+# 【清空选中并返回】11402（清空 selection + 每个音符的 selected 标记 + 黄光 + 交互 tag + #sel_count + **锚点实体**）
+# ★ 2026-09-18：不再内联重写一遍，改调面板 10【取消选中】同款 `sel_clear_all_visual` ——
+#   原来内联版漏了「清锚点」（用户实测：点这个按钮锚点不消失）；以后清选区的公共步骤只改那一个文件
+#   注意：必须在 `menu/main` 之前（main 会重绘主菜单）
+execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/note/selected/sel_clear_all_visual
 execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/main
 # 【批量编辑】11403 / 【批量复制】11404 / 【批量粘贴】11405 / 【粘贴并选中】11406 / 【批量删除】11407
 execute if score #click_value editor matches 11403 run function rhythm_axe:editor/menu/note/batch/batch_open
@@ -107,3 +107,7 @@ execute if score #click_value editor matches 11507..11509 run return 0
 # 锚点重置（11510）【⌖】：清掉锚点（含「被改过」标记）→ 按选中包围盒中心重建（回到自动跟随）→ 重绘本面板
 execute if score #click_value editor matches 11510 run function rhythm_axe:editor/menu/note/anchor/anchor_reset
 execute if score #click_value editor matches 11510 run return 0
+# 应用锚点变换（11511）：把锚点的旋转+相对包围盒中心的位移当刚体变换套到选中音符判定位置（S 开则 start_pos 同旋转）
+#   应用后锚点完全重置（位置回新中心 + 旋转归零 + 清 manual）⇒ 面板上【⌖】变回红
+execute if score #click_value editor matches 11511 run function rhythm_axe:editor/menu/note/panel/note_panel_anchor_apply
+execute if score #click_value editor matches 11511 run return 0

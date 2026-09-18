@@ -19,6 +19,8 @@ kill @e[tag=editor_tool_select_glow]
 execute as @e[tag=editor_note,type=item_display] run data remove entity @s Glowing
 execute as @e[tag=editor_note,type=item_display] run data remove entity @s glow_color_override
 data modify storage rhythm_axe:maps.editor selection set value []
+# ★ 2026-09-18：选区被清空 ⇒ 锚点（镜像/旋转中心）也用不着了，一并清（与 sel_clear_all_visual 语义一致）
+function rhythm_axe:editor/menu/note/anchor/anchor_clear
 
 # 选择工具（金斧头外观；持有时实体交互距离 1.5）
 item replace entity @s container.0 with minecraft:stick[\

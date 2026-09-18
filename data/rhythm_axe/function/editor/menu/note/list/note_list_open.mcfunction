@@ -131,6 +131,10 @@ execute if score #sel_count editor matches 1.. run data modify storage rhythm_ax
 # f10 锚点重置【⌖】（任何时候可点）：红=锚点自动跟随中（= 包围盒中心）/ 蓝=锚点已被手动改过
 data modify storage rhythm_axe:prop f10 set value "{\"text\":\"【⌖】\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11510\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"重置锚点位置（镜像/旋转的中心回到选中音符判定位置的包围盒中心）\"}}"
 execute if entity @e[tag=editor_anchor_manual] run data modify storage rhythm_axe:prop f10 set value "{\"text\":\"【⌖】\",\"color\":\"blue\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11510\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"锚点已被改过（蓝色）——点击重置回选中音符判定位置的包围盒中心\"}}"
+# f11 应用锚点变换（2026-09-18，无选中时灰）：把锚点的「旋转 + 相对包围盒中心的位移」当刚体变换套到选中音符判定位置上
+#   悬停写全说明（按你定的「按钮文字=选项 2、hover 用选项 3 的完整说明」）
+data modify storage rhythm_axe:prop f11 set value "{\"text\":\"【应用锚点变换】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
+execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f11 set value "{\"text\":\"【应用锚点变换】\",\"color\":\"light_purple\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11511\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"以锚点变换数据更改音符判定位置：把锚点的缩放、旋转与位移当成一个整体变换套到选中音符上 —— 以包围盒中心为中心，按「锚点旋转」旋转、按「锚点 scale 三轴各自×4」（可各轴不同比例）缩放，再按「锚点位置 − 包围盒中心」平移；[S] 开则起始位置跟着一起转+缩放（来向跟着变）\"}}"
 # 输出两行 + 清理临时组件
 function rhythm_axe:editor/menu/note/list/note_list_bottom with storage rhythm_axe:prop
 function rhythm_axe:editor/menu/note/list/note_flip_bottom with storage rhythm_axe:prop
@@ -152,3 +156,4 @@ data remove storage rhythm_axe:prop f7
 data remove storage rhythm_axe:prop f8
 data remove storage rhythm_axe:prop f9
 data remove storage rhythm_axe:prop f10
+data remove storage rhythm_axe:prop f11

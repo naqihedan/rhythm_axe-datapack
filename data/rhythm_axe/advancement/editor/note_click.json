@@ -3,8 +3,8 @@
     "left_click": {
       "trigger": "minecraft:player_hurt_entity",
       "conditions": {
-        "entity":{
-              "type": "minecraft:interaction"
+        "entity": {
+          "minecraft:entity_type": "minecraft:interaction"
         }
       }
     }
