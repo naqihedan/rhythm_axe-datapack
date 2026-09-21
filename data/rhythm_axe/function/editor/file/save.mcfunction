@@ -40,6 +40,8 @@ $data modify storage rhythm_axe:maps.$(mapid) id set value "$(mapid)"
 $function rhythm_axe:editor/file/save_strip_selected {mapid:"$(mapid)"}
 $execute store result storage rhythm_axe:maps.$(mapid) highest_score int 1 run scoreboard players get #saved_highest editor
 $data modify storage rhythm_axe:maps.$(mapid) editor_playhead set from storage rhythm_axe:maps.editor playhead
+# ★ 2026-09-19 谱面索引入队：保存后这张谱面会出现在大厅【谱面总表】里（幂等：已在索引里就不重复加）
+$function rhythm_axe:maps/index/index_add {mapid:"$(mapid)"}
 data modify storage rhythm_axe:maps.editor saved_cursor set from storage rhythm_axe:maps.editor history_cursor
 $tellraw @s [{"text":"[编辑器] 谱面已保存 ","color":"green"},{"text":"$(mapid)","color":"aqua"}]
 # ★ 保存前确实交换过（数组顺序变了）→ 提示 + 重建视觉（#vis_next 出生游标 / 选区等按下标的缓存必须按新顺序重算）

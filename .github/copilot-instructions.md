@@ -8,6 +8,8 @@
 
 本数据包（rhythm_axe）编辑器所有按钮都走 `trigger editor_click set <值>`。
 
+**例外：菜单系统**（聊天栏菜单 UI，如谱面总表）**不占用 `editor_click`**，走自己的计分板 `menu_click` + 分发层 `rhythm_axe:menu/consume`（临时分数存分数板 `menu`）；守卫写在该页面自己的 `panelN.mcfunction` 里。编辑器 / 菜单 / 游玩三套互不干扰。
+
 **在新增、修改或迁移任何按钮值之前，必须先阅读 `节奏地图开发文档/编辑器.md` 的《trigger值》一节，并执行其中的《新增按钮流程（checklist）》。**
 
 硬约束（违反会造成「按钮点了没反应」或「一个值触发两个功能」）：

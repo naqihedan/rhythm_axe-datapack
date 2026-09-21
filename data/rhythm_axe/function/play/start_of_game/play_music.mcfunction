@@ -1,6 +1,6 @@
 # 播放谱面背景音乐（宏参数 music；time == 0 时由 main_loop 调用）
-# as @a at @s：每个玩家在自己位置播放（main_loop 执行位置 = 世界原点，直接 ~ ~ ~ 会因距离衰减听不到）
-# minVolume 1（playsound 第 7 参数）：无论距离多远都以全音量播放（无视差）
-# record 通道 + 立体声音频（audio.ogg）→ 不随距离衰减
+# 用 mod 的 /playmusic：与编辑器试听同一条播放路径 ⇒ 客户端每刻把音频对齐到歌曲时间轴
+#   （play_state.time，只动音频、不动游戏时间与判定），见《游玩谱面.md》音乐播放
+# 起始 0 刻（= 音乐起点）、速率 1（保调）、音量 1；@a = 所有玩家各自本地播放（不看距离衰减）
 #arg: music
-$execute as @a at @s run playsound $(music) record @s ~ ~ ~ 1 1 1
+$playmusic $(music) 0 1 @a 1

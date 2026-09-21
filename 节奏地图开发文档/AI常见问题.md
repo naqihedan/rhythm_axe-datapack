@@ -17,6 +17,13 @@
   - 自查：`grep -rn "\$(mapid)\.[a-z]" data/`、`grep -rn "maps\.editor\.[a-z]" data/`。
 - **「变化检测 / 手动改过」的基准必须是一个自己不会变的量**（2026-09-17 锚点踩坑）：判「用户有没有手动挪过锚点」如果拿**当前包围盒中心**当基准，那么**选区一变中心就变**而锚点还停在旧中心 ⇒ 每次换选区都被误判成「用户动过」（实测：选完第一个音符再选第二个就变蓝）。正确做法 = **把「上次自动摆放的位置」记下来**（锚点把 `data.anchor_cx/cy/cz` 存在自己身上），再拿实体当前 Pos 与它比。同类风险：凡 `当前值 != 期望值 ⇒ 判定用户改过` 的写法，先问「期望值自己会不会变」。
 
+- **`if score X obj >= 0`（右侧直接写裸常量）是非法语法 ⇒ 整个函数不加载**（2026-09-21 实测：`editor/judge/protect` 因此**从创建起就没加载过**，症状＝「判定保护完全不生效」——从头到尾把准星放在判定位置上也只判 perfectL）。
+  - `if score` 的右侧必须是**带记分项的来源**，或改用 `matches`：`if score #v editor matches 0..`（≥0）、`if score #v editor <= -1 const`（常量挂到 `const` 上）。全库自查：`score \S+ \S+ (>=|<=|>|<) -?[0-9]`（后面没跟 `const` 的就是嫌疑）。
+  - ⚠️ **最隐蔽的一点**：`check_all_macros.ps1` 查不出（它只管宏），函数在游戏里表现成「已注册但没加载」——`execute ... run function <id>` **静默无输出**，只有**不带 `execute` 直接 `function <id>`** 才会回「未知的函数 xxx」。
+  - 排查：日志 `Failed to load function <id>` + `Whilst parsing command on line N: ... <--[HERE]`（`HERE` 指着那个 `>=`/`<=`）。
+  - ⚠️ 桥接 `bridge.ps1 logs -Search "..."` **不可靠**（按「上次读取位置」只返回新行，常给 `lines: []` → 会误判成「0 错误」）→ **直接读 `logs/latest.log`**。
+  - **规矩：改完/新增任何 mcfunction，除了宏检查，还要「不带 execute 直接 `function <id>`」验证它真的加载了**。
+
 # 判定区域（选择器体积参数）方面
 
 - **`@e[x=,y=,z=,dx=,dy=,dz=]` 里 `d=N` 覆盖的是 N+1 格，不是 N 格**（2026-09-16 用零尺寸 marker 逐点实测）：
@@ -24,6 +31,16 @@
   → 写「高 3 格」这类注释/文档时最容易把 `dy` 直接当格数（混凝土判定区域就因此长期写错成「3 高」，实际是向上 4 格）。要么按 `d+1` 换算，要么直接写清覆盖区间。
 - **bridge 实测实体选择器前，目标区块必须已加载**：往未加载区块 `summon` 会正常返回「召唤了新的标记」，但选择器**完全找不到**它（`if entity`、`distance=..` 全部失败），表现是「所有测试都是 0」。先 `forceload add <x> <z>`（用完 `forceload remove`），或把测试点放在玩家附近。
 - 零尺寸 AABB 的实体（`marker`）是最好用的「点探针」：它能被某个 `d=0` 的盒子选中 ⇒ 那一格被覆盖。扫边界时一个点一条命令即可。
+- **音符「展示实体 `Pos` = 判定位置」，视觉位置在 `transformation.translation` —— 别把两者搞混**（2026-09-20）：
+  `fill_disp` 把谱面 `position` 写进展示实体的 `Pos`（**恒定不动**，编辑器与游玩一致）；每刻变化的是 `translation`（`place` 计算 + 客户端插值）。
+  只有**交互实体**的 `Pos` 每刻被写成"视觉位置"（`place_inter_apply` 跟随缓动头部）。
+  ⇒ 「判定位置」在世界上**有实体代表**（就是展示实体）：判定保护的射线步进（`raycast_step` 的 `distance=..1.0`）与游玩的 `looked_at_perfect` 都用它，
+    不需要额外 marker；反过来，要"音符当前视觉位置"必须读 `translation`，读展示实体 `Pos` 只会拿到判定位置。
+- **展示实体的 `Pos` 必须落在玩家附近（2026-09-21 引导线踩坑）**：客户端只更新**已追踪**的实体，追踪范围看的是实体自己的 `Pos`，**区块强加载对此无效**。
+  所以「把世界坐标全塞进 `transformation.translation`、`Pos` 留在 `(0,0,0)`」的做法，谱面一旦远离世界原点，表现就是**引导线不跟随/停在旧位置/看不见**。
+  - 正解：`Pos` 锚在实体自己的一端（引导线 = A 端判定位置），`translation` 只存**相对锚点**的偏移；锚点由 `utilization/guide_anchor_set` 读回真实 `Pos` 存实体计分板，每刻减掉。
+  - 顺带好处：`summon` 到目标坐标（而不是原点）也能避开「往未加载区块 summon 后选择器找不到实体」。
+  - 同类对照：音符展示实体早就是「`Pos` = 判定位置 + `translation` = 相对偏移」，只有引导线漏了这层。
 
 # 编辑器按钮（trigger）方面
 
@@ -54,6 +71,16 @@
   这条上限从此只当**失控递归的报警线**；但「重活 + 渲染」仍不要同刻（同刻会卡顿，谱面再翻倍还会重现）。重活（整表 `refresh` 重建视觉、逐音符 `find_by_id`、列表渲染）不要和操作本身挤在同一 tick：把后续渲染 `schedule ... 1t`（`_next` 包装里必须 `execute as @a[tag=editor_active]`），或分刻处理。实例：`翻转时间`(11501) 曾因此把 `refresh` 的重建砍掉 → 音符在世界上消失、但 `notes[].time` 翻转正确。
 - **「顺序游标」型扫描/应用必须带兜底**：`selection` 的顺序是「按 notes 下标递增」时才成立（`sel_rebuild` 保证），但一旦乱序（历史数据、残留状态、上一步移过位置），顺序游标就会**静默漏掉音符**。所有这类叶子（`flip_scan_leaf` / `flip_apply_leaf` / `flip_pos_*` / `rotate_*` / `flip_start_*`）都要写「未命中 → `index` 置 0 再全扫一次」。漏掉的下场：min/max 只剩部分音符（`min == max` 时对称轴直接跑到 max，音符被翻到 `2·max−old` 飞出去）。
 - **重操作入口要清残留 prop + 空选中提前返回**：`#flip_total` / `prop.note_id` 这类「上一轮留下的值」会让后续扫描“找到”旧音符（`store result` 失败时分数/字段保留旧值，不会清零）。写法：入口先 `execute unless data storage rhythm_axe:maps.editor selection[0] run return fail`，再 `data remove` 掉 `note_id/found_index/index/insert_index/flip_cursor` 等。
+- **给宏函数加宏参必须同步 `#arg:` 行**：`scripts\check_all_macros.ps1` 会报 `undeclared macro var $(xxx)`。2026-09-20 给 `editor/visual/trigger_` 加 `$(case)`（音符事件情况键）时改了注释里的「宏参数：…」却漏了 `#arg:` → 5 处 ERR（脚本按 `#arg:` 判定声明）。
+- **等级/情况这类「一次性消费」变量要防覆盖**：`visual/trigger` 开头会读 `#ed_level` 并**立刻 reset**（因为 type=4 的 `return fail` 会提前结束函数，不清就会残留污染下一次触发）⇒ 调用方若在 trigger **之后**还要用这个值（判定的文字反馈就是），必须**先另存一份**（`editor/judge/hit` 存 `#ed_disp`、`feedback_text` 读它），否则会读到空值、误显示最低等级。
+
+# 音符出生顺序（渲染时序）方面
+
+- **`notes` 按 `time` 升序 ≠ 出生刻升序**（2026-09-21 修）：`birth = time − note_base_life×16/note_speed`，而 `note_base_life` 每个音符可自定义（本谱面就有 12/16/17/20/24/30/32/42/48 九种）⇒ 同一个升序数组里 `birth` 出现 **33 处倒挂**。
+  - 后果（只靠「队首未出生就停」的出生游标 `#vis_next` / `tick_birth_*` 时必踩）：排在后面、前导更长的音符被压到「挡路音符的出生刻」才生成 ⇒ **音符只剩后半程才出现、一出现就已经走过一半**；而**快进快退「逐刻看」却是好的**（它们走 `refresh` 全表重建，不看顺序）。实测 `lament_rain`：1424 音符里 **61 个**被延迟 1~24 刻。
+  - 通用教训：凡「按数组顺序推进 + 拿派生量当推进条件」的游标，先问**这个派生量单调吗**。同族已知坑：数组 `time` 乱序（用 `order_repair` 修）、游玩侧 `_birth` 倒挂（`start_of_game` 的桶排序就是为此）。
+  - 修法：`visual/scan_due{,_drive,_leaf}` 每刻从游标之后补扫「本刻恰好出生」的音符；两条路都只认 `birth == playhead` **精确一刻** ⇒ 每个音符只生成一次（若沿用 `>=` 会把补扫已生成的音符**重复召唤**、重置判定状态）。扫描窗口上界 = `refresh` 统计的 `vis_lead_max`。
+  - 验证口径：`refresh` 后把播放头移到某音符出生刻前一格、播放，看它是否在出生刻就出现在**起始位置**（进度 0），而不是半路冒出来；也可直接读实体 `editor_n_birth` 与出生时刻。
 
 # 性能方面
 
@@ -72,9 +99,16 @@
   - **正解**：一律「**普通驱动器 + 宏叶子单步**」——驱动器（普通函数，可安全自递归）负责取下标/推进/判断结束，宏叶子只处理当前一个元素。参考 `visual/spawn_drive`、`menu/note/selected/sel_rebuild_drive`、`visual/guide_state_find_drive`。
 - **别在「每元素循环」里放 `@e[...]` 选择器**：每条 `@e[tag=editor_n_$(nid),…]` 都要遍历全世界实体。若对同一批实体要连做 N 条命令，合并成 1 次 `execute as @e[…] run function …`，函数内全用 `@s`（见 `visual/fill_disp`、`fill_inter`、`place_inter_apply`）。
   ⚠️ **但动手前必须先问清数量级**：当时以为编辑器同时有几百个音符实体，实际**只有几个到几十个存活**（用户提醒）→ 那轮「合并选择器」收益有限，白折腾一轮。**先问「同一时刻有多少个」（存活实体数 / 列表长度 / 调用次数）再动手。**
-- **「只遍历窗口内元素」是最大的剩余优化，但有正确性风险**：`refresh` 必须把全部音符过一遍，其中 99% 只是「看一眼发现不用管」。要跳过它们必须提前知道「每个音符会在播放头前方多久出生」（`note_base_life × 16 / note_speed`，**每个音符可自定义**，本谱面就有 `note_base_life: 24`）。猜小 = **漏渲染音符**。要做只能走「编辑时统计上界并缓存」的安全版（代价：编辑后的刷新 +30%）。**2026-09-14 用户决定暂不做。**
+- **「只遍历窗口内元素」是最大的剩余优化，但有正确性风险**：`refresh` 必须把全部音符过一遍，其中 99% 只是「看一眼发现不用管」。要跳过它们必须提前知道「每个音符会在播放头前方多久出生」（`note_base_life × 16 / note_speed`，**每个音符可自定义**，本谱面就有 `note_base_life: 24`）。猜小 = **漏渲染音符**。要做只能走「编辑时统计上界并缓存」的安全版（代价：编辑后的刷新 +30%）。**2026-09-14 用户决定暂不做。**（2026-09-21 新增的 `vis_lead_max` 就是这里说的「编辑时统计上界并缓存」，代价只有每音符 3 条普通命令；但**目前只喂给播放中的补扫窗口**（见《音符出生顺序》一节），`refresh` 本身仍未跳过任何音符。）
 - **纯移动播放头的刷新可以跳过选区重建**：`refresh` 末尾的 `sel_rebuild` 只在「音符数组可能变化」时才需要。`playback/seek_fwd`、`seek_back`、`menu/jump/jump_start`、`jump_end_`、`menu/progress/click` 都会先设 `prop.refresh_skip_sel=1b`，refresh 用 `execute unless data storage rhythm_axe:prop refresh_skip_sel` 跳过（末尾统一 `data remove`）。**新增这类「只动播放头」的入口时记得带上这一行。**
 - **性能实测口径（bridge）**：① 返回体会带回**函数内每条命令的文本**——大函数（3 万条命令）能到 2.4MB / 0.9s，**那不是真实 mspt**；② 测量值随「当前播放头附近存活音符数」波动（同一份代码实测 0.093 / 0.112 / 0.143 s）→ **只比相对值、取多次最小值；绝对值以玩家 HUD 为准**；③ 服务端上下文里 `@e` 只搜 overworld，要么 `execute as @a[tag=editor_active] at @s run …`，要么 `execute in <维度>`。
 - **改完必查**：`scripts\check_all_macros.ps1`（宏）＋ `/reload` 后看日志有没有 `Failed to load function`（注释行漏写 `#` 会被当命令，脚本查不出来）。
+- **`kill` 不会清计分板项 → 残留会拖垮全局（2026-09-20 实测的重大事故）**：
+  - 计分板项是**按「名字」（实体 UUID 字符串）持久存在**的，实体被 `kill` 后项**不会**自动消失，只能 `scoreboard players reset` 清掉。
+  - 编辑器音符实体的 24 个 `editor_n_*`（birth/time/dist/…/px/py/pz/vx…/sx…）此前**没有任何地方清**；而「kill 全部 + 重建」路径极多：`visual/refresh`（每次编辑）、`exit_do`（退出）、`visual/tick_kill`（**播放时每个音符经过都 kill 一次**）、`summon_` 的 `$kill`（清幽灵副本）。
+  - 后果：该存档堆到 **1 333 190 项 / `scoreboard.dat` 6.75MB / 解压后 104MB**。世界保存（自动保存每 6000 刻，约 5 分钟）要把整份分数板序列化 → **位置不固定、每几分钟一次、不玩谱面也卡的 MSPT 尖峰**（用户实测 max 752ms，日志里还有 2~6 秒的 `Can't keep up!`）。
+  - 排查口径：`saves/<存档>/data/minecraft/scoreboard.dat` 体积（正常应 < 1MB；> 数 MB 即有残留）＋ `script` 里 `scoreboard players reset *` 对照 objective 清单。日记 `[Server thread/INFO]: Saving and pausing game...` 的时间点与 `scoreboard.dat` 的 `LastWriteTime` 对得上，即可确认是保存卡。
+  - **正解**：① 每个 `kill <编辑器音符实体>` 前先 `execute as @e[tag=…] run function rhythm_axe:editor/visual/note_scores_reset_`（`@s` 版清 24 项）；② `utilization/clear_note_scores` 里补 `scoreboard players reset * editor_n_*` 一次性清历史残留（`/reload` 即生效）；③ **新增 `editor_n_*` objective 时这三处（kill 前清、reset 文件、clear_note_scores）必须同步。**
+  - 同类隐患自查：任何「实体 UUID 上挂计分板 + 会 kill/重建」的系统（游玩侧 `note_*` / `note_c_*` / `note_g_*` 已在 `clear_note_scores` 覆盖）都要走同一套。
 - 本轮成绩（供参照）：`refresh` 0.903s → **0.112s**（seek 模式 0.093s）；每音符命令数 ~45 → **~9**；`sel_rebuild` 0.030 → 0.018s。
 

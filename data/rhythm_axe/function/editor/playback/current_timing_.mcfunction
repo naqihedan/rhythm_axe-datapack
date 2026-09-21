@@ -6,6 +6,8 @@ $execute if score #index editor matches 0 if data storage rhythm_axe:maps.editor
 $execute if score #index editor matches 0 if data storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].tpb run data modify storage rhythm_axe:prop tpb set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].tpb
 $execute if score #index editor matches 0 if data storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].bpb run data modify storage rhythm_axe:prop bpb set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].bpb
 $execute if score #index editor matches 0 if data storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].time run data modify storage rhythm_axe:prop time set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].time
+# 判定缩放（编辑器真实判定窗口用）：同样取首个时间点作回退（playhead 早于首时间点/未定义时）
+$execute if score #index editor matches 0 if data storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].judgement_scale run data modify storage rhythm_axe:prop judgement_scale set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[0].judgement_scale
 $execute unless data storage rhythm_axe:maps.editor history[$(cursor)].timing_points[$(index)] run return 0
 $execute store result score #timing_time editor run data get storage rhythm_axe:maps.editor history[$(cursor)].timing_points[$(index)].time
 execute store result score #temp_playhead editor run data get storage rhythm_axe:prop playhead
@@ -14,6 +16,7 @@ $data modify storage rhythm_axe:prop bpm set from storage rhythm_axe:maps.editor
 $data modify storage rhythm_axe:prop tpb set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[$(index)].tpb
 $data modify storage rhythm_axe:prop bpb set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[$(index)].bpb
 $data modify storage rhythm_axe:prop time set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[$(index)].time
+$data modify storage rhythm_axe:prop judgement_scale set from storage rhythm_axe:maps.editor history[$(cursor)].timing_points[$(index)].judgement_scale
 execute store result score #index editor run data get storage rhythm_axe:prop index
 scoreboard players add #index editor 1
 execute store result storage rhythm_axe:prop index int 1 run scoreboard players get #index editor

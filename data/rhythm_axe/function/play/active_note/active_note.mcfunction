@@ -5,12 +5,15 @@
 # M2-D：木板判定（简化版音符盒：无 bad/miss，全转大P）
 # 后续里程碑：其他类型判定 / 反馈组表 / 出窗
 
-# 视线标记清理：looked_at（实际判定，由 judgement/judgement 用 looking_at 打）与
+# 视线标记清理：looked_at（实际判定，★ 2026-09-21 起由 judgement/same_tick 统一打）与
 #   looked_at_perfect（判定保护，由射线步进 raycast 打）每 tick 先清再重新打
 #   （display 的 looked_at 供唱片机视线兜底 jukebox_late 用，也一并清理）
+#   st_hit / st_pass（《同一刻判定限制》的本刻命中与放行标记）同样每刻先清
 tag @e[type=interaction,tag=note_interaction] remove looked_at
 tag @e[type=interaction,tag=note_interaction] remove looked_at_perfect
 tag @e[type=item_display,tag=note_display] remove looked_at
+tag @e[type=interaction,tag=note_interaction] remove st_hit
+tag @e[type=interaction,tag=note_interaction] remove st_pass
 function rhythm_axe:play/active_note/raycast
 
 # 染色玻璃扣血冷却递减（M2-G；>0 时每刻 -1，=0 时碰撞可再次扣血）
@@ -81,6 +84,10 @@ scoreboard players add #proto_high play_state 1
 #     但扣血反馈（damage_feedback → feedback）以交互实体位置 at @s 播放音效/粒子，故玻璃交互实体也须
 #     跟随视觉位置（之前排除导致反馈播在出生位置，玩家看不到/听不到）。每玻璃多 ~30 条命令，可接受。
 execute as @e[type=interaction,tag=note_linear] run function rhythm_axe:play/active_note/move_self
+# ★ 《同一刻判定限制》（2026-09-21）：每刻先算「每位玩家本刻只放行哪一批」，
+#   并顺带打 looked_at（判定 / 保护记录共用）。必须【单次】调用（内部自己遍历玩家与音符）、
+#   且在 interact_judge 之前（命中检测与配额要来自同一份快照；位置已由 move_self 更新到当前刻）。
+function rhythm_axe:play/judgement/same_tick
 execute as @e[type=interaction,tag=note_interaction] at @s run function rhythm_axe:play/active_note/interact_judge
 
 # ★ 2026-08-29 spawn / tick 事件：

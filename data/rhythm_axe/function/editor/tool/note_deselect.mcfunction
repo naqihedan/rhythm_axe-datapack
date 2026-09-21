@@ -3,6 +3,9 @@ advancement revoke @s only rhythm_axe:editor/note_deselect
 execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][右键]","color":"gray"},{"text":" 奖励函数已触发","color":"green"}]
 execute unless entity @s[tag=editor_active] run execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][右键]","color":"gray"},{"text":" 非 editor_active","color":"red"}]
 execute unless entity @s[tag=editor_active] run return fail
+# ★ 真实判定（试听）：播放中 + 判定模式 → 右键也转交判定输入（不进入取消选中流程）
+execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} run function rhythm_axe:editor/judge/input_click
+execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} run return fail
 # 捕获玩家 UUID
 data modify storage rhythm_axe:prop deselect_player_uuid set from entity @s UUID
 execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][右键]","color":"gray"},{"text":" 已捕获玩家UUID，遍历交互实体","color":"green"}]

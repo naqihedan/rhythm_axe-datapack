@@ -16,6 +16,10 @@ execute if data storage rhythm_axe:runtime hit_events run data remove storage rh
 # 其它根字段（id/title/.../teleport/spawn_pos 等）由 merge 覆盖，无需逐个清
 $data modify storage rhythm_axe:runtime {} merge from storage rhythm_axe:maps.$(mapid)
 $data modify storage rhythm_axe:runtime mapid set value "$(mapid)"
+# ===== 音乐预热（越早越好）=====
+# ★ 2026-09-19：从 init_game 末尾提前到这里（谱面刚 merge 完就发），让后台解码与后续初始化并行
+#   见 start_of_game/preload_music.mcfunction；谱面无 music 字段则不预热
+execute if data storage rhythm_axe:runtime music run function rhythm_axe:play/start_of_game/preload_music with storage rhythm_axe:runtime
 # 谱面格式校验（雏形；方案 B = 只警告、不阻止开局）
 # ★ 必须放在 spawn_x/y/z 兜底之前：否则"teleport 为真但缺 spawn_x"判不出来（已被兜底成 0.0）
 function rhythm_axe:play/map_check

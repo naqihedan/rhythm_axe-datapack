@@ -142,7 +142,7 @@ scoreboard players operation #t2 display_calc *= #dir_z play_state
 scoreboard players operation #d2 display_calc += #t2 display_calc
 scoreboard players operation #sqrt_sq display_calc = #d2 display_calc
 function rhythm_axe:utilization/math/sqrt
-# 保存 3D dist 到专用变量（#sqrt_out 后面会被混凝土 marker 段等覆盖；普通/玻璃后续用 #note_dist）
+# 保存 3D dist 到专用变量（#sqrt_out 后面会被混凝土远近标记段等覆盖；普通/玻璃后续用 #note_dist）
 scoreboard players operation #note_dist display_calc = #sqrt_out display_calc
 # 混凝土长条：scale.z = 长条长度 = 3D距离×duration/note_base_life / size（格数）
 execute if score #note_type play_state matches 3 run scoreboard players operation #L100 display_calc = #sqrt_out display_calc
@@ -371,18 +371,17 @@ $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)
 # 单段（seg_count==1）时首段=末段，seg_end = -duration（按末段处理，保护2/推进均适用）
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score @s note_c_seg_count matches 1 run scoreboard players operation @s note_c_seg_end = @s note_c_dur
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score @s note_c_seg_count matches 1 run scoreboard players operation @s note_c_seg_end *= -1 const
-# ===== 混凝土判定区域 marker =====
+# ===== 混凝土判定区域：远近标记（★ 2026-09-21 去掉 note_c_zone marker）=====
 # 判定区域（不受 size 影响）：
-#   水平距离 > 1：判定点沿前进方向 4 格长、1 格宽；竖直以判定点为中心上下各 4 格（2026-09-16 起对称）
-#   水平距离 ≤ 1：水平以判定点为中心 3×3；竖直从判定点向上 4 格
-# 水平距离 > 1：marker 在判定点 + Rotation(yaw)=运动方向，检测时用本地 ^ 逐格探 4 格
-# 水平距离 ≤ 1：marker 在判定点，检查 3 宽 × 4 高 × 3 深
-# marker yaw（实体）= atan2(-dir_x, dir_z)（#num = -dir_x = start_x，#den = dir_z = -start_z）
-scoreboard players operation #num display_calc = #dir_x play_state
-scoreboard players operation #num display_calc *= -1 const
-scoreboard players operation #den display_calc = #dir_z play_state
-execute if score #note_type play_state matches 3 run function rhythm_axe:utilization/math/atan2
-# 水平距离（×100）
+#   远（水平距离 > 1 格）：判定点沿前进方向 4 格长、1 格宽；竖直以判定点为中心上下各 4 格（2026-09-16 起对称）
+#   近（水平距离 ≤ 1 格）：水平以判定点为中心 3×3；竖直从判定点向上 4 格
+# ★ 不再生成 marker：判定位置/朝向直接用配对展示实体自身——
+#   Pos 恒定 = 判定位置（见 play/note/concrete/tick 的 note_base_* 快照）、
+#   Rotation[0] = 运动方向 yaw、Rotation[1] = pitch（见上方「实体 Rotation 朝向」段）
+#   检测时 at @s rotated ~ 0 把 pitch 归零，等价旧 marker 的 Rotation:[yaw,0f]
+# ★ 远近在生成时定死（两种判定几何不同），只写一个标记 note_c_far 到展示实体（1=远，0=近）
+#   —— 与旧版「生成时决定 summon 哪种 marker」语义完全一致，判定侧零额外每刻开销
+# 水平距离（×100）= sqrt(dir_x² + dir_z²)
 execute if score #note_type play_state matches 3 run scoreboard players operation #hz2 display_calc = #dir_x play_state
 execute if score #note_type play_state matches 3 run scoreboard players operation #hz2 display_calc *= #dir_x play_state
 execute if score #note_type play_state matches 3 run scoreboard players operation #hzz display_calc = #dir_z play_state
@@ -390,17 +389,8 @@ execute if score #note_type play_state matches 3 run scoreboard players operatio
 execute if score #note_type play_state matches 3 run scoreboard players operation #hz2 display_calc += #hzz display_calc
 execute if score #note_type play_state matches 3 run scoreboard players operation #sqrt_sq display_calc = #hz2 display_calc
 execute if score #note_type play_state matches 3 run function rhythm_axe:utilization/math/sqrt
-# 生成 marker（判定位置）；远距离 note_c_zone（^ 探格），近距离 note_c_zone_near（3×3×3）
-# ★ 同展示实体：宏整数坐标会对齐方块中心 → summon 到原点后 data modify 写精确 Pos
-$execute if score #note_type play_state matches 3 if score #sqrt_out display_calc matches 101.. run summon marker 0.0 0.0 0.0 {Tags:["note","note_c_zone","$(mapid)_n$(id)_zone","map_$(mapid)"],Rotation:[0f,0f]}
-$execute if score #note_type play_state matches 3 if score #sqrt_out display_calc matches ..100 run summon marker 0.0 0.0 0.0 {Tags:["note","note_c_zone_near","$(mapid)_n$(id)_zone","map_$(mapid)"],Rotation:[0f,0f]}
-# ★ 2026-09-04 修复：同展示实体，data modify entity Pos 写入失效 → 改 store result entity Pos（复用 #dspx/y/z 判定位置）
-$execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[0] double 0.01 run scoreboard players get #dspx play_state
-$execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[1] double 0.01 run scoreboard players get #dspy play_state
-$execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Pos[2] double 0.01 run scoreboard players get #dspz play_state
-# marker 设置 yaw（Rotation[0]，度×100 → float 0.01）与 note_id（配对检测/删除）
-$execute if score #note_type play_state matches 3 run execute store result entity @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] Rotation[0] float 0.01 run scoreboard players get #atan_deg100 display_calc
-$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id)_zone,type=marker,limit=1] run scoreboard players set @s note_id $(id)
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_c_far 0
+$execute if score #note_type play_state matches 3 if score #sqrt_out display_calc matches 101.. run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_c_far 1
 # 判定保护状态与记录寿命初始化（M2-C）；note_recorded_life 用 -1 表示“无记录”
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_protect 0
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_recorded_life -1

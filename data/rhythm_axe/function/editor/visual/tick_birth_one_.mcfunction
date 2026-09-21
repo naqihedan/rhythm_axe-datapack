@@ -1,5 +1,5 @@
 # 播放新出生单个音符：读字段算出生/结束/进度
-# 已到出生（playhead >= birth）→ tick_birth_go_（生成+继续）；已消失 → tick_birth_next_（跳过推进）；未出生 → 停
+# 出生当刻（playhead == birth）→ tick_birth_go_（生成+继续）；已过出生刻 → tick_birth_next_（只推进）；未出生 → 停
 #arg: cursor, note_idx
 $execute store result score #n_time editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].time
 $execute store result score #n_type editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].type
@@ -29,6 +29,8 @@ execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run s
 execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor /= note_speed options
 execute if score #n_type editor matches 4 run scoreboard players operation #n_end editor += #glass_end editor
 execute if score #n_type editor matches 4 run scoreboard players add #n_end editor 1
+# ★ 真实判定模式：普通音符（0..2）窗口延长到 miss 时刻（time+2x+1）——判定期间音符要留在世界里
+function rhythm_axe:editor/judge/window_extend
 # density（混凝土判定密度；缺省 8）
 scoreboard players set #n_density editor 8
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].density run execute store result score #n_density editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].density
@@ -42,6 +44,9 @@ execute if score #den editor matches 1.. run scoreboard players operation #prog 
 execute if score #den editor matches ..0 run scoreboard players set #prog editor 1000
 execute if score #prog editor matches ..0 run scoreboard players set #prog editor 0
 execute if score #prog editor matches 1001.. run scoreboard players set #prog editor 1000
-# 分支：存活→生成+继续；已消失→跳过推进；未出生→停（游标留在当前 idx）
-execute if score #playhead editor >= #n_birth editor if score #playhead editor <= #n_end editor run function rhythm_axe:editor/visual/tick_birth_go_ with storage rhythm_axe:prop
-execute if score #playhead editor > #n_end editor run function rhythm_axe:editor/visual/tick_birth_next_ with storage rhythm_axe:prop
+# 分支（2026-09-21 改语义）：出生当刻 → 生成+推进；已过出生刻 → 只推进；未出生 → 停（游标留在当前 idx）
+#   ★ 为什么「已过出生刻」只推进而不生成：该音符要么已消失，要么已由视觉补扫（scan_due）在其出生当刻 / seek 的
+#     refresh 生成过 —— 以前这里用 `playhead >= birth` 会把补扫已生成的音符**重复召唤**（重置判定状态）。
+#   ★ 与 scan_due 的分工：游标只负责队首这一个音符的「出生当刻」，队首之后各音符由 scan_due 认各自的 birth == playhead。
+execute if score #playhead editor = #n_birth editor run function rhythm_axe:editor/visual/tick_birth_go_ with storage rhythm_axe:prop
+execute if score #playhead editor > #n_birth editor run function rhythm_axe:editor/visual/tick_birth_next_ with storage rhythm_axe:prop

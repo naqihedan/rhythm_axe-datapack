@@ -1,5 +1,11 @@
 #arg:cursor
 # 组装播放参数并开始（prop：music/tick/speed/bpm/tpb 已就绪）
+# ★ 游玩测试：虚拟血量/连击 —— 每次开始播放（含暂停后继续）回满、连击归零，模拟游玩一局
+#   满值取工作副本 health（与游玩 init_game 读 runtime.health 同源；新建谱面默认 10）
+scoreboard players set #ed_health editor 0
+$execute store result score #ed_health editor run data get storage rhythm_axe:maps.editor history[$(cursor)].health
+execute if score #ed_health editor matches ..0 run scoreboard players set #ed_health editor 10
+scoreboard players set #ed_combo editor 0
 # 清延迟音乐标记残留
 data remove storage rhythm_axe:editor.runtime music_wait
 data remove storage rhythm_axe:editor.runtime music_wait_music

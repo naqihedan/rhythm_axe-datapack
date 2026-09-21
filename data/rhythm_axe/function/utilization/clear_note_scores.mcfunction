@@ -27,6 +27,20 @@ scoreboard players reset * note_base_y
 scoreboard players reset * note_base_z
 scoreboard players reset * note_half_size
 scoreboard players reset * note_cur_tz
+# ============ 引导线实体（note_guide_*；原先漏清，实体 kill 后计分项不会自动消失） ============
+scoreboard players reset * note_guide_a
+scoreboard players reset * note_guide_b
+scoreboard players reset * note_guide_x
+scoreboard players reset * note_guide_y
+scoreboard players reset * note_guide_z
+scoreboard players reset * note_guide_sx
+scoreboard players reset * note_guide_sy
+scoreboard players reset * note_guide_sz
+scoreboard players reset * note_guide_tp
+scoreboard players reset * note_guide_n
+scoreboard players reset * note_guide_px
+scoreboard players reset * note_guide_py
+scoreboard players reset * note_guide_pz
 # ============ 交互/点击 ============
 scoreboard players reset * interacted
 # ============ 阶段C 线性客户端插值 ============
@@ -68,3 +82,40 @@ scoreboard players reset * note_glass_dur
 scoreboard players reset * note_hitsound
 scoreboard players reset * note_hit_particles
 scoreboard players reset * note_color
+# ============ 编辑器音符视觉（editor_n_*，挂编辑器音符实体 UUID） ============
+# ★ 2026-09-20 新增：这些项此前【没有任何地方清】。残留累计到 1 333 190 项 → scoreboard.dat 6.75MB
+#   （解压 104MB），世界保存要序列化整份分数板 → 每几分钟一次 MSPT 尖峰（不玩谱面也卡）。
+#   各类 kill 点已改为「kill 前先清」（见 editor/visual/note_scores_reset_）；这里负责一次性清掉历史残留。
+# ★ 必须在【无编辑器音符活动】时调用（reload / 游戏结束）。load 里调用后若编辑器仍 active 会立刻 refresh 重建。
+# ★ 新增 editor_n_* objective 时，此处与 editor/visual/note_scores_reset_.mcfunction 必须同步。
+scoreboard players reset * editor_n_birth
+scoreboard players reset * editor_n_time
+scoreboard players reset * editor_n_end
+scoreboard players reset * editor_n_dist
+scoreboard players reset * editor_n_type
+scoreboard players reset * editor_n_dur
+scoreboard players reset * editor_n_density
+scoreboard players reset * editor_n_lt
+scoreboard players reset * editor_n_easing
+scoreboard players reset * editor_n_power
+scoreboard players reset * editor_n_len
+scoreboard players reset * editor_n_seg
+scoreboard players reset * editor_n_seg_count
+scoreboard players reset * editor_n_size
+scoreboard players reset * editor_n_protect
+scoreboard players reset * editor_n_rec_life
+scoreboard players reset * editor_n_hit
+scoreboard players reset * editor_n_c_last
+scoreboard players reset * editor_n_idx
+scoreboard players reset * editor_n_px
+scoreboard players reset * editor_n_py
+scoreboard players reset * editor_n_pz
+scoreboard players reset * editor_n_vx
+scoreboard players reset * editor_n_vy
+scoreboard players reset * editor_n_vz
+scoreboard players reset * editor_n_sx
+scoreboard players reset * editor_n_sy
+scoreboard players reset * editor_n_sz
+scoreboard players reset * editor_n_vvx
+scoreboard players reset * editor_n_vvy
+scoreboard players reset * editor_n_vvz

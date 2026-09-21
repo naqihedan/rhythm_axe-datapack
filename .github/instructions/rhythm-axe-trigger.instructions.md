@@ -1,11 +1,23 @@
 ---
-description: "rhythm_axe 编辑器按钮（trigger editor_click 值）编号规范与新增/修改流程。Use when: 新增编辑器按钮、修改/迁移 trigger 值、动 panelN 守卫或分支、改编辑器的 trigger 表。"
+description: "rhythm_axe 按钮（trigger 值）编号规范与新增/修改流程（编辑器 editor_click / 菜单系统 menu_click）。Use when: 新增编辑器或菜单按钮、修改/迁移 trigger 值、动 panelN 守卫或分支、改 trigger 表。"
 applyTo: "**/data/rhythm_axe/**"
 ---
 
 # rhythm_axe 编辑器按钮（trigger 值）规范
 
 > 权威文档：`节奏地图开发文档/编辑器.md` 的《trigger值》一节（完整号段总表 / 列码约定 / 新增按钮 checklist / 常见坑 / 迁移记录）。**动手前先读它**，本文件只是硬约束摘要。
+
+## ⚠️ 菜单系统例外（不走 `editor_click`）
+
+聊天栏**菜单 UI**（目前 = 谱面总表，代码在 `map_list/`）**独立于编辑器**，走自己的一套：
+
+| 项 | 编辑器 | 菜单系统 |
+| --- | --- | --- |
+| 触发计分板 | `editor_click` | **`menu_click`**（`load.mcfunction` 里 `add` + `enable @a`；按钮写 `/trigger menu_click set <值>`） |
+| 检测 / 分发 | `tick` → `editor/menu/consume` | `tick` → **`menu/consume`**（临时分数存分数板 `menu`，不是 `editor`）|
+| 守卫/分支位置 | `editor/menu/panel/panelN.mcfunction` | 该页面自己的 **`map_list/panel/panelN.mcfunction`** |
+
+**给菜单系统加/改按钮时，把下文所有 `editor_click` 换成 `menu_click`、`#click_value editor` 换成 `#menu_value menu`、面板路径换成页面自己的。**
 
 ## 核心规则
 

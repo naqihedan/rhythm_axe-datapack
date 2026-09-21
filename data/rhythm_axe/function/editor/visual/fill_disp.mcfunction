@@ -85,6 +85,24 @@ scoreboard players operation @s editor_n_density = #n_density editor
 execute if score #note_type play_state matches 3 if score #playhead editor < #n_time editor run scoreboard players set @s editor_n_seg 1
 execute if score #note_type play_state matches 3 if score #playhead editor >= #n_time editor run scoreboard players operation @s editor_n_seg = #seg_calc editor
 execute if score #note_type play_state matches 3 run scoreboard players operation @s editor_n_seg_count = #seg_cnt editor
+# 判定保护状态初始化（真实判定模式用；0=未保护，-1 = “无记录”哨兵）
+#   实际写入保护/记录的是 editor/judge/protect；这里只保证每个新实体都有初值（防上一轮同 UUID 残留）
+scoreboard players set @s editor_n_protect 0
+scoreboard players set @s editor_n_rec_life -1
+scoreboard players set @s editor_n_hit 0
+# 段进度预置（★ 2026-09-21，用户报告）：seek / 快进快退刷新重建时，必须按播放头把【播放头之前的段】标记为已判完，
+#   否则 editor_n_c_last 归 0 ⇒ 一按播放就从第 1 段起逐刻补判（实测：暂停 → 快退一刻刷新 → 播放 ⇒ 连续好几刻判）。
+#   段 k 判完 ⟺ elapsed = playhead − time ≥ min(k×density, dur) ⇒ c_last = floor(elapsed / density)；
+#   elapsed ≥ dur 时所有段都已过去 ⇒ 直接取 seg_count。（非混凝土保持 0，不受影响）
+scoreboard players set @s editor_n_c_last 0
+execute if score #note_type play_state matches 3 run scoreboard players operation #c_seg editor = #playhead editor
+execute if score #note_type play_state matches 3 run scoreboard players operation #c_seg editor -= #n_time editor
+execute if score #note_type play_state matches 3 if score #c_seg editor matches 1.. run scoreboard players operation @s editor_n_c_last = #c_seg editor
+execute if score #note_type play_state matches 3 if score #c_seg editor matches 1.. run scoreboard players operation @s editor_n_c_last /= #n_density editor
+execute if score #note_type play_state matches 3 if score #c_seg editor >= @s editor_n_dur run scoreboard players operation @s editor_n_c_last = #seg_cnt editor
+scoreboard players set @s editor_n_vvx 0
+scoreboard players set @s editor_n_vvy 0
+scoreboard players set @s editor_n_vvz 0
 # 玻璃段①时长也随流速缩放（×16/note_speed，ignore 除外；#glass_lt 由 summon_ 算）
 scoreboard players operation @s editor_n_lt = #glass_lt editor
 scoreboard players operation @s editor_n_easing = #n_easing editor

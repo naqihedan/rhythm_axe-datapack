@@ -22,7 +22,8 @@ execute if score #level play_state matches 4 run function rhythm_axe:play/judgem
 execute if score #level play_state matches 5 run function rhythm_axe:play/judgement_feedback/good_late
 execute if score #level play_state matches 6 run function rhythm_axe:play/judgement_feedback/miss
 
-# 删除音符对（交互实体 @s + 配对的展示实体 + 判定区域 marker；展示实体兼作完美判定区域代表）
+# 删除音符对（交互实体 @s + 配对的展示实体 + 玻璃中心 marker；展示实体兼作完美判定区域代表）
+#   （★ 2026-09-21 混凝土已无 note_c_zone marker）
 # 先记录 note_id，再杀配对实体
 # ★ 先用 note_id 配对打 tag，再 reset+kill：直接 reset 会清掉 note_id，导致后续 kill 配对失效（展示实体残留）
 scoreboard players operation #nid play_state = @s note_id
@@ -34,8 +35,6 @@ execute as @e[tag=note_display] if score @s note_id = #nid play_state run tag @s
 #   仅当当前被判定/清除的音符是 guide 的尾端（note_guide_b）时才清理；
 #   前一个音符不再触发强制清理，允许收缩逻辑自然消失。
 execute as @e[type=item_display,tag=note_guide] if score @s note_guide_b = #nid play_state run tag @s add note_to_clear
-execute as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state run tag @s add note_to_clear
-execute as @e[type=marker,tag=note_c_zone_near] if score @s note_id = #nid play_state run tag @s add note_to_clear
 execute as @e[type=marker,tag=note_glass_center] if score @s note_id = #nid play_state run tag @s add note_to_clear
 tag @s add note_to_clear
 # reset 清计分板分数（本版本实体删除不自动清分；note_id 也被清，但已用 tag 配对）

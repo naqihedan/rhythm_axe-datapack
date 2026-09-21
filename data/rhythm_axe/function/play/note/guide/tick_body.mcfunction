@@ -94,6 +94,11 @@ scoreboard players operation #offz play_state /= 1000 const
 scoreboard players operation #offz play_state /= 2 const
 scoreboard players operation #mz play_state = #bz play_state
 scoreboard players operation #mz play_state += #offz play_state
+# ★ 锚点（2026-09-21）：translation 是【相对实体 Pos】的偏移 → 减掉锚点（note_guide_px/py/pz = 实体 Pos×100）
+#   （实体 Pos 由 spawn 锚在 A 端判定位置；不减就会把线推到世界坐标 + 锚点 的错位处）
+scoreboard players operation #mx play_state -= @s note_guide_px
+scoreboard players operation #my play_state -= @s note_guide_py
+scoreboard players operation #mz play_state -= @s note_guide_pz
 # ---- 写 storage（translation/left_rotation/right_rotation/scale 全组装）----
 data modify storage rhythm_axe:guide transformation set value {translation:[0.0d,0.0d,0.0d],left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.15f,0.15f,0.01f]}
 execute store result storage rhythm_axe:guide transformation.translation[0] double 0.01 run scoreboard players get #mx play_state

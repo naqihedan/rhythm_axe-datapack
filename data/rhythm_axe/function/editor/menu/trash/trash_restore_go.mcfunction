@@ -41,5 +41,7 @@ $data modify storage rhythm_axe:maps.$(mapid) {} merge from storage rhythm_axe:m
 $data modify storage rhythm_axe:maps.$(mapid) id set value "$(mapid)"
 $data remove storage rhythm_axe:maps.$(mapid) mapid
 $data remove storage rhythm_axe:maps trash[$(index)]
+# ★ 2026-09-19 谱面索引入队：还原 = 重新出现在大厅【谱面总表】里
+$function rhythm_axe:maps/index/index_add {mapid:"$(mapid)"}
 $tellraw @s [{"text":"已还原谱面","color":"green"},{"text":"$(mapid)","color":"aqua"}]
 function rhythm_axe:editor/menu/trash/trash_panel_open

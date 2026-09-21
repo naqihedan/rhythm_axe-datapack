@@ -6,6 +6,8 @@
 
 # ★ 2026-09-04 防"原点幽灵"：播放路径（tick_birth_go_ 宏递归）可能重复 summon 同一音符，导致未配置的重复副本堆积
 #   （副本没有 editor_n_type/Pos，停在原点、默认音符盒贴图）。生成前先清掉同名旧实体，保证每个 note_id 只有一份且被正确配置。
+# ★ 2026-09-20：清幽灵副本前也要清它的 editor_n_* 计分项（kill 不清计分板项，详见 note_scores_reset_）
+$execute as @e[tag=editor_n_$(nid)] run function rhythm_axe:editor/visual/note_scores_reset_
 $kill @e[tag=editor_n_$(nid)]
 
 # ===== 朝向：dir = -start_pos（运动方向 = 出生→判定）=====

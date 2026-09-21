@@ -97,6 +97,12 @@ scoreboard objectives add note_guide_sz dummy
 # 引导线时间参数（note_guide_tp = 前一个音符判定时刻、note_guide_n = 两音符判定时刻差）
 scoreboard objectives add note_guide_tp dummy
 scoreboard objectives add note_guide_n dummy
+# 引导线实体自身 Pos 锚点（×100）：transformation.translation 写「世界中点 − 锚点」。
+# ★ 引导线 Pos 必须落在它自己（=玩家附近）身上：展示实体只有被客户端【追踪】才会更新，
+#   停在世界原点的实体即使区块【强加载】也不会更新（2026-09-21 起锚在 A 端判定位置）。
+scoreboard objectives add note_guide_px dummy
+scoreboard objectives add note_guide_py dummy
+scoreboard objectives add note_guide_pz dummy
 # 音符判定时刻（每个音符展示实体/交互实体存储自己的 data.time；引导线用）
 scoreboard objectives add note_time dummy
 # 音符实体配对用（展示实体与交互实体各存自己的 note_id）
@@ -170,7 +176,8 @@ scoreboard objectives add note_c_seg1_dur dummy
 scoreboard objectives add note_c_seg1_ticks dummy
 # 混凝土判定状态（交互实体存储，M2-F 段落判定）
 #   note_c_density = density；note_c_dur = duration；note_c_seg_done = 当前段是否已判；
-#   note_c_seg_end = 当前段结束寿命；note_c_seg_idx = 当前段索引；note_c_done = 全部段完成
+#   note_c_seg_end = 当前段结束寿命；note_c_seg_idx = 当前段索引；note_c_done = 全部段完成；
+#   note_c_far = 判定区域远近标记（展示实体存储；1 = 水平距离 > 1 格，0 = ≤ 1 格。2026-09-21 去 marker 后新增）
 scoreboard objectives add note_c_density dummy
 scoreboard objectives add note_c_dur dummy
 scoreboard objectives add note_c_seg_done dummy
@@ -178,6 +185,7 @@ scoreboard objectives add note_c_seg_end dummy
 scoreboard objectives add note_c_seg_idx dummy
 scoreboard objectives add note_c_seg_count dummy
 scoreboard objectives add note_c_done dummy
+scoreboard objectives add note_c_far dummy
 # 染色玻璃持续时长（交互实体存储，M2-G 出窗：寿命 + duration <= 0 → 清除）
 scoreboard objectives add note_glass_dur dummy
 # 判定反馈组号（交互实体存储，M2-H 查表：note_hitsound / note_hit_particles = 音效/粒子组编号）
@@ -215,6 +223,13 @@ gamerule max_command_sequence_length 1000000
 #====================编辑器====================
 # 编辑器运行时计分板（#playhead/#play_speed/#metronome/#history_cursor/#timeline_length 镜像 maps.editor）
 scoreboard objectives add editor dummy
+# 编辑器判定缩放镜像（#ed_scale：真实判定窗口用；由 visual/refresh 的 judge/scale_sync 与 playback/advance_ 维护）
+#   此处兜底为 1，避免"刚进编辑器还没 refresh"时窗口为 0 → 音符一出生就被判 miss
+scoreboard players set #ed_scale editor 1
+# ★ 新增设置项兜底：options.editor_note_judge（编辑器试听＝音符真实判定）默认开。
+#   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故必须在此兜底；
+#   仅在未定义时写入，不覆盖玩家在【判定：开/关】按钮上的改动
+execute unless score editor_note_judge options matches 0..1 run scoreboard players set editor_note_judge options 1
 # 编辑器音符展示实体参数（visual/：place/tick 按实体读；每个字段一个 objective，与游玩 note_c_* 同模式）
 scoreboard objectives add editor_n_birth dummy
 scoreboard objectives add editor_n_time dummy
@@ -231,6 +246,13 @@ scoreboard objectives add editor_n_seg dummy
 scoreboard objectives add editor_n_seg_count dummy
 scoreboard objectives add editor_n_size dummy
 scoreboard objectives add editor_n_idx dummy
+# 编辑器判定保护（真实判定模式；0=未保护 1=保护中）与保护期记录的寿命（哨兵 -1 = 无记录）
+#   照搬游玩 note_protect / note_recorded_life（见 editor/judge/protect）
+scoreboard objectives add editor_n_protect dummy
+scoreboard objectives add editor_n_rec_life dummy
+scoreboard objectives add editor_n_hit dummy
+scoreboard objectives add editor_n_c_last dummy
+# 玻璃判定（2026-09-21）：vvx/vvy/vvz = 上一刻视觉中心×1000（CCD 扫掠起点）；命中冷却改用 editor 假玩家 #ed_g_cd
 # 编辑器音符判定位置与起始偏移（place 算交互实体世界坐标用；×1000）
 scoreboard objectives add editor_n_px dummy
 scoreboard objectives add editor_n_py dummy
@@ -238,12 +260,19 @@ scoreboard objectives add editor_n_pz dummy
 scoreboard objectives add editor_n_vx dummy
 scoreboard objectives add editor_n_vy dummy
 scoreboard objectives add editor_n_vz dummy
+scoreboard objectives add editor_n_vvx dummy
+scoreboard objectives add editor_n_vvy dummy
+scoreboard objectives add editor_n_vvz dummy
 scoreboard objectives add editor_n_sx dummy
 scoreboard objectives add editor_n_sy dummy
 scoreboard objectives add editor_n_sz dummy
 # 编辑器聊天栏点击通道（trigger 类型：点击 run_command 执行 /trigger 不弹确认窗）
 scoreboard objectives add editor_click trigger
 scoreboard players enable @a editor_click
+# 菜单系统（聊天栏菜单 UI，独立于编辑器与游玩系统）：自己的 trigger 通道 + 临时分数板 menu
+scoreboard objectives add menu dummy
+scoreboard objectives add menu_click trigger
+scoreboard players enable @a menu_click
 # 编辑器音符交互实体点击检测（时间戳）用
 scoreboard objectives add nc_last_right dummy
 scoreboard objectives add nc_last_attack dummy
@@ -256,6 +285,11 @@ bossbar set rhythm_axe:editor_progress visible false
 # 重进存档提示：编辑器状态持久化在命令存储，未正常退出时提醒
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor active
 execute if score #temp editor matches 1 run function rhythm_axe:editor/load_notice
+
+# 大厅（谱面总表）是聊天栏面板级的临时 UI：reload 后清掉（聊天栏旧按钮失效、不再响应）
+data remove storage rhythm_axe:map_list open
+data remove storage rhythm_axe:map_list panel
+data remove storage rhythm_axe:map_list page
 
 #====================残留实体清理（★ 修复 2026-08-08）====================
 # reload 会重置 storage/计分板/schedule，但【不会清实体】。若 reload 前游戏进行中/未正常结束，

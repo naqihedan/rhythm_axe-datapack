@@ -105,11 +105,11 @@ data merge storage rhythm_axe:feedback { \
             spawn: "", \
             tick: "", \
             bad: "", \
-            good_early: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect_early: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect_late: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            good_late: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
+            good_early: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect_early: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect_late: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            good_late: "particle minecraft:block{block_state:\"minecraft:note_block\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
             miss: "", \
             damage: "" \
         }, \
@@ -117,11 +117,11 @@ data merge storage rhythm_axe:feedback { \
             spawn: "", \
             tick: "", \
             bad: "", \
-            good_early: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect_early: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect_late: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            good_late: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
+            good_early: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect_early: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect_late: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            good_late: "particle minecraft:block{block_state:\"minecraft:birch_planks\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
             miss: "", \
             damage: "" \
         }, \
@@ -129,11 +129,11 @@ data merge storage rhythm_axe:feedback { \
             spawn: "", \
             tick: "", \
             bad: "", \
-            good_early: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect_early: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            perfect_late: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
-            good_late: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 100 force @a", \
+            good_early: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect_early: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            perfect_late: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
+            good_late: "particle minecraft:block{block_state:\"minecraft:jukebox\"} ~ ~ ~ 0.3 0.3 0.3 0 50 force @a", \
             miss: "", \
             damage: "" \
         }, \
@@ -187,3 +187,5 @@ data merge storage rhythm_axe:feedback { \
         } \
     ] \
 }
+
+tellraw @a {"text":"已将粒子与音效反馈替换为默认"}

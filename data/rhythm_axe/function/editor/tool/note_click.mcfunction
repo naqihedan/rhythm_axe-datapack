@@ -2,6 +2,10 @@ advancement revoke @s only rhythm_axe:editor/note_click
 execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][左键]","color":"gray"},{"text":" 奖励函数已触发","color":"green"}]
 execute unless entity @s[tag=editor_active] run execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][左键]","color":"gray"},{"text":" 非 editor_active","color":"red"}]
 execute unless entity @s[tag=editor_active] run return fail
+# ★ 真实判定（试听）：播放中 + 判定模式 → 左键转交判定输入（不进入选中/开面板流程）
+#   （判定输入只在唱片机上有效；其他类型点击被忽略，见 judge/input_click）
+execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} run function rhythm_axe:editor/judge/input_click
+execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} run return fail
 # 判定位置偏移模式：Shift+左键 且 暂停（playing==0）→ #click_offset_mode=1
 scoreboard players set #click_offset_mode editor 0
 execute if entity @s[predicate=rhythm_axe:sneaking] if data storage rhythm_axe:maps.editor {playing:0b} run scoreboard players set #click_offset_mode editor 1

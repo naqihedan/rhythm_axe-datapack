@@ -6,7 +6,7 @@
 #     · 线性（power=1，默认）：客户端插值（seg1_client → seg1_merge → seg2_client → seg3_client）
 #       —— 本文件只负责「段推进阈值 + 头端进度」，不写 NBT
 #     · 非线性（power≠1）：本文件每刻调 concrete/drive 直接写 NBT（drive 同时写好 #hp）
-# 头端进度 hp（0..lt，单位刻）：头端偏移 = dir×hp/lt（混凝土判定走 marker 区域，不依赖交互实体位置）
+# 头端进度 hp（0..lt，单位刻）：头端偏移 = dir×hp/lt（混凝土判定走展示实体自身 Pos 的判定区域，不依赖交互实体位置）
 
 # ---- 进度 t = lt - l + 2（渲染延迟 2 刻）----
 scoreboard players operation #cl play_state = @s note_life

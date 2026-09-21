@@ -110,6 +110,11 @@ scoreboard players operation #offz editor /= 1000 const
 scoreboard players operation #offz editor /= 2 const
 scoreboard players operation #mz editor = #bz editor
 scoreboard players operation #mz editor += #offz editor
+# ★ 锚点（2026-09-21）：translation 是【相对实体 Pos】的偏移 → 减掉锚点（note_guide_px/py/pz = 实体 Pos×100）
+#   （实体 Pos 由 guide_spawn_ 锚在 A 端判定位置；不减就会把线推到世界坐标 + 锚点 的错位处）
+scoreboard players operation #mx editor -= @s note_guide_px
+scoreboard players operation #my editor -= @s note_guide_py
+scoreboard players operation #mz editor -= @s note_guide_pz
 # 写入 transformation，长度 = #glen
 data modify storage rhythm_axe:editor_guide transformation set value {translation:[0.0d,0.0d,0.0d],left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.15f,0.15f,0.01f]}
 execute store result storage rhythm_axe:editor_guide transformation.translation[0] double 0.01 run scoreboard players get #mx editor

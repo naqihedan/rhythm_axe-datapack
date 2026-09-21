@@ -13,6 +13,9 @@ function rhythm_axe:editor/playback/current_timing
 execute store result score #cur_bpm editor run data get storage rhythm_axe:prop bpm 1000
 execute store result score #cur_tpb editor run data get storage rhythm_axe:prop tpb
 execute store result score #cur_bpb editor run data get storage rhythm_axe:prop bpb
+# 判定缩放（编辑器真实判定用）：同步本刻所在时间点的 judgement_scale → #ed_scale（缺省 1）
+scoreboard players set #ed_scale editor 1
+execute if data storage rhythm_axe:prop judgement_scale run execute store result score #ed_scale editor run data get storage rhythm_axe:prop judgement_scale
 execute store result score #cur_time editor run data get storage rhythm_axe:prop time
 execute unless score #cur_bpm editor = #rate_bpm editor run function rhythm_axe:editor/playback/rate_update
 execute unless score #cur_tpb editor = #rate_tpb editor run function rhythm_axe:editor/playback/rate_update
@@ -22,6 +25,7 @@ data remove storage rhythm_axe:prop bpm
 data remove storage rhythm_axe:prop tpb
 data remove storage rhythm_axe:prop bpb
 data remove storage rhythm_axe:prop time
+data remove storage rhythm_axe:prop judgement_scale
 data remove storage rhythm_axe:prop index
 data remove storage rhythm_axe:prop playhead
 data remove storage rhythm_axe:prop cursor

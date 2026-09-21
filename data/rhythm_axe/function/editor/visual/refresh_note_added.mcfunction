@@ -15,6 +15,9 @@
 # ⚠️ 中段插入（insert 模式）不走这里，仍走全量 refresh（create 里分流）。
 # ① 同步播放头（spawn 分支只看 #playhead）
 execute store result score #playhead editor run data get storage rhythm_axe:maps.editor playhead
+# ①a ★ 最大前导：读回已存量（普通函数 spawn_one_ 会与本音符取 max；新音符可能继承到更长的 base_life）
+scoreboard players set #vis_lead_max editor 0
+execute store result score #vis_lead_max editor run data get storage rhythm_axe:editor.runtime vis_lead_max
 # ①b 清掉 spawn_one_ 复制音符元素用的临时键（卫生）
 data remove storage rhythm_axe:prop note
 # ①c ⚠️ 必须**显式**设置 prop.cursor：spawn_one_ / build_ 的宏参数 $(cursor) 靠它展开。
@@ -39,6 +42,8 @@ execute store result score #temp editor run data get storage rhythm_axe:maps.edi
 execute as @e[tag=editor_note,type=item_display] at @s if score #temp editor matches 0 if score @s editor_n_type matches 3 if score @s editor_n_density matches 1.. run function rhythm_axe:editor/visual/concrete_seg_check
 execute as @e[tag=editor_note,type=item_display] at @s if score #temp editor matches 0 if score @s editor_n_type matches 0..2 if score #playhead editor = @s editor_n_time unless entity @s[tag=editor_n_triggered] run function rhythm_axe:editor/visual/trigger
 execute as @e[tag=editor_guide,type=item_display] run function rhythm_axe:editor/visual/guide_tick
+# ⑤ 最大前导写回（补扫窗口上界；无脑写回，省一次比较）
+execute store result storage rhythm_axe:editor.runtime vis_lead_max int 1 run scoreboard players get #vis_lead_max editor
 # 清理本次用到的 prop 键（spawn_one_/build_ 自己也会清掉它用的）
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop note_idx

@@ -92,3 +92,6 @@ execute if score song_progress_display options matches 1 if score song_progress_
 execute if score song_progress_display options matches 1 if score song_progress_color options matches 4 run bossbar set rhythm_axe:song_progress color green
 execute if score song_progress_display options matches 1 if score song_progress_color options matches 5 run bossbar set rhythm_axe:song_progress color yellow
 execute if score song_progress_display options matches 1 if score song_progress_color options matches 6 run bossbar set rhythm_axe:song_progress color purple
+
+# ===== 音乐预热（mod 流式播放器）=====
+# ★ 2026-09-19 已提前到 start 开头（谱面 merge 之后立刻预热）；详见 start_of_game/preload_music.mcfunction

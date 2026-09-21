@@ -5,11 +5,11 @@
 #   - 段末该段从未进过判定区域 → 该段 miss；miss 不中断
 #   - 保护1 首段过早离开：记录窗口 l∈[1,3x] 在区域内→记录寿命；首段段末不在区域且已记录→按记录寿命判级
 #   - 保护2 末段过短：末段长 = dur%density（0则=density）< 3x → 延长 3x，延长段按 level(l+dur) 判级
-# 判定区域（marker 常驻，见 summon）：
+# 判定区域（★ 2026-09-21 去 note_c_zone marker：直接用配对展示实体自身，见下方检测段）：
 #   水平距离 > 1：沿前进方向 4 格长、1 格宽；竖直以判定点为中心上下各 4 格（共 8 格）
 #   水平距离 ≤ 1：水平以判定点为中心 3×3；竖直从判定点向上 4 格
 
-# 记录 note_id 用于配对本长条的 marker
+# 记录 note_id 用于配对本长条的展示实体
 scoreboard players operation #nid play_state = @s note_id
 # 3×判定缩放（保护用；#judgement_scale 由时间点维护）
 scoreboard players operation #x3 play_state = #judgement_scale play_state
@@ -26,20 +26,23 @@ scoreboard players operation #neg_dur play_state += #ext play_state
 scoreboard players operation #neg_dur play_state *= -1 const
 
 # ===== 检测玩家是否处于判定区域 =====
-# ★ 自动模式（2026-08-09）：auto=1 时玩家始终在判定区域 → #in_zone 直接置 1，跳过 marker 遍历
+# ★ 自动模式（2026-08-09）：auto=1 时玩家始终在判定区域 → #in_zone 直接置 1，跳过遍历
 scoreboard players set #in_zone play_state 0
 execute if score auto play_state matches 1 run scoreboard players set #in_zone play_state 1
-# 远距离（水平 > 1）：marker 在判定点，沿本地 ^（yaw=运动方向）逐格探 4 格，每格检测 1 宽 × 8 高 × 1 深
+# ★ 2026-09-21 去掉 note_c_zone marker：改用配对的混凝土展示实体自身
+#   展示实体 Pos 恒 = 判定位置、Rotation[0] = 运动方向 yaw、Rotation[1] = pitch
+#   ⇒ at @s rotated ~ 0 归零 pitch，等价旧 marker 的 Rotation:[yaw,0f]；远/近由实体上的 note_c_far 分流
+# 远（水平 > 1 格）：沿本地 ^（yaw = 运动方向）逐格探 4 格，每格 1 宽 × 8 高 × 1 深
 # ★ 2026-09-16 竖直改为对称（用户要求"往上有多高往下有多低"）：锚点 y 下移 4 格 + dy 3→7
 #   → 竖直覆盖 = 以判定点为中心、上下各 4 格（上界与改前一致，未抬高）
 #   ⚠ 引擎里 dx/dy/dz=N 覆盖 N+1 格（实测 marker 验证）→ 原 dy=3 实为向上 4 格、向下 0 格，文档旧写的"3 高"不准
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^0 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^1 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^2 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone] if score @s note_id = #nid play_state at @s positioned ^ ^ ^3 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
-# 近距离（水平 ≤ 1）：marker 在判定点，检测 3 宽 × 4 高 × 3 深（水平以判定点为中心半径1.5格；竖直从判定点向上 4 格，本分支未改）
+execute if score auto play_state matches 0 as @e[type=item_display,tag=note_display,tag=note_concrete,scores={note_c_far=1}] if score @s note_id = #nid play_state at @s rotated ~ 0 positioned ^ ^ ^0 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+execute if score auto play_state matches 0 as @e[type=item_display,tag=note_display,tag=note_concrete,scores={note_c_far=1}] if score @s note_id = #nid play_state at @s rotated ~ 0 positioned ^ ^ ^1 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+execute if score auto play_state matches 0 as @e[type=item_display,tag=note_display,tag=note_concrete,scores={note_c_far=1}] if score @s note_id = #nid play_state at @s rotated ~ 0 positioned ^ ^ ^2 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+execute if score auto play_state matches 0 as @e[type=item_display,tag=note_display,tag=note_concrete,scores={note_c_far=1}] if score @s note_id = #nid play_state at @s rotated ~ 0 positioned ^ ^ ^3 positioned ~-0.5 ~-4 ~-0.5 if entity @a[dx=0,dy=7,dz=0] run scoreboard players set #in_zone play_state 1
+# 近（水平 ≤ 1 格）：判定点为中心 3 宽 × 3 深；竖直从判定点向上 4 格（本分支未改）
 # ★ dx=2 = 3 格宽：positioned ~-1.5 后 dx=2 覆盖 [-1.5,+1.5]（dx=N 表示宽度 N+1 格）
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_c_zone_near] if score @s note_id = #nid play_state at @s positioned ~-1.5 ~ ~-1.5 if entity @a[dx=2,dy=3,dz=2] run scoreboard players set #in_zone play_state 1
+execute if score auto play_state matches 0 as @e[type=item_display,tag=note_display,tag=note_concrete,scores={note_c_far=0}] if score @s note_id = #nid play_state at @s positioned ~-1.5 ~ ~-1.5 if entity @a[dx=2,dy=3,dz=2] run scoreboard players set #in_zone play_state 1
 
 # ===== 保护1：记录窗口 l∈[1,3x] 且 in_zone → 记录寿命（最后一刻记录为准）=====
 execute if score @s note_life matches 1.. if score @s note_life <= #x3 play_state if score #in_zone play_state matches 1 run scoreboard players operation @s note_recorded_life = @s note_life

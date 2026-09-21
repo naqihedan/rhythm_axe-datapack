@@ -2,6 +2,17 @@
 
 > 动态清零，用于快速记录想法
 
+- [x] 编辑器试听「真实判定模式」（**阶段 1 完成 2026-09-20**）
+  - 开关：`options.editor_note_judge`（默认 **1 开**）+ 主菜单行 105【判定：开/关】（`10502`，与节拍器同行）
+  - 阶段 1 覆盖普通音符 0/1/2，**照搬游玩语义**：0 音符盒 / 1 木板 = 视线命中（同一 `predicate rhythm_axe:looking_at`）；2 唱片机 = 左/右键点击
+  - 窗口/等级与游玩**同一套边界**（x = 当前时间点 `judgement_scale`）；命中按等级播音符事件 + actionbar/聊天栏文字，超窗 miss（**木板静默清除**）
+  - **不计成绩与连击**（不碰 play_state 的 perfect/combo/highest_score）；`hit_events` 情况键随实际等级
+  - 边界：暂停不判定；**seek/快进快退保持旧行为**（自动 perfect + 橙光）；播放中切换立即重建；播放中左/右键转为判定输入
+  - 代码：`editor/judge/`（note_check / look_check / input_click+click_probe / level / hit+window_out / feedback_text / scale_sync / window_extend）；详见 编辑器.md《真实判定模式》
+- [x] 编辑器真实判定 **阶段 2 - 混凝土**（2026-09-21 完成，`editor/judge/concrete_check`）——顺带把**游玩侧**的 `note_c_zone` / `note_c_zone_near` marker 也去掉：判定区域直接用混凝土展示实体自身（`Pos` 恒 = 判定位置、`Rotation[0]` = 运动方向、`Rotation[1]` = pitch，检测前 `rotated ~ 0` 归零），远近只留一个 `note_c_far` 标记；改 `play/note/summon` + `play/judgement/main_concrete` + clear_note/judge 清理
+- [ ] 编辑器真实判定 **阶段 2 - 染色玻璃**（待做）：玩家判定箱 × 玻璃位置相交，不扣血，播 `damage` 组反馈
+- [x] 编辑器真实判定：**判定保护**（0 音符盒 / 1 木板）已搬（2026-09-20）——编辑器展示实体 `Pos` 恒 = 判定位置，可直接复用游玩 raycast 机制（每 0.5 格采样、`distance=..1.0`）；玩家 tag `editor_active`、实体 tag `editor_note`，`editor_n_looked_perfect` 直接打展示实体（省掉游玩那层配对）。代码：`editor/judge/raycast*` + `protect`；由 `visual/tick` 每刻先清后打
+
 - [x] 批量编辑-「镜像按钮组」（2026-09-07 已实现，与【时间轴翻转】同在一行：活跃列表/已选定列表底部**第二行/最后一行**）
   - X / Y / Z 轴镜像（单击 910/914/915）：先找到一个能把**所选音符**都完美框起来的长方体，取长方体**中心点**；按点击的轴，让音符的**判定位置 position** 变成关于该中心点对应轴镜像的位置（new = min+max−old = 2×center−old）。仅改 position，按 time 升序数组不变，可撤销。
   - 【同时翻转起始位置】（单击 916）：让选中音符 **start_pos** 绕其**判定位置**做 XYZ 轴镜像（start_pos.axis = −start_pos.axis）。可撤销。
@@ -46,13 +57,13 @@
 
 - M2-G 染色玻璃（type 4）：碰撞检测→扣 `health` 计分板（不影响真实血量）；扣血冷却（全局设置）；持续时长语义（寿命 0 后存活 duration 刻）；移动方式（一直运动直到寿命+duration<=0）✅
 - M2-H 判定反馈组表（音效/粒子/事件）：hitsound/hit_particles 用“存储表+宏执行”（`$playsound`/`$particle` 按 [组][等级] 查表）；hit_events 按各情况 enabled 过滤后宏执行；把 judgement_feedback 硬编码反馈重构为查表 ✅
-- M2-I 事件+音乐：✅ 背景音乐播放（谱面 `music` 字段 → `time==0` 触发 play_music，record 通道，`as @a at @s` + minVolume 1 无视差；end_of_game `stopsound @a record` 停止，自动结束+手动 stop 全覆盖；资源包 sounds.json 已关联 audio.ogg）。待办：定义音效组/粒子组数据（spawn/bad/goodE/perfectE/perfect/perfectL/goodL/miss/damage 9 情况；用户暂不填）
+- M2-I 事件+音乐：✅ 背景音乐播放（谱面 `music` 字段 → `time==0` 触发 play_music，**mod 的 `/playmusic` 流式播放**、开局 `/preloadmusic` 预热、end_of_game `/stopmusic @a` 停止，自动结束+手动 stop 全覆盖；资源包 sounds.json 已关联 audio.ogg。**2026-09-18 由 playsound 改为 mod 流式播放器**，以便「音乐自动对齐游戏」在正式游玩里也生效 —— 见《游玩谱面.md》音乐播放 / 《工具组件.md》音乐对齐游戏；**2026-09-21 音量改由 mod 自己乘游戏音量设置**（唱片机/音符盒滑块 × 主音量，拖动即时生效——此前直连 OpenAL 绕过了原版音量分类，等于永远满音量；分类取 RECORDS 而非 MUSIC：关「音乐」不该连谱面音乐一起静音））。待办：定义音效组/粒子组数据（spawn/bad/goodE/perfectE/perfect/perfectL/goodL/miss/damage 9 情况；用户暂不填）
 - 优化轮：音符缓动整体测试（M2-G 完成后一块测试 anim_easing/anim_power）
 - 近距混凝土判定区域偏移：✅ 用户确认保持 dx=2 不改（2026-08-07）
 
 ## 里程碑实现规划（编辑器）
 
-- [x] 阶段0：mod 流式音乐播放（2026-08-15 完成：/playmusic /pausemusic /resumemusic /stopmusic；多人网络包；保调重采样变速；tick→ms 换算——正在编辑谱面且有 timing_points 时按时间点分段换算、无则 mspt；/stopsound 联动停音；mod 1.5.0）
+- [x] 阶段0：mod 流式音乐播放（2026-08-15 完成：/playmusic /pausemusic /resumemusic /stopmusic；多人网络包；保调重采样变速；tick→ms 换算——正在编辑谱面且有 timing_points 时按时间点分段换算、无则 mspt；/stopsound 联动停音；mod 1.5.0——2026-09-18 起版本号改为编译日期 yy.M.d）
 - [x] 阶段1：编辑器框架（2026-08-18 完成：旧 editor/ 归档 editor_old；入口 function rhythm_axe:editor/editor {mapid:"xx"}；单人锁 editor_active（被占用/已进入编辑均有提示）；maps.editor 全字段状态；新建谱面=默认模板 append 工作副本 history（不写 maps.<mapid>，保存才写）；加载已有谱面=history[0] 快照+传送 spawn_pos；退出清理）
 - [x] 阶段2：各类操作的入口 function（底层，先于界面，详见下方清单）（2026-08-18 完成：文件类 begin/commit/save/undo/redo+截断与上限裁剪+删除回收站；时间轴控件 play/pause/seek/step 含 playmusic 与 tick rate 联动；音符创建/删除/复制/粘贴；时间点与事件点创建/修改/删除/上一下一跳转）
 - [ ] start_of_game 编辑器占用守卫支持多人开局（2026-08-18：当前单人检测已注释，见 start_of_game 顶部注释；需遍历所有参与玩家）

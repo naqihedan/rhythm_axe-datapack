@@ -34,4 +34,6 @@ $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhy
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) events
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) editor_playhead
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) id
+# ★ 2026-09-19 谱面索引出队：进了回收站就不再出现在大厅【谱面总表】里
+$function rhythm_axe:maps/index/index_remove {mapid:"$(mapid)"}
 $tellraw @s [{"text":"[编辑器] 谱面已移入回收站：","color":"green"},{"text":"$(mapid)","color":"aqua"}]

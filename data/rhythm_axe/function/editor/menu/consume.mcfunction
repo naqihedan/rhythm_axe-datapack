@@ -11,7 +11,7 @@ execute if score #click_value editor matches 903 run data modify storage rhythm_
 execute if score #click_value editor matches 903 run function rhythm_axe:editor/menu/resume
 execute if score #click_value editor matches 903 run return fail
 
-# 仅在编辑中响应
+# 仅在编辑中响应：未在编辑 → 静默忽略（菜单系统走自己的 menu_click，完全不从这里过）
 execute unless data storage rhythm_axe:maps.editor {active:1b} run return fail
 
 # ★ 会话自检（2026-09-10）：editor.mapid 缺失/为空 ⇒ 从工作副本 id 修回。

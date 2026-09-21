@@ -1,7 +1,9 @@
 # 游戏结束时执行（宏参数 mapid，with storage rhythm_axe:runtime）
 #arg: mapid
-# 停止背景音乐（record 通道；自动结束与手动 stop 都汇聚于此，一处覆盖）
-stopsound @a record
+# 停止背景音乐（mod 流式播放器；自动结束与手动 stop 都汇聚于此，一处覆盖）
+# 说明：音乐由 /playmusic 播放，故用 /stopmusic 停；原版 /stopsound @a record 也会一并停掉
+#   （mod 的 SoundManagerMixin 让 record 通道的 stopsound 联动 RhythmAxeMusic.stop）
+stopmusic @a
 scoreboard players set is_running play_state 0
 # 移除歌曲进度条
 bossbar remove rhythm_axe:song_progress
@@ -41,3 +43,8 @@ function rhythm_axe:play/end_of_game/result_display
 # 清空 note_* 计分板残留计分项（remove+add 重建；已死亡音符的项 @e 选不中，只能重建清空）
 # ★ 必须放在结算之后：remove 的同一刻后续不能再引用这些计分板（见 clear_note_scores 头部注释）
 function rhythm_axe:utilization/clear_note_scores
+# ★ 同一坑（2026-09-21 补）：clear_note_scores 用 reset * 也会清掉【编辑器音符/引导线实体】的计分板
+#   （note_id 展示↔交互配对、note_guide_* 等）→ 若**游玩结束时编辑器正开着**，编辑器视觉会半坏
+#   （place 无法移动交互实体、tick_kill 无法按 id 清理 → 实体滞留召唤位置）。
+#   编辑器占用守卫目前是注释掉的（可同时开），故这里补与 load.mcfunction 同款的兜底重建。
+execute if data storage rhythm_axe:maps.editor {active:1b} run function rhythm_axe:editor/visual/refresh

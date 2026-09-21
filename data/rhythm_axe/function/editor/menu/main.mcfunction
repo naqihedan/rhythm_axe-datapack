@@ -83,14 +83,18 @@ data remove storage rhythm_axe:prop speed_btn
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 function rhythm_axe:editor/menu/progress/line with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop cursor
-# 节拍器行：节拍器开关 + 播放进度「当前刻/最终刻」（刻数用 #prog_head / #prog_end，由 progress/line 一并算好）
+# 节拍器行：节拍器开关 + 判定开关 + 播放进度「当前刻/最终刻」（刻数用 #prog_head / #prog_end，由 progress/line 一并算好）
 # 26.1 下 if data ... value 1b 解析报错 → 用复合标签 {metronome:1b} 判断（常见问题：布尔值用复合标签匹配）
 data modify storage rhythm_axe:prop met set value '{"text":"【节拍器：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击开启节拍器"}}'
 execute if data storage rhythm_axe:maps.editor {metronome:1b} run data modify storage rhythm_axe:prop met set value '{"text":"【节拍器：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击关闭节拍器"}}'
+# 游玩测试开关（值 10502，与节拍器同行）：开=试听时按真实游玩语义判定（需命中/看向/点击）；关=自动预览（等同 auto）
+data modify storage rhythm_axe:prop jm set value '{"text":"【游玩测试：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10502"},"hover_event":{"action":"show_text","value":"当前：试听时音符自动判定（等同 auto）。点击开启【游玩测试】——像真实游玩一样要命中/看向/点击"}}'
+execute if score editor_note_judge options matches 1 run data modify storage rhythm_axe:prop jm set value '{"text":"【游玩测试：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10502"},"hover_event":{"action":"show_text","value":"当前：【游玩测试】进行中——音符要在判定窗内被命中/看向/点击才播音符事件（不计成绩/连击）。点击关闭"}}'
 data modify storage rhythm_axe:prop end set value '{"text":"/","color":"gray"},{"score":{"name":"#prog_end","objective":"editor"},"color":"white"},{"text":" 刻","color":"gray"}'
 execute unless score #prog_end editor matches 1.. run data modify storage rhythm_axe:prop end set value '{"text":"/","color":"gray"},{"text":"未定义","color":"red"},{"text":" 刻","color":"gray"}'
 function rhythm_axe:editor/menu/metronome_row with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop met
+data remove storage rhythm_axe:prop jm
 data remove storage rhythm_axe:prop end
 # 音符流速（读改全局 note_speed；调低显示更多音符、调高聚焦一小段；调整后刷新世界音符状态）
 execute store result score #temp editor run scoreboard players get note_speed options

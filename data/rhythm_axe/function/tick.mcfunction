@@ -1,11 +1,14 @@
 # ========== display_animation 游戏刻循环 ==========
-# 每 tick 调用，驱动所有活跃动画。
-# 由 #minecraft:tick 标签触发。
+# 每 tick 调用，驱动所有活跃动画
 execute as @e[scores={anim_status=1}] run function rhythm_axe:utilization/display_animation/step
 
 # ========== 编辑器：聊天栏点击逐刻消费 ==========
-# 玩家点击聊天文本（/trigger editor_click set N）→ 本行检测后分发到菜单处理
+# 玩家点击编辑器按钮（/trigger editor_click set N）→ 本行检测后分发到编辑器 consume
 execute as @a[scores={editor_click=1..}] run function rhythm_axe:editor/menu/consume
+
+# ========== 菜单系统：聊天栏点击逐刻消费 ==========
+# 玩家点击菜单按钮（/trigger menu_click set N）→ 本行检测后分发到菜单层 consume
+execute as @a[scores={menu_click=1..}] run function rhythm_axe:menu/consume
 
 # （已选定音符列表改为同步高效渲染，无需此处异步驱动）
 
@@ -13,8 +16,8 @@ execute as @a[scores={editor_click=1..}] run function rhythm_axe:editor/menu/con
 # 播放中每 tick 播放头 +1、更新 bossbar、到尾自动停
 execute if data storage rhythm_axe:maps.editor active run function rhythm_axe:editor/playback/advance
 
-# ========== 编辑器：时间范围选择的出点跟手 ==========
-# 暂停中 + 已设入点（等出点）时，出点始终 = 播放头（快进/快退、跳到开头/结尾、暂停那一刻都由这一行覆盖）
+# 出点跟手（编辑器打开 + 暂停中）：出点始终 = 播放头，让时间轴实时预览范围；
+# ★ 刚点完入点（出入点同刻）时不显示出点/色带 —— 由 mod 侧（TimelineGui）按「只有入点」画。
 execute if data storage rhythm_axe:maps.editor active unless data storage rhythm_axe:maps.editor {playing:1b} run function rhythm_axe:editor/tool/select/time_select_out_sync
 
 # ========== 编辑器：物品栏工具游标 ==========

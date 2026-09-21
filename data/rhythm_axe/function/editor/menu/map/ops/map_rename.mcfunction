@@ -28,6 +28,9 @@ $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage
 # 更新谱面内 id 字段为新 mapid（storage 键与 id 保持一致；改名时游戏未在玩，无 map_$(mapid) 实体/计分板需重建——objective 均全局）
 $execute if data storage rhythm_axe:maps.$(new_mapid) id run data modify storage rhythm_axe:maps.$(new_mapid) id set value "$(new_mapid)"
 $data modify storage rhythm_axe:maps.editor mapid set value "$(new_mapid)"
+# ★ 2026-09-19 谱面索引同步：旧名出队 + 新名入队（索引机制上线前就存在的谱面借此首次登记）
+#   ⚠️ 代价是顺序变化：改名后的谱面会挪到总表末尾（总表按索引顺序显示）
+$function rhythm_axe:maps/index/index_rename {old:"$(old_mapid)",new:"$(new_mapid)"}
 $tellraw @s [{"text":"[编辑器] 已修改谱面 id 为 ","color":"green"},{"text":"$(new_mapid)","color":"aqua"}]
 tellraw @s [{"text":"（改名不进撤销历史；如需改回原名，请再次修改谱面 id）","color":"gray","italic":true}]
 function rhythm_axe:editor/menu/map/panel/map_panel_open
