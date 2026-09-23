@@ -16,8 +16,8 @@ execute unless data storage rhythm_axe:maps.editor editing.temp.size run data mo
 execute unless data storage rhythm_axe:maps.editor editing.temp.note_base_life run data modify storage rhythm_axe:maps.editor editing.temp.note_base_life set value 24
 execute unless data storage rhythm_axe:maps.editor editing.temp.anim_easing run data modify storage rhythm_axe:maps.editor editing.temp.anim_easing set value 1
 execute unless data storage rhythm_axe:maps.editor editing.temp.anim_power run data modify storage rhythm_axe:maps.editor editing.temp.anim_power set value 1
-execute unless data storage rhythm_axe:maps.editor editing.temp.hitsound run execute store result storage rhythm_axe:maps.editor editing.temp.hitsound int 1 run data get storage rhythm_axe:maps.editor editing.temp.type
-execute unless data storage rhythm_axe:maps.editor editing.temp.hit_particles run execute store result storage rhythm_axe:maps.editor editing.temp.hit_particles int 1 run data get storage rhythm_axe:maps.editor editing.temp.type
+execute unless data storage rhythm_axe:maps.editor editing.temp.hitsound run data modify storage rhythm_axe:maps.editor editing.temp.hitsound set value 0
+execute unless data storage rhythm_axe:maps.editor editing.temp.hit_particles run data modify storage rhythm_axe:maps.editor editing.temp.hit_particles set value 0
 execute unless data storage rhythm_axe:maps.editor editing.temp.following_point run data modify storage rhythm_axe:maps.editor editing.temp.following_point set value 0b
 execute unless data storage rhythm_axe:maps.editor editing.temp.ignore_note_speed run data modify storage rhythm_axe:maps.editor editing.temp.ignore_note_speed set value 0b
 # 【x】重置为"打开时的值" 依赖 editing.orig；缺字段的音符 orig 也要补默认，否则单个音符重置 set from 失败、值不还原

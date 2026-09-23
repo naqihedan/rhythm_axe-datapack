@@ -7,6 +7,7 @@ execute store result storage rhythm_axe:runtime fb_hitsound int 1 run scoreboard
 data modify storage rhythm_axe:runtime fb_particles set value 0
 execute store result storage rhythm_axe:runtime fb_particles int 1 run scoreboard players get @s note_hit_particles
 data modify storage rhythm_axe:runtime case_name set value "good_early"
+execute store result storage rhythm_axe:runtime fb_type int 1 run scoreboard players get @s note_type
 function rhythm_axe:play/feedback/feedback with storage rhythm_axe:runtime
 
 #当前判定计数+1

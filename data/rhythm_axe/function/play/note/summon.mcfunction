@@ -341,11 +341,14 @@ $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1
 # ★ 2026-09-01 流速缩放：note_life = base_life×16/note_speed（流速16恒等；ignore_note_speed 不缩放）
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life *= 16 const
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life /= note_speed options
-# 记录判定反馈组号（note_hitsound / note_hit_particles，M2-H 查表；缺省 0）
-$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players operation @s note_hitsound = #note_type play_state
+# 记录判定反馈组号（0=使用 options.note_hitsound/note_particle）
+$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players operation @s note_type = #note_type play_state
+$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_hitsound 0
 $execute if data storage rhythm_axe:runtime cur_note.hitsound run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run execute store result score @s note_hitsound run data get storage rhythm_axe:runtime cur_note.hitsound
-$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players operation @s note_hit_particles = #note_type play_state
+$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score @s note_hitsound matches 0 run scoreboard players operation @s note_hitsound = note_hitsound options
+$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_hit_particles 0
 $execute if data storage rhythm_axe:runtime cur_note.hit_particles run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run execute store result score @s note_hit_particles run data get storage rhythm_axe:runtime cur_note.hit_particles
+$execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score @s note_hit_particles matches 0 run scoreboard players operation @s note_hit_particles = note_particle options
 # 记录音符颜色（混凝土默认组3动态破坏粒子用；缺省 0）
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_color 0
 $execute if data storage rhythm_axe:runtime cur_note.color run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run execute store result score @s note_color run data get storage rhythm_axe:runtime cur_note.color

@@ -695,7 +695,6 @@ execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.ed
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12806"},"hover_event":{"action":"show_text","value":"打开全局击打音效编辑"}}\
 ]
 execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hitsound run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
@@ -704,7 +703,6 @@ execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:map
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"text":"-","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12806"},"hover_event":{"action":"show_text","value":"打开全局击打音效编辑"}}\
 ]
 execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14011"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
@@ -713,7 +711,6 @@ execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:map
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12806"},"hover_event":{"action":"show_text","value":"打开全局击打音效编辑"}}\
 ]
 execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
@@ -722,7 +719,6 @@ execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12806"},"hover_event":{"action":"show_text","value":"打开全局击打音效编辑"}}\
 ]
 # 击打视效（行首[x]= 已修改红可点重置(905)/未修改灰；批量未修改显示 -）
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [\
@@ -732,7 +728,6 @@ execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.ed
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12906"},"hover_event":{"action":"show_text","value":"打开全局击打视效编辑"}}\
 ]
 execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
@@ -741,7 +736,6 @@ execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:map
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"text":"-","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12906"},"hover_event":{"action":"show_text","value":"打开全局击打视效编辑"}}\
 ]
 execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14012"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
@@ -750,7 +744,6 @@ execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:map
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12906"},"hover_event":{"action":"show_text","value":"打开全局击打视效编辑"}}\
 ]
 execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
@@ -759,7 +752,6 @@ execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
-{"text":"【编辑】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 12906"},"hover_event":{"action":"show_text","value":"打开全局击打视效编辑"}}\
 ]
 # 击打事件（行首[x]= 已修改红可点重置(906)/未修改灰；批量未修改显示 -）
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_events run tellraw @s [\

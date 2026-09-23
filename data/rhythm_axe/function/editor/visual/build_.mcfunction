@@ -55,9 +55,9 @@ $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_
 execute store result storage rhythm_axe:prop easing int 1 run scoreboard players get #n_easing editor
 execute store result storage rhythm_axe:prop power int 1 run scoreboard players get #n_power editor
 # 拆击打反馈参数与音符下标到 prop（★ 必须在 summon_ 之前：summon_ #arg 含 hitsound/hit_particles/idx，缺失会导致整个 summon_ 宏静默失败 → 无实体）
-scoreboard players operation #n_hs editor = #n_type editor
+scoreboard players set #n_hs editor 0
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].hitsound run execute store result score #n_hs editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].hitsound
-scoreboard players operation #n_hp editor = #n_type editor
+scoreboard players set #n_hp editor 0
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].hit_particles run execute store result score #n_hp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(note_idx)].hit_particles
 execute store result storage rhythm_axe:prop hitsound int 1 run scoreboard players get #n_hs editor
 execute store result storage rhythm_axe:prop hit_particles int 1 run scoreboard players get #n_hp editor

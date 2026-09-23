@@ -4,7 +4,7 @@ function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
 data modify storage rhythm_axe:maps.editor current_panel set value 13
 tellraw @s [{"text":"====全局音符击打视效====","color":"gold","bold":true}]
-tellraw @s [{"text":"选择要编辑的组号（对应音符的 hit_particles 值），点选后打开该组详情面板","color":"gray"}]
+tellraw @s [{"text":"选择要查看的组号（对应音符的 hit_particles 值），点选后打开只读详情面板","color":"gray"}]
 tellraw @s [{"text":"你也可以修改editor/init.mcfunction来快速编辑","color":"gray"}]
 tellraw @s [\
 {"text":"【0】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10001"},"hover_event":{"action":"show_text","value":"查看并编辑组 0"}},\

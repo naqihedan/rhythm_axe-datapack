@@ -107,6 +107,7 @@ scoreboard objectives add note_guide_pz dummy
 scoreboard objectives add note_time dummy
 # 音符实体配对用（展示实体与交互实体各存自己的 note_id）
 scoreboard objectives add note_id dummy
+scoreboard objectives add note_type dummy
 # 音符寿命（交互实体存储，每刻递减，M2-B）
 scoreboard objectives add note_life dummy
 # 判定保护状态与记录寿命（交互实体存储，M2-C）
@@ -230,6 +231,14 @@ scoreboard players set #ed_scale editor 1
 #   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故必须在此兜底；
 #   仅在未定义时写入，不覆盖玩家在【判定：开/关】按钮上的改动
 execute unless score editor_note_judge options matches 0..1 run scoreboard players set editor_note_judge options 1
+# ★ 2026-09-23：options.editor_note_hitevents 已合并进 editor_play_events（同一个开关现在同时管【谱面事件点 events[]】
+#   与【音符击打事件 hit_events】）。老存档若原来开过击打事件，把意图并进新开关，再清掉废弃的旧计分项。
+execute if score editor_note_hitevents options matches 1 run scoreboard players set editor_play_events options 1
+scoreboard players reset editor_note_hitevents options
+# 兜底把 editor_play_events 落成明确值（0=不执行），避免计分项缺失时按钮状态显示错
+execute unless score editor_play_events options matches 0..1 run scoreboard players set editor_play_events options 0
+execute unless score note_hitsound options matches 1..6 run scoreboard players set note_hitsound options 1
+execute unless score note_particle options matches 1..6 run scoreboard players set note_particle options 1
 # 编辑器音符展示实体参数（visual/：place/tick 按实体读；每个字段一个 objective，与游玩 note_c_* 同模式）
 scoreboard objectives add editor_n_birth dummy
 scoreboard objectives add editor_n_time dummy

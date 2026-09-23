@@ -4,4 +4,4 @@
 # ★ 玻璃（type=4）零特效：即使误入播放函数也直接 return（终极防线）
 #arg: cur_sound
 execute if score @s editor_n_type matches 4 run return fail
-$execute if data storage rhythm_axe:editor.runtime cur_sound run playsound $(cur_sound) master @a ~ ~ ~ 1 1
+$execute if data storage rhythm_axe:editor.runtime cur_sound run $(cur_sound)

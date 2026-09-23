@@ -34,8 +34,8 @@ execute unless data storage rhythm_axe:prop size run data modify storage rhythm_
 execute unless data storage rhythm_axe:prop note_base_life run data modify storage rhythm_axe:prop note_base_life set value 24
 execute unless data storage rhythm_axe:prop anim_easing run data modify storage rhythm_axe:prop anim_easing set value 1
 execute unless data storage rhythm_axe:prop anim_power run data modify storage rhythm_axe:prop anim_power set value 1
-execute unless data storage rhythm_axe:prop hitsound run execute store result storage rhythm_axe:prop hitsound int 1 run scoreboard players get #note_type editor
-execute unless data storage rhythm_axe:prop hit_particles run execute store result storage rhythm_axe:prop hit_particles int 1 run scoreboard players get #note_type editor
+execute unless data storage rhythm_axe:prop hitsound run data modify storage rhythm_axe:prop hitsound set value 0
+execute unless data storage rhythm_axe:prop hit_particles run data modify storage rhythm_axe:prop hit_particles set value 0
 execute unless data storage rhythm_axe:prop following_point run data modify storage rhythm_axe:prop following_point set value 0b
 execute unless data storage rhythm_axe:prop custom_tag run data modify storage rhythm_axe:prop custom_tag set value ""
 

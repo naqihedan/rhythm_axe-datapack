@@ -20,10 +20,13 @@ scoreboard players operation #tmp_hs editor = @s note_hitsound
 execute store result storage rhythm_axe:prop hitsound int 1 run scoreboard players get #tmp_hs editor
 scoreboard players operation #tmp_hp editor = @s note_hit_particles
 execute store result storage rhythm_axe:prop hit_particles int 1 run scoreboard players get #tmp_hp editor
+execute if score #tmp_hs editor matches 0 run execute store result storage rhythm_axe:prop hitsound int 1 run scoreboard players get note_hitsound options
+execute if score #tmp_hp editor matches 0 run execute store result storage rhythm_axe:prop hit_particles int 1 run scoreboard players get note_particle options
 scoreboard players operation #tmp_idx editor = @s editor_n_idx
 execute store result storage rhythm_axe:prop idx int 1 run scoreboard players get #tmp_idx editor
 # cursor 传入（trigger_ 读 history[$(cursor)].notes 的 hit_events）
 execute store result storage rhythm_axe:prop cursor int 1 run data get storage rhythm_axe:maps.editor history_cursor
+execute store result storage rhythm_axe:prop note_type int 1 run scoreboard players get @s editor_n_type
 # 情况键（bad/good_early/perfect_early/perfect/perfect_late/good_late/miss）：由 #ed_tmp_lv 决定
 data modify storage rhythm_axe:prop case set value "perfect"
 execute if score #ed_tmp_lv editor matches 0 run data modify storage rhythm_axe:prop case set value "bad"
@@ -36,6 +39,7 @@ function rhythm_axe:editor/visual/trigger_ with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop nid
 data remove storage rhythm_axe:prop hitsound
 data remove storage rhythm_axe:prop hit_particles
+data remove storage rhythm_axe:prop note_type
 data remove storage rhythm_axe:prop idx
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop case

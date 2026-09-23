@@ -6,6 +6,7 @@
 # 行104: 10401 保存 / 10402 退出 / 10403 另存 / 10404 删除谱面 / 10405 回收站
 # 行105: 10501 节拍器 / 10502 判定开关（试听时音符真实判定，见《真实判定模式》）
 # 行106: 10601/10602 流速减/加；10603..10606 流速设 2/4/8/16
+# 行107: 10701 事件播放开关 / 10702 音符聊天反馈开关 / 10703 音符hotbar反馈开关（渲染在行106 上方，见 main.mcfunction）
 # 行108: 10801 整理音符顺序（notes 按 time 升序重排；2026-09-15 从面板 2 迁来，保存谱面时也会自动执行一遍）
 # 行1150: 115001..115051 播放进度条 51 格（前 50 格等分 end_time，第 51 格跳结尾；值 = 1150×100 + 两位格号，前导零避开共用组 11501..11509）
 # 注：20..29 时间控件由 consume 顶层处理；8/9 撤销重做、903 亦顶层。value 1=返回主菜单(供其它面板/刷新用)。
@@ -39,6 +40,11 @@ execute if score #click_value editor matches 10502 run function rhythm_axe:edito
 
 # 行108【整理音符顺序】（10801；2026-09-15 从谱面设置面板迁到主菜单，值不变）
 execute if score #click_value editor matches 10801 run function rhythm_axe:editor/menu/note/order_fix
+
+# 行107：事件播放（10701，同时管谱面事件点 events[] 与音符击打事件 hit_events）/ 音符聊天反馈（10702）/ 音符hotbar反馈（10703）
+execute if score #click_value editor matches 10701 run function rhythm_axe:editor/menu/event_play_toggle
+execute if score #click_value editor matches 10702 run function rhythm_axe:editor/menu/note_feedback_chat_toggle
+execute if score #click_value editor matches 10703 run function rhythm_axe:editor/menu/note_feedback_hotbar_toggle
 
 # 行106：音符流速（10601 降低 / 10602 提高，下界 1；10603..10606 直接设值）
 execute if score #click_value editor matches 10601 run scoreboard players remove note_speed options 1

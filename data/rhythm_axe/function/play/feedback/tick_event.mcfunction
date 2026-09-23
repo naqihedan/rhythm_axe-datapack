@@ -7,4 +7,5 @@ data modify storage rhythm_axe:runtime fb_particles set value 0
 execute store result storage rhythm_axe:runtime fb_particles int 1 run scoreboard players get @s note_hit_particles
 execute store result storage rhythm_axe:runtime fb_nid int 1 run scoreboard players get @s note_id
 data modify storage rhythm_axe:runtime case_name set value "tick"
+execute store result storage rhythm_axe:runtime fb_type int 1 run scoreboard players get @s note_type
 function rhythm_axe:play/feedback/feedback with storage rhythm_axe:runtime

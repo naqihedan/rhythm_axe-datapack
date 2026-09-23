@@ -96,6 +96,22 @@ function rhythm_axe:editor/menu/metronome_row with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop met
 data remove storage rhythm_axe:prop jm
 data remove storage rhythm_axe:prop end
+# 行107：事件播放 + 音符判定文字反馈（聊天栏 / hotbar）三个开关，位于音符流速行上方
+# ★【事件播放】（10701）= options.editor_play_events：同时管【谱面事件点 events[]】与【音符击打事件 hit_events】
+#   （2026-09-23 把原 editor_note_hitevents 并入本开关）
+# ★【音符聊天反馈】（10702）= options.feedback_chat、【音符hotbar反馈】（10703）= options.feedback_actionbar：
+#   编辑器真实判定的文字反馈与游玩共用这一对全局开关（见 editor/judge/feedback_text）
+# 先写「关」再按分值覆盖为「开」：即使计分项未定义也不会误显示为开（不用 store result，避免沿用上一次的 #temp）
+data modify storage rhythm_axe:prop ep set value '{"text":"【事件播放：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10701"},"hover_event":{"action":"show_text","value":"当前已关闭：试听经过事件点不执行 events[]，经过音符判定时刻不执行 hit_events。点击开启"}}'
+execute if score editor_play_events options matches 1 run data modify storage rhythm_axe:prop ep set value '{"text":"【事件播放：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10701"},"hover_event":{"action":"show_text","value":"启用谱面时间播放与音符击打事件"}}'
+data modify storage rhythm_axe:prop fc set value '{"text":"【音符聊天反馈：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10702"},"hover_event":{"action":"show_text","value":"当前已关闭：音符判定反馈不显示在聊天栏。点击开启"}}'
+execute if score feedback_chat options matches 1 run data modify storage rhythm_axe:prop fc set value '{"text":"【音符聊天反馈：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10702"},"hover_event":{"action":"show_text","value":"音符判定反馈（Bad/Good/Perfect/Miss）显示在聊天栏；与游玩共用 options.feedback_chat"}}'
+data modify storage rhythm_axe:prop fh set value '{"text":"【音符hotbar反馈：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10703"},"hover_event":{"action":"show_text","value":"当前已关闭：音符判定反馈不显示在物品栏上方。点击开启"}}'
+execute if score feedback_actionbar options matches 1 run data modify storage rhythm_axe:prop fh set value '{"text":"【音符hotbar反馈：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10703"},"hover_event":{"action":"show_text","value":"音符判定反馈（含虚拟血量/连击）显示在物品栏上方；与游玩共用 options.feedback_actionbar"}}'
+function rhythm_axe:editor/menu/event_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop ep
+data remove storage rhythm_axe:prop fc
+data remove storage rhythm_axe:prop fh
 # 音符流速（读改全局 note_speed；调低显示更多音符、调高聚焦一小段；调整后刷新世界音符状态）
 execute store result score #temp editor run scoreboard players get note_speed options
 tellraw @s [\

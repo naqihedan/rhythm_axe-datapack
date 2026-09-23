@@ -9,6 +9,8 @@ scoreboard players set note_speed options 16
 scoreboard players set feedback_actionbar options 1
 scoreboard players set feedback_chat options 1
 scoreboard players set detailed_judgements options 1
+scoreboard players set note_hitsound options 1
+scoreboard players set note_particle options 1
 # 伤害扣血冷却（刻）
 scoreboard players set damage_cooldown options 10
 # 歌曲进度条
@@ -18,11 +20,10 @@ scoreboard players set song_progress_color options 0
 scoreboard players set editor_history_limit options 50
 # 可视化时间轴（mod 屏幕覆盖层）开关：编辑器进入自动置 1、退出置 0；0=关 1=开
 scoreboard players set editor_timeline_gui options 0
-# 编辑器试听：播放中经过音符判定时间时是否执行击打事件（hit_events 自定义指令）；0=只播音效/粒子 1=同时执行指令
-scoreboard players set editor_note_hitevents options 0
 # 编辑器试听：音符真实判定；0=自动预览（等同 auto，到点即播音符事件） 1=真实判定（须在判定窗内被命中才播，超窗 miss）
 scoreboard players set editor_note_judge options 1
-# 编辑器试听：播放中经过事件点时是否执行谱面事件（events[]）指令；0=不执行 1=执行
+# 编辑器试听：经过事件点是否执行谱面事件（events[]）、经过音符判定时刻是否执行击打事件（hit_events 自定义指令）；0=不执行 1=执行
+# ★ 2026-09-23：原 editor_note_hitevents 已并入本开关（同一个开关同时管事件点与音符击打事件）
 scoreboard players set editor_play_events options 0
 # 编辑器试听：音乐自动对齐游戏（音频偏差 >40ms 且已稳住时，把音频挪到播放头，不动播放头）；0=关 1=开
 scoreboard players set editor_audio_align options 1

@@ -87,9 +87,11 @@ execute if score #gsc_skip editor matches 1 run return 0
 
 # ===== 组装反馈宏参数（命中时 glass_feedback 以 with storage 取用；每刻组装，几条命令）=====
 scoreboard players operation #gsc_hs editor = @s note_hitsound
-execute store result storage rhythm_axe:editor.runtime gf_hs int 1 run scoreboard players get #gsc_hs editor
+execute if score #gsc_hs editor matches 0 run execute store result storage rhythm_axe:editor.runtime gf_hs int 1 run scoreboard players get note_hitsound options
+execute unless score #gsc_hs editor matches 0 run execute store result storage rhythm_axe:editor.runtime gf_hs int 1 run scoreboard players get #gsc_hs editor
 scoreboard players operation #gsc_hp editor = @s note_hit_particles
-execute store result storage rhythm_axe:editor.runtime gf_hp int 1 run scoreboard players get #gsc_hp editor
+execute if score #gsc_hp editor matches 0 run execute store result storage rhythm_axe:editor.runtime gf_hp int 1 run scoreboard players get note_particle options
+execute unless score #gsc_hp editor matches 0 run execute store result storage rhythm_axe:editor.runtime gf_hp int 1 run scoreboard players get #gsc_hp editor
 data modify storage rhythm_axe:editor.runtime gf_case set value "damage"
 execute store result storage rhythm_axe:editor.runtime gf_cursor int 1 run data get storage rhythm_axe:maps.editor history_cursor
 execute store result storage rhythm_axe:editor.runtime gf_nid int 1 run scoreboard players get #gsc_id editor

@@ -13,4 +13,5 @@ data modify storage rhythm_axe:runtime fb_particles set value 0
 execute as @e[type=interaction,tag=note_stained_glass] if score @s note_id = #nid play_state run execute store result storage rhythm_axe:runtime fb_particles int 1 run scoreboard players get @s note_hit_particles
 data modify storage rhythm_axe:runtime case_name set value "damage"
 # 以交互实体为执行者调 feedback（位置 = 交互实体位置）
+execute as @e[type=interaction,tag=note_stained_glass] if score @s note_id = #nid play_state at @s run execute store result storage rhythm_axe:runtime fb_type int 1 run scoreboard players get @s note_type
 execute as @e[type=interaction,tag=note_stained_glass] if score @s note_id = #nid play_state at @s run function rhythm_axe:play/feedback/feedback with storage rhythm_axe:runtime

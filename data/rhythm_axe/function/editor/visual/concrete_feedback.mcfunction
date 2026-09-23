@@ -10,6 +10,10 @@ scoreboard players operation #ctf_hs editor = @s note_hitsound
 execute store result storage rhythm_axe:prop hitsound int 1 run scoreboard players get #ctf_hs editor
 scoreboard players operation #ctf_hp editor = @s note_hit_particles
 execute store result storage rhythm_axe:prop hit_particles int 1 run scoreboard players get #ctf_hp editor
+execute if score #ctf_hs editor matches 0 run execute store result storage rhythm_axe:prop hitsound int 1 run scoreboard players get note_hitsound options
+execute if score #ctf_hp editor matches 0 run execute store result storage rhythm_axe:prop hit_particles int 1 run scoreboard players get note_particle options
+# 音符类型（trigger_ 用 $(note_type) 查二维表）
+execute store result storage rhythm_axe:prop note_type int 1 run scoreboard players get @s editor_n_type
 scoreboard players operation #ctf_idx editor = @s editor_n_idx
 execute store result storage rhythm_axe:prop idx int 1 run scoreboard players get #ctf_idx editor
 execute store result storage rhythm_axe:prop cursor int 1 run data get storage rhythm_axe:maps.editor history_cursor
@@ -22,6 +26,7 @@ execute if score editor_note_judge options matches 1 run function rhythm_axe:edi
 data remove storage rhythm_axe:prop nid
 data remove storage rhythm_axe:prop hitsound
 data remove storage rhythm_axe:prop hit_particles
+data remove storage rhythm_axe:prop note_type
 data remove storage rhythm_axe:prop idx
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop case
