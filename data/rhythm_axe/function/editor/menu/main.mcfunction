@@ -1,5 +1,5 @@
 # 聊天栏主菜单：标题-作者 + 谱面/编辑/文件按钮 + 时间控件
-# 文本组件 26.1 命名：click_event（run_command 用 command）、hover_event（show_text 用 value）
+# 文本组件 26.x 命名：click_event（run_command 用 command）、hover_event（show_text 用 value）
 function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
 # 显示主菜单即视为处于编辑状态（保证 active 检查通过，避免直接调 main 后点按钮被拦截）
@@ -84,7 +84,7 @@ data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.edit
 function rhythm_axe:editor/menu/progress/line with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop cursor
 # 节拍器行：节拍器开关 + 判定开关 + 播放进度「当前刻/最终刻」（刻数用 #prog_head / #prog_end，由 progress/line 一并算好）
-# 26.1 下 if data ... value 1b 解析报错 → 用复合标签 {metronome:1b} 判断（常见问题：布尔值用复合标签匹配）
+# 26.x 下 if data ... value 1b 解析报错 → 用复合标签 {metronome:1b} 判断（常见问题：布尔值用复合标签匹配）
 data modify storage rhythm_axe:prop met set value '{"text":"【节拍器：关】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击开启节拍器"}}'
 execute if data storage rhythm_axe:maps.editor {metronome:1b} run data modify storage rhythm_axe:prop met set value '{"text":"【节拍器：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10501"},"hover_event":{"action":"show_text","value":"点击关闭节拍器"}}'
 # 游玩测试开关（值 10502，与节拍器同行）：开=试听时按真实游玩语义判定（需命中/看向/点击）；关=自动预览（等同 auto）

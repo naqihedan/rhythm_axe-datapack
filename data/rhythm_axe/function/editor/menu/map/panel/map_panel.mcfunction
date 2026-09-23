@@ -1,5 +1,5 @@
 # 谱面设置面板：显示暂存副本 panel_temp 的值 + 编辑按钮；修改只动暂存，【保存设置】才写回并进历史
-# 文本组件 26.1 命名：click_event（run_command 用 command）、hover_event（show_text 用 value）
+# 文本组件 26.x 命名：click_event（run_command 用 command）、hover_event（show_text 用 value）
 function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
 tellraw @s [{"text":"====谱面设置====","color":"gold","bold":true}]
