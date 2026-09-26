@@ -3,4 +3,4 @@
 #   （play_state.time，只动音频、不动游戏时间与判定），见《游玩谱面.md》音乐播放
 # 起始 0 刻（= 音乐起点）、速率 1（保调）、音量 1；@a = 所有玩家各自本地播放（不看距离衰减）
 #arg: music
-$playmusic $(music) 0 1 @a 1
+$playmusic $(music) 0 1 @a[team=player] 1

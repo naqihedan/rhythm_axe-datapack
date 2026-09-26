@@ -19,7 +19,7 @@ scoreboard players operation max_combo play_state > combo play_state
 
 scoreboard players set fc_ap play_state 0
 
-execute if score feedback_actionbar options matches 1 run title @a actionbar \
+execute if score feedback_actionbar options matches 1 run title @a[team=player] actionbar \
     [{"text":"(","color":"red"},\
      {"score":{"objective":"play_state","name":"health"},"color":"red","bold":true},\
      {"text":")","color":"red","bold":true},\
@@ -28,4 +28,4 @@ execute if score feedback_actionbar options matches 1 run title @a actionbar \
      {"score":{"objective":"play_state","name":"combo"},\
      "color":"white","bold":true},\
      {"text":")","color":"white","bold":true}]
-execute if score feedback_chat options matches 1 run tellraw @a [{"text":"*  Bad *  <","color":"dark_aqua"}]
+execute if score feedback_chat options matches 1 run tellraw @a[team=player] [{"text":"*  Bad *  <","color":"dark_aqua"}]

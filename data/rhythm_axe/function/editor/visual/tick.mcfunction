@@ -45,7 +45,10 @@ execute as @e[tag=editor_guide,type=item_display] run function rhythm_axe:editor
 #   点击发生在扫描之后的（advancement 晚于 tick）留给下一刻，见 judge/input_click）
 execute if score editor_note_judge options matches 1 run tag @e[type=interaction,tag=editor_note,tag=editor_n_clicked] remove editor_n_clicked
 # 3) 事件点触发（仅播放中经过；跳转不触发）
-execute if score editor_play_events options matches 1 run execute as @a[tag=editor_active] at @s run function rhythm_axe:editor/visual/tick_event
+# ★ 多人协作（2026-09-26）：事件链的代表对象固定为**会话主**（事件里的 ~ ~ ~ / @s 与单人时一致），
+#   会话主不在线才退回「任一编辑者」（游标是全局的，所以退回时也只会真正执行一次）。
+execute if score editor_play_events options matches 1 as @a[tag=editor_host,limit=1] at @s run function rhythm_axe:editor/visual/tick_event
+execute if score editor_play_events options matches 1 unless entity @a[tag=editor_host] as @a[tag=editor_active] at @s run function rhythm_axe:editor/visual/tick_event
 # ★ 2026-09-20 取消「播放中每刻刷新播放进度 actionbar」：它每刻都把 actionbar 顶掉，
 #   真实判定的 PERFECT/GOOD/MISS 文字刚显示就被进度覆盖。
 #   进度改看播放进度 bossbar（播放中一直可见）与主菜单「当前刻/最终刻」；

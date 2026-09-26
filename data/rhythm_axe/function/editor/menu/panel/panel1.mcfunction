@@ -8,6 +8,7 @@
 # 行106: 10601/10602 流速减/加；10603..10606 流速设 2/4/8/16
 # 行107: 10701 事件播放开关 / 10702 音符聊天反馈开关 / 10703 音符hotbar反馈开关（渲染在行106 上方，见 main.mcfunction）
 # 行108: 10801 整理音符顺序（notes 按 time 升序重排；2026-09-15 从面板 2 迁来，保存谱面时也会自动执行一遍）
+# 行109: 10905 领取协作工具（把协作工具放进背包第 1 格；2026-09-26 起不再随打开编辑器自动发放）
 # 行1150: 115001..115051 播放进度条 51 格（前 50 格等分 end_time，第 51 格跳结尾；值 = 1150×100 + 两位格号，前导零避开共用组 11501..11509）
 # 注：20..29 时间控件由 consume 顶层处理；8/9 撤销重做、903 亦顶层。value 1=返回主菜单(供其它面板/刷新用)。
 # main.mcfunction 设 current_panel=1。
@@ -40,6 +41,10 @@ execute if score #click_value editor matches 10502 run function rhythm_axe:edito
 
 # 行108【整理音符顺序】（10801；2026-09-15 从谱面设置面板迁到主菜单，值不变）
 execute if score #click_value editor matches 10801 run function rhythm_axe:editor/menu/note/order_fix
+
+# 行109【领取协作工具】（10905，2026-09-26）：把协作工具交给会话主（原先在 init_state 打开编辑器时自动发，
+#   会无条件占掉背包第 1 格 ⇒ 改为自愿领取）；领取后右键队友=邀请、蹲下右键=踢出
+execute if score #click_value editor matches 10905 run function rhythm_axe:editor/tool/give_coop_tool
 
 # 行107：事件播放（10701，同时管谱面事件点 events[] 与音符击打事件 hit_events）/ 音符聊天反馈（10702）/ 音符hotbar反馈（10703）
 execute if score #click_value editor matches 10701 run function rhythm_axe:editor/menu/event_play_toggle

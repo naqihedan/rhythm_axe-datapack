@@ -1,14 +1,10 @@
-
-# ===== 音符工具注视光标（黄色玻璃）=====
-execute unless data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note run kill @e[tag=editor_tool_glow]
-execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note \
-        unless entity @e[tag=editor_tool_glow] run \
-            summon item_display ~ ~ ~ {item:{id:"minecraft:yellow_stained_glass",count:1},Tags:["editor_tool_glow"],Glowing:1b,glow_color_override:16776960,brightness:{block:15,sky:15},transformation:{translation:[0f,0f,0f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1.01f,1.01f,1.01f]}}
-execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note \
-        anchored eyes positioned ^ ^ ^4 align xyz positioned ~0.5 ~0.5 ~0.5 run tp @e[tag=editor_tool_glow] ~ ~ ~
-# ===== 选择工具注视/选区玻璃（黄绿色玻璃，发绿光）=====
-# 未手持选择工具：清玻璃（确认选区后玻璃已被 select 逻辑 kill，此处仅兜底）
-execute unless data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select run kill @e[tag=editor_tool_select_glow]
-# 蹲下（时间段选择模式）：不显示玻璃预览（该模式只用 mod 时间轴上的入点/出点与范围色带）
-execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select if entity @s[predicate=rhythm_axe:sneaking] if entity @e[tag=editor_tool_select_glow] run kill @e[tag=editor_tool_select_glow]
-execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select unless entity @s[predicate=rhythm_axe:sneaking] run function rhythm_axe:editor/tool/select/select_glow_tick
+# 工具光标玻璃分发（@s = 编辑玩家；由 tick.mcfunction 每刻 as @a[tag=editor_active] 调用）
+# ★ 协作要点：玻璃必须「每人一块」——身份 = 玩家 UUID[0]（tag glow_<gid> / glow_sel_<gid>）。
+#   旧的「全局一块 + 没手持就 kill 全部」在多人下会互相 tp / 互相删 ⇒ 闪烁 + 自己看不见。
+#   本文件只做「取身份 + 按手持工具分发」；细节在 glow_note（黄）/ select_glow_tick（黄绿）。
+execute store result score #glow_uid editor run data get entity @s UUID[0]
+execute store result storage rhythm_axe:prop gid int 1 run scoreboard players get #glow_uid editor
+execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note run function rhythm_axe:editor/tool/glow_note with storage rhythm_axe:prop
+# 选择工具的黄绿玻璃只给「占用者」看（非占用者用不了它，别给误导性预览；没认领就会被 tick 的存活标记清掉）
+execute if entity @s[tag=editor_select_owner] if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_select run function rhythm_axe:editor/tool/select/select_glow_tick with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop gid

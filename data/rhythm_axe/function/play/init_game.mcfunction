@@ -80,7 +80,7 @@ scoreboard players set #song_max play_state 0
 execute if data storage rhythm_axe:runtime end_time run execute store result score #song_max play_state run data get storage rhythm_axe:runtime end_time
 scoreboard players operation #song_max play_state -= #song_start play_state
 execute if score song_progress_display options matches 1 run function rhythm_axe:play/note/song_progress/bossbar_init with storage rhythm_axe:runtime
-execute if score song_progress_display options matches 1 run bossbar set rhythm_axe:song_progress players @a
+execute if score song_progress_display options matches 1 run bossbar set rhythm_axe:song_progress players @a[team=player]
 execute if score song_progress_display options matches 1 run bossbar set rhythm_axe:song_progress value 0
 execute if score song_progress_display options matches 1 run execute store result storage rhythm_axe:runtime bp int 1 run scoreboard players get #song_max play_state
 execute if score song_progress_display options matches 1 run function rhythm_axe:play/note/song_progress/bossbar_max with storage rhythm_axe:runtime

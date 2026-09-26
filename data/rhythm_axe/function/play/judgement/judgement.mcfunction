@@ -39,8 +39,10 @@ execute if score #life play_state = #protect_enter play_state if score @s note_p
 # 分支 A：处于保护状态
 execute if score @s note_protect matches 1 run function rhythm_axe:play/judgement/protected
 # 分支 B：未保护、玩家看着且寿命在判定窗口内（<=3x，#protect_high 已在上方算好）→ 立即判定（用当前寿命）
-# ★ st_pass（2026-09-21）：《同一刻判定限制》放行标记 —— 本刻只有 note_life 最小的那批带它
-#   （每位玩家各限一批，见 same_tick/st_player）。保护分支不受此限（保护中音符不算候选、不占名额）
+# ★ st_pass（2026-09-21；★ 2026-09-26 改）：《同一刻判定限制》放行标记 ——
+#   life <= 0（已抵达判定位置）的音符**无条件**带它（不受竞争约束，同刻可多个一起判）；
+#   life > 0 的只有抢到本刻最小寿命才带它（每位玩家各限一批，见 same_tick/st_player）。
+#   保护分支不受此限（保护中音符不算候选、不占名额）
 execute if score @s note_protect matches 0 if entity @s[tag=st_pass] if score #life play_state <= #protect_high play_state if entity @s[tag=looked_at] run scoreboard players operation #judge_life play_state = @s note_life
 execute if score @s note_protect matches 0 if entity @s[tag=st_pass] if score #life play_state <= #protect_high play_state if entity @s[tag=looked_at] run function rhythm_axe:play/judgement/judge
 

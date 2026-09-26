@@ -2,6 +2,10 @@
 #   第一次 定第一角 | 第二次 定第二角（生成选区+判定+高亮+填充 selection+弹已选定音符列表）后回第一角
 # 位置 = 当前注视方块中心（^^^3，与音符工具游标同款）
 # （操作音效由 use.mcfunction 统一播放，此处不再重复）
+# ★ 协作占用检查：选择工具同一时间只允许一人驱动（占用者 = 最先手持它的人，见 select/select_owner_tick；
+#   放下工具即释放，下一位手持者可接着用前一位设好的第一角继续框选）
+execute unless entity @s[tag=editor_select_owner] run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"选择工具已被占用","color":"yellow"}]
+execute unless entity @s[tag=editor_select_owner] run return fail
 # 读当前注视方块中心到 prop.sx/sy/sz
 function rhythm_axe:editor/tool/select/select_read_pos
 # 初始化状态

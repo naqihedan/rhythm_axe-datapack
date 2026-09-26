@@ -3,7 +3,8 @@
 function rhythm_axe:editor/menu/clear_lines
 data remove storage rhythm_axe:map_list open
 data remove storage rhythm_axe:map_list panel
-data remove storage rhythm_axe:map_list page
+# 页码已改成按玩家（menu_page 计分项）：收起时把自己的页号归零（下次打开从第一页开始）
+scoreboard players reset @s menu_page
 data remove storage rhythm_axe:prop i
 data remove storage rhythm_axe:prop row
 data remove storage rhythm_axe:prop mapid

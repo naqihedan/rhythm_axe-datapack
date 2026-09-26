@@ -15,11 +15,11 @@ execute if data storage rhythm_axe:editor.runtime cur_particle run data remove s
 # 播放击打音效（查表 feedback.sounds[组][type].$(case)）
 $execute if data storage rhythm_axe:feedback sounds[$(hitsound)][$(note_type)].$(case) run data modify storage rhythm_axe:editor.runtime cur_sound set from storage rhythm_axe:feedback sounds[$(hitsound)][$(note_type)].$(case)
 execute if data storage rhythm_axe:editor.runtime cur_sound run function rhythm_axe:editor/visual/play_sound with storage rhythm_axe:editor.runtime
-execute if score debug_output options matches 1.. run tellraw @a ["",{"text":"[调试.lv1][trigger]","color":"gray"},{"text":" sound=","color":"yellow"},{"nbt":"cur_sound","storage":"rhythm_axe:editor.runtime","interpret":true},{"text":" 实体Pos=","color":"gray"},{"nbt":"Pos","entity":"@s"}]
+execute if score debug_output options matches 1.. run tellraw @a[tag=editor_active] ["",{"text":"[调试.lv1][trigger]","color":"gray"},{"text":" sound=","color":"yellow"},{"nbt":"cur_sound","storage":"rhythm_axe:editor.runtime","interpret":true},{"text":" 实体Pos=","color":"gray"},{"nbt":"Pos","entity":"@s"}]
 # 播放击打粒子（查表 feedback.particles[组][type].$(case)）
 $execute if data storage rhythm_axe:feedback particles[$(hit_particles)][$(note_type)].$(case) run data modify storage rhythm_axe:editor.runtime cur_particle set from storage rhythm_axe:feedback particles[$(hit_particles)][$(note_type)].$(case)
 execute if data storage rhythm_axe:editor.runtime cur_particle run function rhythm_axe:editor/visual/play_particle with storage rhythm_axe:editor.runtime
-execute if score debug_output options matches 1.. run tellraw @a ["",{"text":"[调试.lv1][trigger]","color":"gray"},{"text":" particle=","color":"yellow"},{"nbt":"cur_particle","storage":"rhythm_axe:editor.runtime","interpret":true},{"text":" 实体Pos=","color":"gray"},{"nbt":"Pos","entity":"@s"}]
+execute if score debug_output options matches 1.. run tellraw @a[tag=editor_active] ["",{"text":"[调试.lv1][trigger]","color":"gray"},{"text":" particle=","color":"yellow"},{"nbt":"cur_particle","storage":"rhythm_axe:editor.runtime","interpret":true},{"text":" 实体Pos=","color":"gray"},{"nbt":"Pos","entity":"@s"}]
 # 查表结果已在函数开头清理；播放完成后不保留临时值
 execute if data storage rhythm_axe:editor.runtime cur_sound run data remove storage rhythm_axe:editor.runtime cur_sound
 execute if data storage rhythm_axe:editor.runtime cur_particle run data remove storage rhythm_axe:editor.runtime cur_particle

@@ -2,7 +2,7 @@
 data modify storage rhythm_axe:maps.editor playing set value 0b
 # ★ 试玩结束：视线/交互距离恢复原版 3.0（试玩期间的 4.5 由 visual/tick 每刻维持，见那里的说明）
 execute as @a[tag=editor_active] run attribute @s entity_interaction_range base set 3.0
-pausemusic @s
+pausemusic @a[tag=editor_active]
 tick rate 20
 execute store result score #playhead editor run data get storage rhythm_axe:maps.editor playhead
 # ★ 2026-09-20 暂停清理：已过判定位置且未判定的音符静默清掉（0/1/2 判据 = 寿命 < 0）

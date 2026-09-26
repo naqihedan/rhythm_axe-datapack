@@ -44,7 +44,7 @@ data remove storage rhythm_axe:prop ticks
 data remove storage rhythm_axe:prop kind
 # 播放进度 bossbar（end_time 未定义则不显示）
 $execute store result score #temp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].end_time
-execute if score #temp editor matches 1.. run bossbar set rhythm_axe:editor_progress players @a
+bossbar set rhythm_axe:editor_progress players @a[tag=editor_active]
 execute if score #temp editor matches 1.. run execute store result bossbar rhythm_axe:editor_progress max run scoreboard players get #temp editor
 execute if score #temp editor matches 1.. run bossbar set rhythm_axe:editor_progress visible true
 execute if score #temp editor matches ..0 run bossbar set rhythm_axe:editor_progress visible false

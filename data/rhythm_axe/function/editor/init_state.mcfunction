@@ -1,5 +1,7 @@
 # 初始化 maps.editor 状态 + 单人锁标记（@s = 玩家）
 tag @s add editor_active
+tag @s add editor_host
+tag @a remove editor_select_owner
 scoreboard players enable @s editor_click
 advancement grant @s only rhythm_axe:editor/note_click
 advancement grant @s only rhythm_axe:editor/note_deselect
@@ -35,3 +37,7 @@ scoreboard players set #playhead editor 0
 scoreboard players set #metronome editor 0
 scoreboard players set #history_cursor editor 0
 execute store result score #hist_limit editor run scoreboard players get editor_history_limit options
+
+# ★ 多人协作（2026-09-26）：打开编辑器的人 = 会话主（editor_host）。
+#   协作工具**不在这里自动发放**（会无条件占掉背包第 1 格）⇒ 改由主菜单行 109【领取协作工具】自愿领取
+#   （panel1 的 10905 → editor/tool/give_coop_tool）。协作者的加入/退出见 editor/coop/{join,leave}。

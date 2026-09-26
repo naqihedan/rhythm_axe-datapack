@@ -4,7 +4,7 @@
 # 由玩家执行（@s 必须是玩家）
 execute unless entity @s[type=player] run return fail
 # ① 单人锁：若已有其他玩家在编辑 → 拒绝
-execute if entity @a[tag=editor_active] unless entity @s[tag=editor_active] run tellraw @s [{"text":"[编辑器] 编辑器已被占用，请稍后再试","color":"red"}]
+execute if entity @a[tag=editor_active] unless entity @s[tag=editor_active] run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"编辑器正在被使用；请让房主用【协作工具】右键你，把你加入协作","color":"red"}]
 execute if entity @a[tag=editor_active] unless entity @s[tag=editor_active] run return fail
 # ② @s 已在编辑 → 比较 mapid：相同→提示已在编辑；不同→弹切换谱面确认
 $execute if entity @s[tag=editor_active] run function rhythm_axe:editor/menu/switch/switch_check {mapid:"$(mapid)"}

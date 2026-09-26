@@ -11,7 +11,7 @@ scoreboard players operation #tn2 play_state *= -2 const
 #   ⚠️ display（item_display）无 hitbox，无法被 looking_at 射线选中，不能检测 display
 # ★ 距离基准 = 玩家视线位置（2026-08-09 用户确认）：positioned ~ ~-1.62 ~ 使 distance 测音符→玩家眼睛
 execute if score #life play_state = #tn2 play_state run tag @s add to_be_looked_at
-execute if score #life play_state = #tn2 play_state positioned ~ ~-1.62 ~ if entity @a[sort=nearest,distance=..4.5,predicate=rhythm_axe:looking_at] run tag @s add looked_at
+execute if score #life play_state = #tn2 play_state positioned ~ ~-1.62 ~ if entity @a[team=player,sort=nearest,distance=..4.5,predicate=rhythm_axe:looking_at] run tag @s add looked_at
 execute if score #life play_state = #tn2 play_state run tag @s remove to_be_looked_at
 # 寿命 == -2x：视线相交 → 按当前寿命（= goodL）判定；相离 → miss
 execute if score #life play_state = #tn2 play_state if entity @s[tag=looked_at] run scoreboard players operation #judge_life play_state = @s note_life

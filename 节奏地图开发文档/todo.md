@@ -2,6 +2,21 @@
 
 > 动态清零，用于快速记录想法
 
+## ⏸ 多人判定延迟补偿（**已搁置 2026-09-26，待重新评估**）
+
+- **做了什么**：mod 每 20 刻把每人 RTT 写进计分板 `net`；数据包 `play/judgement/st_player` 换算 `#st_lag = (RTT+30)/50`（clamp 0..4），`st_probe` 按玩家把判定箱回退到「他眼睛看到的位置」再测视线（线性音符闭式回退 / 非线性取位置历史环 `note_vis*`）。工具：`test/lag_report` 体检、`lag_rtt_manual` 手动固定值、`judge_lag_comp` 总开关。
+- **为什么搁置**（用户实测 2026-09-26）：
+  1. **主观结论：没什么用，手感还更差**。
+  2. **对照实验（编辑器 = 无补偿）**：能明显感到滞后「**稳定晚几刻**」且可适应；真正游玩（有补偿）「摸不着确切感觉」。⇒ 关键在于补偿量**恒定还是飘**：恒定偏差能适应、飘的不行。
+  3. **量纲不对**：RTT 只 20~50ms（≈0.4~1 刻），而感知滞后是「几刻」量级 ⇒ **大头不是 ping**，而是与 ping 无关的**稳定**成分（客户端渲染/插值节奏）。而按 RTT 补的量还在 1↔2 刻之间跳（keep-alive 抖动 × 整刻量化）。
+- **回退方式（已做）**：mod 侧删 `PlayerPingSync` + 撤销注册（不再写 `net` ⇒ 数据包补偿自动恒为 0）；`judge_lag_comp` 默认改 0（`load` 每回 reload 写 0）。
+- **代码现状（重要）**：数据包的补偿代码**仍留在原位**（未删，只停用），清单：
+  - `play/judgement/st_player`/`st_probe`/`st_mark` 里带「★ 2026-09-26 判定延迟补偿」注释的行；`st_lag_apply{,_lin,_nl}`、`st_lag_restore`；
+  - `play/active_note/move_self` 的 `#lag_extra` 减法；`move_write_pair` 的位置环维护 + `vis_ring_next`；
+  - `load.mcfunction` 的 `net` / `lag_rtt_manual` / 16 个 `note_vis*` objective；`tick.mcfunction` 的 `enable @a lag_rtt_manual`；`utilization/clear_note_scores` 的 `note_vis*` 清理；`test/lag_report{,_one}`；只作为对照的调制函数 `lag_rtt_manual`。
+  - 删除它们要做一遍判定回归测试（改动落在判定热路径）；不删也**完全无害**（补偿恒 0）。
+- **若将来重做，优先换思路**：目标应是**恒定偏移**（对所有人生效、不随 RTT 飘），候选杠杆 = `play/active_note/move_self` 里那个固定的 `-= 1` 刻（“对齐客户端渲染延迟”用的常数）——拿它按手感标定即可（单机/房主同样能感受到差异）；先用 `lag_rtt_manual`（per-player 常量）扫 `70/120`（2/3 刻）确认量级。
+
 - [x] 编辑器试听「真实判定模式」（**阶段 1 完成 2026-09-20**）
   - 开关：`options.editor_note_judge`（默认 **1 开**）+ 主菜单行 105【判定：开/关】（`10502`，与节拍器同行）
   - 阶段 1 覆盖普通音符 0/1/2，**照搬游玩语义**：0 音符盒 / 1 木板 = 视线命中（同一 `predicate rhythm_axe:looking_at`）；2 唱片机 = 左/右键点击

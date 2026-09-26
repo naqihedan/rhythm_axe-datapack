@@ -41,27 +41,25 @@ scoreboard players set is_running play_state 1
 
 # 玩家初始化
 # 记录进入前游戏模式（结束游戏时还原；1.20.2+ 无法读玩家 NBT，改用 gamemode 选择器判断）
-# 注意：main 可能由服务器/命令方块执行，@s 不一定是玩家 → 用 @a 判断
-# 先清除旧值避免残留；模式数值：0=生存 1=创造 2=冒险 3=旁观
-execute if data storage rhythm_axe:runtime prev_gamemode run data remove storage rhythm_axe:runtime prev_gamemode
-execute if entity @a[gamemode=survival] run data modify storage rhythm_axe:runtime prev_gamemode set value 0
-execute if entity @a[gamemode=creative] run data modify storage rhythm_axe:runtime prev_gamemode set value 1
-execute if entity @a[gamemode=adventure] run data modify storage rhythm_axe:runtime prev_gamemode set value 2
-execute if entity @a[gamemode=spectator] run data modify storage rhythm_axe:runtime prev_gamemode set value 3
-execute unless data storage rhythm_axe:runtime prev_gamemode run data modify storage rhythm_axe:runtime prev_gamemode set value 2
-gamemode adventure @a[gamemode=!adventure]
+# ★ 2026-09-26 玩家队伍：以下一切只对 **队伍 player 成员**（= 本局名单）生效，名单由大厅「房间页」维护。
+#   prev_gamemode 也从「全局单值」改成**按玩家**存 `play_player`（原来多人下会把所有人还原成同一个模式）。
+#   模式数值：0=生存 1=创造 2=冒险 3=旁观（默认 2：缺分时按冒险兜底）
+scoreboard players set @a[team=player] play_player 2
+execute as @a[team=player,gamemode=survival] run scoreboard players set @s play_player 0
+execute as @a[team=player,gamemode=creative] run scoreboard players set @s play_player 1
+execute as @a[team=player,gamemode=spectator] run scoreboard players set @s play_player 3
+gamemode adventure @a[team=player,gamemode=!adventure]
 scoreboard players set #dbg play_state 3
-effect give @a minecraft:instant_health 1 255 true
-effect give @a minecraft:resistance 5 255 true
-# 标记为游玩中（射线步进视线检测按此筛选玩家；结束游戏时移除）
-tag @a add playing
+effect give @a[team=player] minecraft:instant_health 1 255 true
+effect give @a[team=player] minecraft:resistance 5 255 true
+# 标记为游玩中：直接读 `@a[team=player]`，不再用 tag playing（2026-09-26 删，避免两套状态不同步）
 # 激活唱片机点击 advancement（完整获得 → 触发器检测）
 # 26.x 已验证：grant 整个激活后永久生效（即使 reward 里 revoke 整个，后续点击仍每次触发一次）
 #   grant 时若玩家历史满足会立即触发一次 reward——无害（reward 只 revoke 不清 grant，不会循环）
 advancement revoke @a only rhythm_axe:jukebox_right_click
 advancement revoke @a only rhythm_axe:jukebox_left_click
-advancement grant @a only rhythm_axe:jukebox_right_click
-advancement grant @a only rhythm_axe:jukebox_left_click
+advancement grant @a[team=player] only rhythm_axe:jukebox_right_click
+advancement grant @a[team=player] only rhythm_axe:jukebox_left_click
 # 若谱面 teleport 为真，传送到初始位置（spawn_x/y/z/yaw/pitch 标量；旧谱面缺字段时补 0）
 # ★ 2026-09-13 先清零再读：store result 失败会保留旧值（上一局的 teleport 标记）→ 谱面未定义 teleport 时会误传送
 scoreboard players set #tp_flag play_state 0
@@ -77,11 +75,11 @@ execute unless data storage rhythm_axe:runtime spawn_pitch run data modify stora
 execute if score #tp_flag play_state matches 1 run function rhythm_axe:play/start_of_game/tp_to_spawn with storage rhythm_axe:runtime
 # 实体交互距离：游玩期间硬编码 4.5 格（玩家属性 entity_interaction_range，1.21.2+ 无前缀）
 # 结束游戏恢复原版 3.0（end_of_game/end_of_game）
-execute as @a run attribute @s entity_interaction_range base set 4.5
+execute as @a[team=player] run attribute @s entity_interaction_range base set 4.5
 
 # 给予斧头（默认小木斧lv.1，可由谱面自定义）
 scoreboard players set #dbg play_state 4
-give @a minecraft:stick[\
+give @a[team=player] minecraft:stick[\
     item_model="minecraft:wooden_axe",\
     can_break={\
     blocks:[note_block,birch_planks]},\

@@ -5,4 +5,4 @@
 #   是否有展示实体（=判定位置）→ 有则给其配对音符加 looked_at_perfect（保护进入用）
 # 实际判定（分支B）不用射线步进，用原版 looking_at 精确命中音符 hitbox
 scoreboard players set #ray_max play_state 9
-execute as @a[tag=playing] at @s anchored eyes run function rhythm_axe:play/active_note/raycast_init
+execute as @a[team=player] at @s anchored eyes run function rhythm_axe:play/active_note/raycast_init

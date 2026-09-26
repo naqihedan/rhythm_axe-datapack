@@ -7,8 +7,7 @@ stopmusic @a
 scoreboard players set is_running play_state 0
 # 移除歌曲进度条
 bossbar remove rhythm_axe:song_progress
-# 退出游玩状态（射线步进视线检测按此筛选玩家）
-tag @a remove playing
+# 退出游玩状态：游玩中标记已改为直接读 `@a[team=player]`（2026-09-26 删掉 tag playing）
 # 收回唱片机点击 advancement
 advancement revoke @a only rhythm_axe:jukebox_right_click
 advancement revoke @a only rhythm_axe:jukebox_left_click
@@ -24,14 +23,19 @@ $scoreboard players reset @e[tag=map_$(mapid)]
 $kill @e[tag=map_$(mapid)]
 # 清理 hit_events（判定反馈存储，M2-H；音符清除时已逐个删，这里兜底清空防残留）
 execute if data storage rhythm_axe:runtime hit_events run data remove storage rhythm_axe:runtime hit_events
-# 还原玩家状态（按进入前模式精确还原；模式数值：0=生存 1=创造 2=冒险 3=旁观）
-# 先重置 #prev_gm 防止读取失败时残留上一局的值
-scoreboard players set #prev_gm play_state 0
-execute if data storage rhythm_axe:runtime prev_gamemode run execute store result score #prev_gm play_state run data get storage rhythm_axe:runtime prev_gamemode
-execute if score #prev_gm play_state matches 0 run gamemode survival @a
-execute if score #prev_gm play_state matches 1 run gamemode creative @a
-execute if score #prev_gm play_state matches 2 run gamemode adventure @a
-execute if score #prev_gm play_state matches 3 run gamemode spectator @a
+# 还原玩家状态（★ 2026-09-26：按**每位成员自己**的 play_player 还原，不再用全局单值
+#   —— 原来多人下会把所有人还原成同一个模式。模式数值：0=生存 1=创造 2=冒险 3=旁观）
+#   缺分（老存档/异常）→ 走创造，避免把人锁在冒险模式
+execute as @a[team=player] if score @s play_player matches 0 run gamemode survival @s
+execute as @a[team=player] if score @s play_player matches 1 run gamemode creative @s
+execute as @a[team=player] if score @s play_player matches 2 run gamemode adventure @s
+execute as @a[team=player] if score @s play_player matches 3 run gamemode spectator @s
+execute as @a[team=player] unless score @s play_player matches 0..3 run gamemode creative @s
+# ★ 2026-09-26：结束游玩 = 清空本局名单（队伍 player）。下次要玩得重新在房间页【加入游玩】。
+#   ⚠ 必须放在「按 play_player 还原游戏模式」**之后**（上面那 5 条是按 @a[team=player] 遍历的）：
+#     名单先空 → 谁都不还原 → 所有人卡在冒险模式。
+#   用 team leave 逐个退（room/leave 已在用，稳）；等价的一行写法是 team empty player。
+execute as @a[team=player] run team leave @s
 effect clear @a minecraft:resistance
 execute as @a run attribute @s entity_interaction_range base set 3.0
 clear @a minecraft:stick[item_name={"text":"小木斧lv.1","color":"green"}] 1

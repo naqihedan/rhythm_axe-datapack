@@ -11,9 +11,10 @@ execute if score #menu_value menu matches 11701 run function rhythm_axe:map_list
 execute if score #menu_value menu matches 11702 run function rhythm_axe:map_list/maps/page_next
 
 # —— 动态行（值 = 100000 + 页内序×100 + 列码，页内序 0..9）——
-# 页号（0 基）
+# 页号（0 基）= **点击者自己的** menu_page（与 list_open 写的是同一处；每人独立 ⇒ 行值解析不会串页）
+scoreboard players add @s menu_page 0
 scoreboard players set #ml_page menu 0
-execute store result score #ml_page menu run data get storage rhythm_axe:map_list page
+execute store result score #ml_page menu run scoreboard players get @s menu_page
 # 列码 #ml_tcol = (click - 100000) % 100
 execute if score #menu_value menu matches 100000..100909 run scoreboard players operation #ml_tcol menu = #menu_value menu
 execute if score #menu_value menu matches 100000..100909 run scoreboard players remove #ml_tcol menu 100000

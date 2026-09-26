@@ -2,7 +2,8 @@
 # ★ 播放中退出：必须停音乐 + 复位 tick rate（放在 clear_state 之前、editor_active 还在时）
 #   2026-09-19 补——此前会残留继续播放的音乐与缩放后的 tick rate；四条退出路径都走本文件
 #   （暂停时的 tick rate 复位由 playback/pause 负责）
-execute as @a[tag=editor_active] run stopmusic @s
+execute as @a[tag=editor_active] run function rhythm_axe:editor/coop/leave_core
+tag @a remove editor_select_owner
 tick rate 20
 bossbar set rhythm_axe:editor_progress visible false
 # ★ 2026-09-20：kill 前先清 editor_n_* 计分项（kill 不清计分板项，否则每次退出都残留一整套，详见 note_scores_reset_）

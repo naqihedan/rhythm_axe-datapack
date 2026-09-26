@@ -27,6 +27,23 @@ scoreboard players reset * note_base_y
 scoreboard players reset * note_base_z
 scoreboard players reset * note_half_size
 scoreboard players reset * note_cur_tz
+# 判定延迟补偿的位置历史环（非线性音符）
+scoreboard players reset * note_vis_ok
+scoreboard players reset * note_vis0_x
+scoreboard players reset * note_vis0_y
+scoreboard players reset * note_vis0_z
+scoreboard players reset * note_vis1_x
+scoreboard players reset * note_vis1_y
+scoreboard players reset * note_vis1_z
+scoreboard players reset * note_vis2_x
+scoreboard players reset * note_vis2_y
+scoreboard players reset * note_vis2_z
+scoreboard players reset * note_vis3_x
+scoreboard players reset * note_vis3_y
+scoreboard players reset * note_vis3_z
+scoreboard players reset * note_vis4_x
+scoreboard players reset * note_vis4_y
+scoreboard players reset * note_vis4_z
 # ============ 引导线实体（note_guide_*；原先漏清，实体 kill 后计分项不会自动消失） ============
 scoreboard players reset * note_guide_a
 scoreboard players reset * note_guide_b

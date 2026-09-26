@@ -76,9 +76,29 @@ function rhythm_axe:play/feedback/init
 scoreboard objectives add play_state dummy
 scoreboard objectives add score_calculate dummy
 scoreboard objectives add options dummy
+# net：每位玩家的 RTT（毫秒），由 rhythm_axe_mod 每 20 刻写入（数据包只读，多人判定延迟补偿用）
+#   没装 mod / 旧版 mod 时该计分项恒缺 ⇒ 补偿刻数算成 0，判定行为与补偿前完全一致
+scoreboard objectives add net dummy
+# lag_rtt_manual：手动覆盖该玩家的 RTT（毫秒；不设 = 自动读 net）
+#   用于没法自动测量的场合（房主没装 mod）或想现场 A/B 调参；换算同 net：(值+30)/50，clamp 0..4
+#   用法：/scoreboard players set <玩家> lag_rtt_manual <毫秒>（0 = 该玩家不补偿；想固定 N 刻填 50N-30）
+scoreboard objectives add lag_rtt_manual dummy
 # mods 计分板（玩家开始游戏前设置的 mod 开关；start 时复制到 play_state 同名项）
 #   auto：1=自动模式（auto 接管判定，玩家不能判定）
 scoreboard objectives add mods dummy
+#====================玩家队伍（游玩侧名单）====================
+# team player = 本局的玩家名单：切冒险模式 / 判定 / 扣血 / 进度条 / 音乐 只对 @a[team=player] 生效，
+#   名单外的人 = 观众（原游戏模式、背包、属性一律不动）。名单由大厅「房间页」（room/，页面 21）维护。
+#   ★ team add 重复执行会报「队伍已存在」⇒ 用 runtime 标记只建一次（队伍是否存在无法直接检测）。
+execute unless data storage rhythm_axe:runtime {team_ready:1b} run team add player
+execute unless data storage rhythm_axe:runtime {team_ready:1b} run data modify storage rhythm_axe:runtime team_ready set value 1b
+# ★ 26.2 里选项名是 camelCase：friendlyFire（全小写 friendlyfire 会「错误的命令参数」⇒ 整个 load 不加载）
+team modify player friendlyFire false
+# play_player：每位玩家的「进入游戏前游戏模式」（0 生存/1 创造/2 冒险/3 旁观），结束游戏时按各自还原
+scoreboard objectives add play_player dummy
+#====================菜单系统（菜单层）====================
+# menu_page：每位玩家**自己的**菜单页码（谱面总表用；每人独立 ⇒ 别人翻页不影响我的页）
+scoreboard objectives add menu_page dummy
 # 运行期 auto 标记（start 从 mods.auto 复制；判定系统读取）
 scoreboard players set auto play_state 0
 # is_running 初始化：防上次游玩未正常走完 end_of_game（自动结束未到/退出/重载）导致残留 1，
@@ -136,6 +156,27 @@ scoreboard objectives add note_base_y dummy
 scoreboard objectives add note_base_z dummy
 scoreboard objectives add note_half_size dummy
 scoreboard objectives add note_cur_tz dummy
+# ★ 2026-09-26 判定延迟补偿：交互实体的「位置历史环」（×100）——
+#   note_vis0 = 当前刻视觉位置（= 判定箱当前位置）、note_vis1 = 再往前 1 刻 … note_vis4 = 再往前 4 刻
+#   非线性音符（anim_power≠1）没有闭式反解，只能存真实历史；维护见 active_note/vis_ring_next
+#   （线性音符走 move_self 的闭式公式，不用这组）
+scoreboard objectives add note_vis0_x dummy
+scoreboard objectives add note_vis0_y dummy
+scoreboard objectives add note_vis0_z dummy
+scoreboard objectives add note_vis1_x dummy
+scoreboard objectives add note_vis1_y dummy
+scoreboard objectives add note_vis1_z dummy
+scoreboard objectives add note_vis2_x dummy
+scoreboard objectives add note_vis2_y dummy
+scoreboard objectives add note_vis2_z dummy
+scoreboard objectives add note_vis3_x dummy
+scoreboard objectives add note_vis3_y dummy
+scoreboard objectives add note_vis3_z dummy
+scoreboard objectives add note_vis4_x dummy
+scoreboard objectives add note_vis4_y dummy
+scoreboard objectives add note_vis4_z dummy
+# 位置历史环是否已初始化（首次写入时把 5 个槽全填成当前位置，防未初始化槽被读成 0 = 世界原点）
+scoreboard objectives add note_vis_ok dummy
 # 阶段C 线性客户端插值（统一模型，2026-08-08 重写 / 2026-08-14 修订）：note_lin_dur = 插值时长 D
 #   （普通=lt-2、玻璃=lt+dur-2：出生→终点隔 2 tick 且插值时钟从终点到达时开始，补偿渲染延迟1刻+间隔1刻）；
 #   note_lin_t = 插值进度（0 起每 tick +1，move 算交互位置用）；note_lin_end = 终点 end×100（普通 0，玻璃 dist×dur/lt）
@@ -239,6 +280,12 @@ scoreboard players reset editor_note_hitevents options
 execute unless score editor_play_events options matches 0..1 run scoreboard players set editor_play_events options 0
 execute unless score note_hitsound options matches 1..6 run scoreboard players set note_hitsound options 1
 execute unless score note_particle options matches 1..6 run scoreboard players set note_particle options 1
+# ★ 2026-09-26 设置：options.judge_lag_comp（多人判定延迟补偿）—— ⏸ **该功能已搁置**，见 todo.md
+#   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故必须在此兜底
+#   （0 = 关闭：判定箱不回退，回到补偿前的行为，单人/排查用）
+# ⏸ 2026-09-26 起默认 **0**（延迟补偿已搁置，见 todo.md）；每回 reload 直接写 0，想试验就手动设 1
+#   （即使设 1，只要没 mod 写 `net` 就恒等于不补偿 —— 这也正是当前的回退方式）
+scoreboard players set judge_lag_comp options 0
 # 编辑器音符展示实体参数（visual/：place/tick 按实体读；每个字段一个 objective，与游玩 note_c_* 同模式）
 scoreboard objectives add editor_n_birth dummy
 scoreboard objectives add editor_n_time dummy
@@ -297,6 +344,10 @@ execute if score #temp editor matches 1 run function rhythm_axe:editor/load_noti
 
 # 大厅（谱面总表）是聊天栏面板级的临时 UI：reload 后清掉（聊天栏旧按钮失效、不再响应）
 data remove storage rhythm_axe:map_list open
+# 房间页（菜单系统页面 21）同属临时 UI：状态一起清
+data remove storage rhythm_axe:map_list room_mapid
+# 菜单页码按玩家存 menu_page 计分项（tag 与计分项都不会因 reload 自动消失，这里一并清）
+scoreboard players reset * menu_page
 data remove storage rhythm_axe:map_list panel
 data remove storage rhythm_axe:map_list page
 

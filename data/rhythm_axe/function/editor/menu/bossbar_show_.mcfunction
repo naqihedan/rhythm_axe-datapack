@@ -11,7 +11,7 @@ execute if data storage rhythm_axe:prop title_comp run function rhythm_axe:edito
 execute unless data storage rhythm_axe:prop title run bossbar set rhythm_axe:editor_progress name {"text":"播放进度"}
 data remove storage rhythm_axe:prop title
 data remove storage rhythm_axe:prop title_comp
-bossbar set rhythm_axe:editor_progress players @a
+bossbar set rhythm_axe:editor_progress players @a[tag=editor_active]
 bossbar set rhythm_axe:editor_progress visible true
 execute store result bossbar rhythm_axe:editor_progress value run scoreboard players get #playhead editor
 # 进度条颜色（0白 1粉 2蓝 3红 4绿 5黄 6紫；缺省 0 白；bossbar 支持色）

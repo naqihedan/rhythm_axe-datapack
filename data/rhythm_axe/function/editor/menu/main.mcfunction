@@ -66,6 +66,8 @@ tellraw @s [\
     {"text":"音符顺序：","color":"gray"},\
     {"text":"【整理音符顺序】","color":"gold","click_event":{"action":"run_command","command":"/trigger editor_click set 10801"},"hover_event":{"action":"show_text","value":"把音符数组按判定时间升序重排（修复批量改时间造成的顺序错乱）；保存谱面时会自动执行"}}\
 ]
+# 协作编辑行（行109）：主菜单自愿领取协作工具（2026-09-26 起不再随打开编辑器自动发放）
+tellraw @s [{"text":"协作编辑：","color":"gray"},{"text":"【领取协作工具】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10905"},"hover_event":{"action":"show_text","value":"把协作工具放进背包第 1 格：右键玩家=邀请加入（蹲下右键=踢出）"}}]
 # 时间控件行（播放 ▶/⏸ 按状态显示）+ 速度按钮：同一行，按钮组件经 prop 注入宏 play_row
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor playing
 data modify storage rhythm_axe:prop pb set value '{"text":" ▶ ","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 23"},"hover_event":{"action":"show_text","value":"播放"}}'

@@ -7,11 +7,16 @@
 #   线性 z(t) = -dist + (dist+end)×t/D  →  tz = ((dist+end)×t/D) - dist
 #   【安全前提】交互实体的 note_lin_t 与展示实体同步递增（active_note 同刻对 note_linear 实体 +1），
 #   故 note_lin_t-1 = 展示实体上一刻的 t = move 写 #pvx 用的"上一刻位置"，解耦延迟一致。
+# ★ 2026-09-26 判定延迟补偿：t 再减 #lag_extra（多人在场时该玩家 RTT 换算的刻数；0 = 不补偿）。
+#   只有「临时给某玩家测 looking_at」时 #lag_extra > 0（judgement/st_lag_apply），平时恒 0。
+#   挪过位置的音符打 st_lag_moved，由 same_tick 末尾还原（否则判定反馈会播在回退位置）。
 
 # 进度 t = note_lin_t - 1（上一刻），钳制到 [0, note_lin_dur]
 #   （正常流程下交互实体 note_lin_t 已同刻 +1，÷ 后至少为 1，t 不会 <0；此处下界钳制防边界异常）
 scoreboard players operation #m_t display_calc = @s note_lin_t
 scoreboard players operation #m_t display_calc -= 1 const
+# ★ 2026-09-26 判定延迟补偿：再减 #lag_extra（平时恒 0）。下界钳制会把"还没开始运动"退回出生位置
+scoreboard players operation #m_t display_calc -= #lag_extra play_state
 execute if score #m_t display_calc < 0 const run scoreboard players set #m_t display_calc 0
 execute if score #m_t display_calc > @s note_lin_dur run scoreboard players operation #m_t display_calc = @s note_lin_dur
 # m_s = (dist + end) × t / D
@@ -48,3 +53,6 @@ scoreboard players operation #vz play_state += #wz display_calc
 execute store result entity @s Pos[0] double 0.01 run scoreboard players get #vx play_state
 execute store result entity @s Pos[1] double 0.01 run scoreboard players get #vy play_state
 execute store result entity @s Pos[2] double 0.01 run scoreboard players get #vz play_state
+# ★ 2026-09-26 判定延迟补偿：带补偿挪过位置的音符打标记，same_tick 末尾统一还原
+# （还原 = 把 #lag_extra 归 0 后再调本函数，位置回到"上一刻视觉位置"）
+execute if score #lag_extra play_state matches 1.. run tag @s add st_lag_moved

@@ -1,4 +1,6 @@
+#arg:glow_sel
 # 计算从第一角(corner1)到当前注视位置的选区长方体，更新黄绿玻璃（state=1 预览）
+# 协作：glow_sel = 本次要更新的那块玻璃的身份 tag（每人一块，由 select_glow_tick 传入）
 # 输出：prop.minx/miny/minz/nx/ny/nz → select_stretch（宏）
 execute store result score #c1x editor run data get storage rhythm_axe:maps.editor select_tool.corner1[0]
 execute store result score #c1y editor run data get storage rhythm_axe:maps.editor select_tool.corner1[1]
@@ -59,8 +61,10 @@ execute store result storage rhythm_axe:prop ny int 1 run scoreboard players get
 execute store result storage rhythm_axe:prop nz int 1 run scoreboard players get #nz editor
 # 更新黄绿玻璃（中心定位 + 边长缩放）
 
+$data modify storage rhythm_axe:prop glow_sel set value "$(glow_sel)"
 function rhythm_axe:editor/tool/select/select_stretch with storage rhythm_axe:prop
 # 清宏参
+data remove storage rhythm_axe:prop glow_sel
 data remove storage rhythm_axe:prop cx_int
 data remove storage rhythm_axe:prop cy_int
 data remove storage rhythm_axe:prop cz_int

@@ -1,8 +1,9 @@
 # 谱面总表渲染（面板 19）
 # 布局：清屏 → 标题 → 本页最多 10 行（{标题} - {作者}【游玩】【编辑】{mapid}）→ 页脚（翻页）
 # 前置：rhythm_axe:maps.index 已就绪（map_list/open 里先跑 index_sync）；@s = 查看者。
-# 分页：每页 10 行，页号 0 基存 rhythm_axe:map_list.page；行按钮值为**页内相对**（规范 v2，(1000+页内序)×100+列码），
-#       所以页码不进值、翻页只改 storage —— 同一套行值跨页复用。
+# 分页：每页 10 行，页号 0 基存**玩家自己的 `menu_page` 计分项**（2026-09-26 改：原来存全局
+#       rhythm_axe:map_list.page ⇒ 多人同时在大厅时，别人翻页会改掉我的页）；行按钮值为**页内相对**
+#       （规范 v2，(1000+页内序)×100+列码），所以页码不进值、翻页只改自己的计分项 —— 同一套行值跨页复用。
 data modify storage rhythm_axe:map_list panel set value 19
 function rhythm_axe:editor/menu/clear_lines
 
@@ -15,13 +16,14 @@ scoreboard players add #ml_pages menu 9
 scoreboard players operation #ml_pages menu /= 10 const
 execute if score #ml_pages menu matches 0 run scoreboard players set #ml_pages menu 1
 
-# —— 页号钳制到 [0, 页数-1]（索引缩水后可能越界） ——
+# —— 页号钳制到 [0, 页数-1]（页号 = 本玩家自己的 menu_page；索引缩水后可能越界） ——
+scoreboard players add @s menu_page 0
 scoreboard players set #ml_page menu 0
-execute store result score #ml_page menu run data get storage rhythm_axe:map_list page
+execute store result score #ml_page menu run scoreboard players get @s menu_page
 execute if score #ml_page menu matches ..-1 run scoreboard players set #ml_page menu 0
 execute if score #ml_page menu >= #ml_pages menu run scoreboard players operation #ml_page menu = #ml_pages menu
 execute if score #ml_page menu >= #ml_pages menu run scoreboard players remove #ml_page menu 1
-execute store result storage rhythm_axe:map_list page int 1 run scoreboard players get #ml_page menu
+scoreboard players operation @s menu_page = #ml_page menu
 scoreboard players operation #ml_page_show menu = #ml_page menu
 scoreboard players add #ml_page_show menu 1
 # 是否有上/下一页

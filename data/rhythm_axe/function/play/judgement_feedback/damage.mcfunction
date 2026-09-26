@@ -2,7 +2,7 @@
 execute if score damage_cooldown play_state matches ..0 if score health play_state matches 1.. run scoreboard players remove health play_state 1
 
 execute if score damage_cooldown play_state matches ..0 if score health play_state matches 1.. run \
-    execute if score feedback_actionbar options matches 1 run title @a actionbar \
+    execute if score feedback_actionbar options matches 1 run title @a[team=player] actionbar \
     [{"text":"(","color":"red"},\
      {"score":{"objective":"play_state","name":"health"},"color":"red","bold":true},\
      {"text":")","color":"red","bold":true},\
@@ -13,7 +13,7 @@ execute if score damage_cooldown play_state matches ..0 if score health play_sta
      {"text":")","color":"white","bold":true}]
 
 execute if score damage_cooldown play_state matches ..0 if score health play_state matches 1.. run \
-    execute if score feedback_chat options matches 1 run tellraw @a [{"text":"*   -1 ❤   *","color":"red"}]
+    execute if score feedback_chat options matches 1 run tellraw @a[team=player] [{"text":"*   -1 ❤   *","color":"red"}]
 
 
 # 判定反馈组表（M2-H）：玻璃撞墙扣血 → damage 情况（音效/粒子 + hit_events.damage）

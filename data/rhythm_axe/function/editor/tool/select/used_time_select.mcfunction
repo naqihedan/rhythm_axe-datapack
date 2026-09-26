@@ -2,6 +2,10 @@
 #   第一次 定入点 = 当前播放头 | 第二次 定出点 = 当前播放头（选中 [min,max] 区间内音符 + 弹已选定音符列表）后回 state=0
 # 与站立右键的立方体框选（used_select）互不干扰：状态存 time_select，与 select_tool 分开
 # （操作音效由 use.mcfunction 统一播放，此处不再重复）
+# ★ 协作占用检查：选择工具同一时间只允许一人驱动（占用者 = 最先手持它的人，见 select/select_owner_tick；
+#   放下工具即释放，下一位手持者可接着用前一位设好的第一角继续框选）
+execute unless entity @s[tag=editor_select_owner] run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"选择工具已被占用","color":"yellow"}]
+execute unless entity @s[tag=editor_select_owner] run return fail
 execute unless data storage rhythm_axe:maps.editor time_select run data modify storage rhythm_axe:maps.editor time_select set value {state:0}
 execute store result score #ts_state editor run data get storage rhythm_axe:maps.editor time_select.state
 # 规范化：state 只认 0/1（残留/越界值一律按 0 处理）

@@ -83,6 +83,9 @@ scoreboard players add #proto_high play_state 1
 #   ★ 2026-09-04 恢复玻璃：玻璃交互实体位置虽不参与判定（玻璃走中心 marker 的 glass_sweep 碰撞），
 #     但扣血反馈（damage_feedback → feedback）以交互实体位置 at @s 播放音效/粒子，故玻璃交互实体也须
 #     跟随视觉位置（之前排除导致反馈播在出生位置，玩家看不到/听不到）。每玻璃多 ~30 条命令，可接受。
+# ★ 2026-09-26 判定延迟补偿：#lag_extra 是"临时回退刻数"，只在给某玩家测 looking_at 时被置 >0
+#   （judgement/st_lag_apply 用完立刻归 0）；这里再兜底清一次，保证常规移动恒走"上一刻视觉位置"。
+scoreboard players set #lag_extra play_state 0
 execute as @e[type=interaction,tag=note_linear] run function rhythm_axe:play/active_note/move_self
 # ★ 《同一刻判定限制》（2026-09-21）：每刻先算「每位玩家本刻只放行哪一批」，
 #   并顺带打 looked_at（判定 / 保护记录共用）。必须【单次】调用（内部自己遍历玩家与音符）、
@@ -113,7 +116,7 @@ execute as @e[type=interaction,tag=note_interaction,scores={note_moving=1}] at @
 #   之前（sweep 读 marker 的 Pos/note_prev_*）。非线性玻璃 marker 走 move 的旧扫描，故排除。
 execute as @e[type=marker,tag=note_glass_center,tag=note_linear] run function rhythm_axe:play/active_note/marker_self
 # ★ 自动模式（2026-08-09）：auto=1 玩家不判定玻璃（不会产生 damage），直接短路不扫掠（省全部 CCD）
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_glass_center] at @s if entity @a[distance=..4] run function rhythm_axe:play/active_note/glass_sweep
+execute if score auto play_state matches 0 as @e[type=marker,tag=note_glass_center] at @s if entity @a[team=player,distance=..4] run function rhythm_axe:play/active_note/glass_sweep
 
 # M2-C/D：全局出窗检测——所有音符寿命越过 goodL 末刻（< -2x）且未判定
 # 音符盒等 → miss；木板/染色玻璃 → 静默清除（无 miss）；混凝土 → 跳过（尾未到判定位置，另有出窗）

@@ -2,6 +2,10 @@ advancement revoke @s only rhythm_axe:editor/note_click
 execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][左键]","color":"gray"},{"text":" 奖励函数已触发","color":"green"}]
 execute unless entity @s[tag=editor_active] run execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][左键]","color":"gray"},{"text":" 非 editor_active","color":"red"}]
 execute unless entity @s[tag=editor_active] run return fail
+# 协作：记住「这次左键是谁点的」。后续以音符交互实体身份执行（@s 不是玩家），
+#   不能再 `as @a[tag=editor_active]` 对所有成员各跑一遍（会重复选中 / 重复渲染）。
+tag @a[tag=editor_actor] remove editor_actor
+tag @s add editor_actor
 # ★ 真实判定（试听）：播放中 + 判定模式 → 左键转交判定输入（不进入选中/开面板流程）
 #   （判定输入只在唱片机上有效；其他类型点击被忽略，见 judge/input_click）
 execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} run function rhythm_axe:editor/judge/input_click

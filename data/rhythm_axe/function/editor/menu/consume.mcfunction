@@ -2,6 +2,17 @@
 execute store result score #click_value editor run scoreboard players get @s editor_click
 scoreboard players reset @s editor_click
 scoreboard players enable @s editor_click
+# ★ 多人并发锁（2026-09-26）。MC 命令是单线程顺序执行 ⇒ 同刻两次点击 = 「A 整条链 → B 整条链」，
+#   顺序执行本身不会错；真正会坏的只有「跨刻链 + 全局临时量」（prop.*、#xxx editor、undo.pre_snapshot
+#   被另一个人的链中途覆盖）⇒ 用「锁到期刻号 + 持有者」把并发窗口挡掉。本人连点不受限；
+#   想关掉就删这 6 行（含 use.mcfunction 里同款）。
+execute store result score #op_now editor run time query gametime
+execute if score #lock_until editor >= #op_now editor unless entity @s[tag=editor_lock_holder] run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"另一位编辑者正在操作，请稍候再点","color":"yellow"}]
+execute if score #lock_until editor >= #op_now editor unless entity @s[tag=editor_lock_holder] run return fail
+tag @a[tag=editor_lock_holder] remove editor_lock_holder
+tag @s add editor_lock_holder
+scoreboard players operation #lock_until editor = #op_now editor
+scoreboard players add #lock_until editor 3
 
 # ★ 统一操作反馈音：所有 trigger 按钮点击（含 903/时间控件/撤销重做/各面板按钮）
 playsound minecraft:ui.button.click master @s ~ ~ ~ 1 1

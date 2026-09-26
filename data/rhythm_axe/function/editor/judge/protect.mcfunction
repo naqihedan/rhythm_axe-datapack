@@ -1,5 +1,5 @@
 # 编辑器真实判定：判定保护分支（@s = 编辑器音符展示实体，editor_n_protect = 1）
-# 照搬游玩 protected（音符盒 0）/ protected_plank（木板 1），并按《判定保护情况下音符取得判定的几种情况》对齐：
+# 照搬游玩 protected（音符盒 0），并按《判定保护情况下音符取得判定的几种情况》对齐：
 #   「看着」= 视线与【音符】相交（@s editor_n_hit = judge/probe 的命中标记）
 #             **或** 视线在【完美判定区域】内（editor_n_looked_perfect = raycast，判定位置为中心）
 #     —— 完美判定区域固定在判定位置不动 ⇒「从出生一直盯着判定位置看」也算一直看着
@@ -12,8 +12,7 @@
 #   life == 0 → 结算：
 #     音符盒：有记录 且 看着 → 大P；有记录 但 不看着 → 按记录寿命；无记录 且 看着 → 大P；
 #             无记录 且 不看着 → 不判（等同无保护：life<0 后由 note_check 的 #ed_pblock 放行到分支 B）
-#     木板  ：有记录 或 看着 → 恒大P（木板无 bad/miss）；都没有 → 不判（出窗静默清除）
-# 前置：#ed_life（当前寿命）、#ed_p3（3x）、@s editor_n_hit（本刻是否命中音符，由 judge/probe 写入）
+# 前置：#ed_life（当前寿命）、#ed_p3（3x）、@s editor_n_hit（本刻是否命中音符，由 judge/probe 写入）—— **仅音符盒（type 0）进入本函数**
 # ★ 保护中的音符不算候选、不占名额 ⇒ 其 life==0 的结算**不受《同一刻判定限制》约束**
 #   （保护结算时刻固定为寿命 0，推迟就破坏保护语义；文档规则表「保护中音符」一行的推论）
 # ★ '寿命 >= 0' 必须写 `matches 0..`，不能写 `>= 0`（if score 右侧不支持裸常量；曾因此整函数加载失败）
@@ -32,6 +31,3 @@ execute if score @s editor_n_type matches 0 if score @s editor_n_rec_life matche
 execute if score @s editor_n_type matches 0 if score @s editor_n_rec_life matches 0.. unless score #ed_see editor matches 1 run function rhythm_axe:editor/judge/hit
 # 无记录 + 看着 → 大P
 execute if score @s editor_n_type matches 0 if score @s editor_n_rec_life matches ..-1 if score #ed_see editor matches 1 run function rhythm_axe:editor/judge/hit
-# ---- 木板（type 1）：恒大P（hit 内部会把 life 视 0）----
-execute if score @s editor_n_type matches 1 if score @s editor_n_rec_life matches 0.. run function rhythm_axe:editor/judge/hit
-execute if score @s editor_n_type matches 1 if score @s editor_n_rec_life matches ..-1 if score #ed_see editor matches 1 run function rhythm_axe:editor/judge/hit

@@ -59,7 +59,8 @@ data remove storage rhythm_axe:prop maxy
 data remove storage rhythm_axe:prop minz
 data remove storage rhythm_axe:prop maxz
 # 确认后：黄绿色玻璃使命完成，kill；状态回 0（下次右击重新选第一角）
-kill @e[tag=editor_tool_select_glow]
+# 协作：这里**不再** kill 黄绿玻璃 —— 全局 kill 会把队友的预览一起删掉（每刻复活 ⇒ 闪烁）。
+#   确认后 state 回 0，本刻玻璃会自然缩回「跟随注视的小方块」；真要清理由 tick 的存活标记负责。
 data modify storage rhythm_axe:maps.editor select_tool.state set value 0
 # ★ 临时调试：selection 内容 + 交互实体数
 execute if score debug_output options matches 1.. run tellraw @s [{"text":"[调试.lv1][sel]","color":"gray"},{"text":" selection=","color":"gold"},{"nbt":"selection","storage":"rhythm_axe:maps.editor","color":"aqua"},{"text":" 命中数=","color":"gold"},{"score":{"name":"#sel_count","objective":"editor"},"color":"aqua"}]

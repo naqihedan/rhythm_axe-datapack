@@ -29,6 +29,9 @@ scoreboard players set editor_play_events options 0
 scoreboard players set editor_audio_align options 1
 # 正式游玩：音乐自动对齐游戏（同一套机制，对齐目标是歌曲时间轴 play_state.time）；0=关 1=开
 scoreboard players set play_audio_align options 1
+# 多人判定延迟补偿：按每位玩家自己的 RTT（mod 写在计分板 net，毫秒）把他的判定箱回退到
+#   「他眼睛看到的位置」再测 looking_at。0=关（回补偿前行为） 1=开
+scoreboard players set judge_lag_comp options 0
 # 音乐变速播放（OLA 时域拉伸）的固有相位补偿：语义 = 0.25x 下所需的补偿（音乐毫秒，负=让音频更晚），
 # 代码按 (1−speed)/0.75 缩放（0.25x→原值、0.5x→2/3、0.75x→1/3、1x→0）；0 = 关掉补偿；标定只调这一个数
 scoreboard players set audio_sync_offset options -50

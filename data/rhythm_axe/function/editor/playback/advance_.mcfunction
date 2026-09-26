@@ -36,6 +36,8 @@ execute if score #playhead editor matches 0 if data storage rhythm_axe:editor.ru
 execute if score #playhead editor >= #temp editor run data modify storage rhythm_axe:maps.editor playing set value 0b
 execute if score #playhead editor >= #temp editor as @a[tag=editor_active] run function rhythm_axe:editor/playback/pause
 # 暂停后重绘面板：⏸ 变 ▶（只有面板 1/10 需要，见 menu/resume_playback）
-execute if score #playhead editor >= #temp editor as @a[tag=editor_active] run function rhythm_axe:editor/menu/resume_playback
+# 协作：播放到尾的重绘只针对一名成员（其余成员由 clear_lines 广播重绘）
+execute if score #playhead editor >= #temp editor as @a[tag=editor_lock_holder,limit=1] run function rhythm_axe:editor/menu/resume_playback
+execute if score #playhead editor >= #temp editor unless entity @a[tag=editor_lock_holder] as @a[tag=editor_active,limit=1] run function rhythm_axe:editor/menu/resume_playback
 # 世界音符实时显示：新出生 + 已有实体移动/清理（暂停时不调用本函数）
 function rhythm_axe:editor/visual/tick
