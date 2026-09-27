@@ -20,10 +20,17 @@ execute if data storage rhythm_axe:prop title run function rhythm_axe:utilizatio
 function rhythm_axe:editor/menu/map/panel/map_panel_title with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop title
 data remove storage rhythm_axe:prop title_comp
+# 曲师（artist，音乐作者）
 tellraw @s [\
-{"text":"作者：","color":"gray"},\
+{"text":"曲师：","color":"gray"},\
 {"nbt":"panel_temp.artist","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":" [编辑文本]","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10101"},"hover_event":{"action":"show_text","value":"编辑作者"}}\
+{"text":" [编辑文本]","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10101"},"hover_event":{"action":"show_text","value":"编辑曲师"}}\
+]
+# 谱面作者（charter，做这张谱面的人）
+tellraw @s [\
+{"text":"谱面作者：","color":"gray"},\
+{"nbt":"panel_temp.charter","storage":"rhythm_axe:maps.editor","color":"white"},\
+{"text":" [编辑文本]","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10102"},"hover_event":{"action":"show_text","value":"编辑谱面作者"}}\
 ]
 tellraw @s [\
 {"text":"音乐文件：","color":"gray"},\

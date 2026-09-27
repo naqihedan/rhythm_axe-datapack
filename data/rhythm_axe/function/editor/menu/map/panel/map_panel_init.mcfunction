@@ -19,6 +19,7 @@ execute unless data storage rhythm_axe:maps.editor panel_temp.spawn_pitch run da
 execute unless data storage rhythm_axe:maps.editor panel_temp.title run data modify storage rhythm_axe:maps.editor panel_temp.title set value "{\"text\":\"\"}"
 # 复合/列表原样保留（显示时由 utilization/title_comp 走 nbt+interpret 解析；裸纯文本也已兼容），不再解包 .text
 execute unless data storage rhythm_axe:maps.editor panel_temp.artist run data modify storage rhythm_axe:maps.editor panel_temp.artist set value ""
+execute unless data storage rhythm_axe:maps.editor panel_temp.charter run data modify storage rhythm_axe:maps.editor panel_temp.charter set value ""
 execute unless data storage rhythm_axe:maps.editor panel_temp.music run data modify storage rhythm_axe:maps.editor panel_temp.music set value ""
 execute unless data storage rhythm_axe:maps.editor panel_temp.preview run data modify storage rhythm_axe:maps.editor panel_temp.preview set value ""
 execute unless data storage rhythm_axe:maps.editor panel_temp.teleport run data modify storage rhythm_axe:maps.editor panel_temp.teleport set value 0b

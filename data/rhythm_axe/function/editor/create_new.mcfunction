@@ -6,6 +6,7 @@ $data modify storage rhythm_axe:maps.editor history append value {\
     id:"$(mapid)",\
     title:{text:"$(mapid)"},\
     artist:"unknown",\
+    charter:"unknown",\
     music:"rhythm_axe:rhythm_axe.audio",\
     preview:"rhythm_axe:rhythm_axe.audio",\
     health:10,\

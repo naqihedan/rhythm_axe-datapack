@@ -7,6 +7,7 @@ $execute unless data storage rhythm_axe:maps.$(old_mapid) id run data modify sto
 # ★ 2026-08-25 修复：id 必须最后删——此前第一个删 id 导致后续所有 if data ...id 判断失效，旧谱 title/notes 等全部残留
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) title
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) artist
+$execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) charter
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) author
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) music
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) preview

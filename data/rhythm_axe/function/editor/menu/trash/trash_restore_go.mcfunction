@@ -17,6 +17,7 @@ $execute unless data storage rhythm_axe:maps.$(mapid) id run data modify storage
 $data remove storage rhythm_axe:maps.$(mapid) id
 $data remove storage rhythm_axe:maps.$(mapid) title
 $data remove storage rhythm_axe:maps.$(mapid) artist
+$data remove storage rhythm_axe:maps.$(mapid) charter
 $data remove storage rhythm_axe:maps.$(mapid) author
 $data remove storage rhythm_axe:maps.$(mapid) music
 $data remove storage rhythm_axe:maps.$(mapid) preview

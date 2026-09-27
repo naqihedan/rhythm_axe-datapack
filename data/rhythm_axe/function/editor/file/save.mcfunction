@@ -15,6 +15,7 @@ $execute store result score #saved_highest editor run data get storage rhythm_ax
 $data remove storage rhythm_axe:maps.$(mapid) id
 $data remove storage rhythm_axe:maps.$(mapid) title
 $data remove storage rhythm_axe:maps.$(mapid) artist
+$data remove storage rhythm_axe:maps.$(mapid) charter
 $data remove storage rhythm_axe:maps.$(mapid) author
 $data remove storage rhythm_axe:maps.$(mapid) music
 $data remove storage rhythm_axe:maps.$(mapid) preview

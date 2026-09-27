@@ -15,6 +15,7 @@ $data modify storage rhythm_axe:maps trash[-1] merge from storage rhythm_axe:map
 # ★ 逐键删除正式存储（26.x data remove 不能删根；id 最后删，否则后续 if data ...id 失效）
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) title
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) artist
+$execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) charter
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) author
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) music
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) preview

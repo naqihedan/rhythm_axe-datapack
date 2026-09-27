@@ -1,5 +1,5 @@
 # 面板 2：谱面设置。规范v2：值 = 行号×100 + 行内按钮号（行号 100 起）。
-# 文本字段行：标题10001/作者10101/音乐10201/预览10301/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
+# 文本字段行：标题10001/曲师10101/谱面作者10102/音乐10201/预览10301/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
 # spawn 行107: 10701..10706 = X-/X+/Y-/Y+/Z-/Z+；角度行109: 10901..10904 = yaw-/yaw+/pitch-/pitch+
 # 行108 已空（原【整理音符顺序】10801 于 2026-09-15 迁到主菜单，处理分支见 panel1；值不变）
 # 行110 人数 11001/11002；行111 血量 11101/11102；行112 进度条色 11201/11202
@@ -9,9 +9,10 @@
 execute unless score #click_value editor matches 10000..11499 run function rhythm_axe:editor/menu/wrong_panel
 execute unless score #click_value editor matches 10000..11499 run return fail
 
-# —— 文本输入（每字段一行，编辑按钮=行号+01）——
+# —— 文本输入（每字段一个按钮，列码 01；同一行再挂一个字段时用列码 02，如 10102）——
 execute if score #click_value editor matches 10001 run function rhythm_axe:editor/menu/dialog/dialog_open_title
 execute if score #click_value editor matches 10101 run function rhythm_axe:editor/menu/dialog/dialog_open_author
+execute if score #click_value editor matches 10102 run function rhythm_axe:editor/menu/dialog/dialog_open_charter
 execute if score #click_value editor matches 10201 run function rhythm_axe:editor/menu/dialog/dialog_open_music
 execute if score #click_value editor matches 10301 run function rhythm_axe:editor/menu/dialog/dialog_open_preview
 execute if score #click_value editor matches 10401 run function rhythm_axe:editor/menu/dialog/dialog_open_mapid
