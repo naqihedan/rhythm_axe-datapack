@@ -280,6 +280,7 @@ scoreboard players reset editor_note_hitevents options
 execute unless score editor_play_events options matches 0..1 run scoreboard players set editor_play_events options 0
 execute unless score note_hitsound options matches 1..6 run scoreboard players set note_hitsound options 1
 execute unless score note_particle options matches 1..6 run scoreboard players set note_particle options 1
+execute unless score swing_anim options matches 0..1 run scoreboard players set swing_anim options 1
 # ★ 2026-09-26 设置：options.judge_lag_comp（多人判定延迟补偿）—— ⏸ **该功能已搁置**，见 todo.md
 #   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故必须在此兜底
 #   （0 = 关闭：判定箱不回退，回到补偿前的行为，单人/排查用）
@@ -367,5 +368,8 @@ function rhythm_axe:utilization/clear_note_scores
 #   note_id 被清空后 place 无法移动交互实体（滞留召唤位置=混凝土判定位置）、tick_kill 无法按 id 清除交互实体。
 #   若编辑器活跃，重建编辑器音符实体以恢复 note_id 配对（用当前播放头重新定位，位置不变）。
 execute if data storage rhythm_axe:maps.editor {active:1b} run function rhythm_axe:editor/visual/refresh
+
+#====================手持挥砍动画====================
+function rhythm_axe:utilization/swing_item/init
 
 tellraw @a [{"text":"[节奏地图] 数据包reload完成！","color":"green",bold:true}]

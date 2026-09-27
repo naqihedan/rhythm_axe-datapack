@@ -8,6 +8,8 @@ scoreboard players set note_speed options 16
 # 判定反馈
 scoreboard players set feedback_actionbar options 1
 scoreboard players set feedback_chat options 1
+# 挥砍动画（击打音符时播放；0=关 1=开）
+scoreboard players set swing_anim options 1
 scoreboard players set detailed_judgements options 1
 scoreboard players set note_hitsound options 1
 scoreboard players set note_particle options 1

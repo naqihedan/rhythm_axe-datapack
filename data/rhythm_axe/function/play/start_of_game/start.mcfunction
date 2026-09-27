@@ -80,7 +80,8 @@ execute as @a[team=player] run attribute @s entity_interaction_range base set 4.
 # 给予斧头（默认小木斧lv.1，可由谱面自定义）
 scoreboard players set #dbg play_state 4
 give @a[team=player] minecraft:stick[\
-    item_model="minecraft:wooden_axe",\
+    item_model="rhythm_axe:axe_idle_0",\
+    custom_data={rhythm_axe:1,axe_skin:0},\
     can_break={\
     blocks:[note_block,birch_planks]},\
     item_name={"text":"小木斧lv.1","color":"green"},\

@@ -5,5 +5,5 @@ execute unless entity @s[tag=editor_active] run return 0
 tag @s add coop_just_now
 tellraw @a[tag=editor_active] [{"text":"[编辑器] ","color":"gold"},{"selector":"@a[tag=coop_just_now]"},{"text":" 已被移出协作","color":"yellow"}]
 function rhythm_axe:editor/coop/leave_core
-tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"你已被移出协作（编辑工具已收回，音乐已停）","color":"yellow"}]
+tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"你已被移出协作（音乐已停；编辑工具仍留在背包中，但已失效）","color":"yellow"}]
 tag @s remove coop_just_now

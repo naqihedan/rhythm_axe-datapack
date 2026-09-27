@@ -18,5 +18,7 @@ execute if score #st_seen play_state matches 0 run return 0
 execute if score debug_output options matches 1.. if score #st_lag play_state matches 1.. run tellraw @a ["",{"text":"[调试.lv1][延迟补偿]","color":"gold"},{"text":" id=","color":"gray"},{"score":{"objective":"note_id","name":"@s"}},{"text":" 回退=","color":"gray"},{"score":{"objective":"play_state","name":"#st_lag"}},{"text":"刻","color":"gray"}]
 # ★ 2026-09-26：life <= 0（已抵达判定位置）→ 不参与竞争，直接放行，同刻多个可同时判定
 execute if score @s note_life matches ..0 run tag @s add st_pass
+execute if score @s note_life matches ..0 as @a[tag=st_me] run function rhythm_axe:utilization/swing_item/start_random
 # life > 0 → 只有抢到本刻最小寿命（#st_min）才放行
 execute if score @s note_life matches 1.. if score @s note_life = #st_min play_state run tag @s add st_pass
+execute if score @s note_life matches 1.. if score @s note_life = #st_min play_state as @a[tag=st_me] run function rhythm_axe:utilization/swing_item/start_random

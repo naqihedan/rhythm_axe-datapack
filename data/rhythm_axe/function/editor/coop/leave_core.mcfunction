@@ -11,17 +11,21 @@ scoreboard players reset @s editor_click
 advancement revoke @s only rhythm_axe:editor/note_click
 advancement revoke @s only rhythm_axe:editor/note_deselect
 advancement revoke @s only rhythm_axe:editor/tool_use
-# 收回编辑器工具（逐格判断 custom_data，只清我们发的，绝不动玩家自己的物品）
-execute if items entity @s container.0 *[custom_data~{editor_tool:true}] run item replace entity @s container.0 with air
-execute if items entity @s container.1 *[custom_data~{editor_tool:true}] run item replace entity @s container.1 with air
-execute if items entity @s container.2 *[custom_data~{editor_tool:true}] run item replace entity @s container.2 with air
-execute if items entity @s container.3 *[custom_data~{editor_tool:true}] run item replace entity @s container.3 with air
-execute if items entity @s container.4 *[custom_data~{editor_tool:true}] run item replace entity @s container.4 with air
-execute if items entity @s container.5 *[custom_data~{editor_tool:true}] run item replace entity @s container.5 with air
-execute if items entity @s container.6 *[custom_data~{editor_tool:true}] run item replace entity @s container.6 with air
-execute if items entity @s container.7 *[custom_data~{editor_tool:true}] run item replace entity @s container.7 with air
-execute if items entity @s container.8 *[custom_data~{editor_tool:true}] run item replace entity @s container.8 with air
-execute if items entity @s container.9 *[custom_data~{editor_tool:true}] run item replace entity @s container.9 with air
-execute if items entity @s weapon.offhand *[custom_data~{editor_tool:true}] run item replace entity @s weapon.offhand with air
+# ★ 2026-09-27：退出编辑器（含被踢出协作）**不再收回**编辑器工具 —— 工具留在背包里。
+#   重新进入编辑器时 give_*_tool 会覆盖刷新，所以不会留「过期工具」；
+#   安全性：tool/use 开头有 `unless data storage rhythm_axe:maps.editor active run return fail`，
+#   非编辑状态下拿着工具点右键会被直接忽略，不会误触发任何操作。
+#   如需恢复「收回」行为：删掉下面 11 行行首的 `#off ` 即可。
+#off execute if items entity @s container.0 *[custom_data~{editor_tool:true}] run item replace entity @s container.0 with air
+#off execute if items entity @s container.1 *[custom_data~{editor_tool:true}] run item replace entity @s container.1 with air
+#off execute if items entity @s container.2 *[custom_data~{editor_tool:true}] run item replace entity @s container.2 with air
+#off execute if items entity @s container.3 *[custom_data~{editor_tool:true}] run item replace entity @s container.3 with air
+#off execute if items entity @s container.4 *[custom_data~{editor_tool:true}] run item replace entity @s container.4 with air
+#off execute if items entity @s container.5 *[custom_data~{editor_tool:true}] run item replace entity @s container.5 with air
+#off execute if items entity @s container.6 *[custom_data~{editor_tool:true}] run item replace entity @s container.6 with air
+#off execute if items entity @s container.7 *[custom_data~{editor_tool:true}] run item replace entity @s container.7 with air
+#off execute if items entity @s container.8 *[custom_data~{editor_tool:true}] run item replace entity @s container.8 with air
+#off execute if items entity @s container.9 *[custom_data~{editor_tool:true}] run item replace entity @s container.9 with air
+#off execute if items entity @s weapon.offhand *[custom_data~{editor_tool:true}] run item replace entity @s weapon.offhand with air
 # 停他自己的试听音乐（不动别人）
 stopmusic @s

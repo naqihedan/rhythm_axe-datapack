@@ -1,0 +1,6 @@
+{
+  "function": "minecraft:set_components",
+  "components": {
+    "minecraft:item_model": "rhythm_axe:swing_right_7_6"
+  }
+}

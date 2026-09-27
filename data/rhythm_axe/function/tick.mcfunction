@@ -43,3 +43,8 @@ execute if data storage rhythm_axe:maps.editor active run kill @e[tag=editor_too
 # ========== 编辑器：工具常驻检测（方向工具/事件时间点工具 动态名与模型，随蹲下状态切换） ==========
 function rhythm_axe:editor/tool/tool_regular_tick
 
+# ========== 手持挥砍动画：逐帧切换主手 item_model ==========
+execute as @a[tag=Swing] run function rhythm_axe:utilization/swing_item/tick
+# ========== 手持挥舞动画：空闲时也循环写（拿着斧头就写，保持客户端下坠状态，详见 swing_item/idle） ==========
+execute as @a[tag=!Swing] if items entity @s weapon.mainhand *[minecraft:custom_data~{rhythm_axe:1}] run function rhythm_axe:utilization/swing_item/idle
+
