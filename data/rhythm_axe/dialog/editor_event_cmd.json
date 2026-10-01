@@ -7,7 +7,7 @@
     {
       "type": "minecraft:plain_message",
       "contents": {
-        "text": "输入指令（含引号用 \\\" 转义；超长/复杂指令建议写 function 文件）"
+        "text": "输入指令（开头不能带 / 号；含引号用 \\\" 转义；超长/复杂指令建议写 function 文件）"
       }
     }
   ],

@@ -1,6 +1,5 @@
 # 事件列表：分页显示（每页 5 个）
-# 剪贴板会话：打开列表即清空本面板剪贴板（复制内容只在本会话内有效，离开面板再进入即失效）
-data remove storage rhythm_axe:maps.editor event_clip
+# 剪贴板会话：行级复制仅在当前编辑器会话内保留，退出编辑器时统一清空
 function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
 data modify storage rhythm_axe:maps.editor current_panel set value 5

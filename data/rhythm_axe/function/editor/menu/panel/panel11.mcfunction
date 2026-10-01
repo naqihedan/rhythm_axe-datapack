@@ -12,7 +12,7 @@ execute if score #click_value editor matches 12001..12002 run function rhythm_ax
 execute if score #click_value editor matches 12101 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12201..12202 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12301..12302 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
-execute if score #click_value editor matches 12401..12402 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
+execute if score #click_value editor matches 12401..12404 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12501..12502 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12601..12604 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12701..12704 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust

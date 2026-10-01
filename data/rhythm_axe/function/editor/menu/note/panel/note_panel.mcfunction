@@ -345,33 +345,41 @@ execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14003"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
+{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"nbt":"editing.temp.density","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}}\
+{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 execute if score #temp editor matches 3 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.density run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
+{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"text":"-","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}}\
+{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.density run tellraw @s [\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14003"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
+{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"nbt":"editing.temp.density","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}}\
+{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.density run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
+{"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"nbt":"editing.temp.density","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}}\
+{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 # 大小（全类型，float 一位小数去 f；与文档一致 1.0）
 # 相对模式显示增量（delta.size 为 ×100，转为 ×10 与绝对同尺度），绝对显示 temp.size

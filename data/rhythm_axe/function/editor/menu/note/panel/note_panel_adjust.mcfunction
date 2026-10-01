@@ -48,12 +48,16 @@ execute if score #click_value editor matches 12302 run scoreboard players add #t
 execute if score #click_value editor matches 12301..12302 if score #temp editor matches ..0 run scoreboard players set #temp editor 16
 execute if score #click_value editor matches 12301..12302 if score #temp editor matches 17.. run scoreboard players set #temp editor 1
 execute if score #click_value editor matches 12301..12302 run execute store result storage rhythm_axe:maps.editor editing.temp.color byte 1 run scoreboard players get #temp editor
-# 密度 density（772/773，下界 1；混凝土用）
-execute if score #click_value editor matches 12401..12402 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.density
+# 密度 density（12401/12402 单步 ±1；12403/12404 双步 ±tpb；下界 1；混凝土用）
+scoreboard players set #time_step editor 1
+execute if score #click_value editor matches 12403..12404 run function rhythm_axe:editor/menu/note/panel/note_time_tpb
+execute if score #click_value editor matches 12401..12404 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.density
 execute if score #click_value editor matches 12401 run scoreboard players remove #temp editor 1
 execute if score #click_value editor matches 12402 run scoreboard players add #temp editor 1
-execute if score #click_value editor matches 12401..12402 if score #temp editor matches ..1 run scoreboard players set #temp editor 1
-execute if score #click_value editor matches 12401..12402 run execute store result storage rhythm_axe:maps.editor editing.temp.density int 1 run scoreboard players get #temp editor
+execute if score #click_value editor matches 12403 run scoreboard players operation #temp editor -= #time_step editor
+execute if score #click_value editor matches 12404 run scoreboard players operation #temp editor += #time_step editor
+execute if score #click_value editor matches 12401..12404 if score #temp editor matches ..1 run scoreboard players set #temp editor 1
+execute if score #click_value editor matches 12401..12404 run execute store result storage rhythm_axe:maps.editor editing.temp.density int 1 run scoreboard players get #temp editor
 # 大小 size（774/775，0.1 步；绝对下界 0.1、相对改增量；float 用 scoreboard ×100）
 scoreboard players set #rel_on editor 0
 execute store result score #rel_on editor run data get storage rhythm_axe:maps.editor editing.rel.on.size
@@ -119,8 +123,8 @@ execute if score #click_value editor matches 12203..12204 if data storage rhythm
 execute if score #click_value editor matches 12201..12202 run data modify storage rhythm_axe:maps.editor editing.changed.duration set value 1b
 execute if score #click_value editor matches 12203..12204 run data modify storage rhythm_axe:maps.editor editing.changed.duration set value 1b
 execute if score #click_value editor matches 12301..12302 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.color set value 1b
-execute if score #click_value editor matches 12401..12402 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.density set value 1b
-execute if score #click_value editor matches 12401..12402 run data modify storage rhythm_axe:maps.editor editing.changed.density set value 1b
+execute if score #click_value editor matches 12401..12404 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.density set value 1b
+execute if score #click_value editor matches 12401..12404 run data modify storage rhythm_axe:maps.editor editing.changed.density set value 1b
 execute if score #click_value editor matches 12601..12602 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.base_life set value 1b
 execute if score #click_value editor matches 12601..12602 run data modify storage rhythm_axe:maps.editor editing.changed.base_life set value 1b
 execute if score #click_value editor matches 12701..12702 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.anim_easing set value 1b

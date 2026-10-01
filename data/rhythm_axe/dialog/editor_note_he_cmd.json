@@ -7,7 +7,7 @@
     {
       "type": "minecraft:plain_message",
       "contents": {
-        "text": "输入要执行的指令字符串，并勾选触发的判定情况（spawn=开始移动时一次 / tick=移动中每刻 / bad~good_late=判定时 / damage=玻璃撞墙扣血）"
+        "text": "输入要执行的指令字符串（开头不能带 / 号），并勾选触发的判定情况（spawn=开始移动时一次 / tick=移动中每刻 / bad~good_late=判定时 / damage=玻璃撞墙扣血）"
       }
     }
   ],

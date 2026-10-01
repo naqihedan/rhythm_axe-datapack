@@ -27,9 +27,16 @@ $data modify storage rhythm_axe:maps.editor history append value {\
         }\
     ]\
 }
-execute store result storage rhythm_axe:maps.editor history[0].spawn_x double 1 run data get entity @s Pos[0]
-execute store result storage rhythm_axe:maps.editor history[0].spawn_y double 1 run data get entity @s Pos[1]
-execute store result storage rhythm_axe:maps.editor history[0].spawn_z double 1 run data get entity @s Pos[2]
+# 初始位置取玩家当前位置，坐标保留 1 位小数（四舍五入；与面板【使用玩家位置】同一套取整 round_score）
+execute store result score #rnd_v editor run data get entity @s Pos[0] 1000
+function rhythm_axe:editor/util/round_score {"unit":"100","half":"50"}
+execute store result storage rhythm_axe:maps.editor history[0].spawn_x double 0.001 run scoreboard players get #rnd_v editor
+execute store result score #rnd_v editor run data get entity @s Pos[1] 1000
+function rhythm_axe:editor/util/round_score {"unit":"100","half":"50"}
+execute store result storage rhythm_axe:maps.editor history[0].spawn_y double 0.001 run scoreboard players get #rnd_v editor
+execute store result score #rnd_v editor run data get entity @s Pos[2] 1000
+function rhythm_axe:editor/util/round_score {"unit":"100","half":"50"}
+execute store result storage rhythm_axe:maps.editor history[0].spawn_z double 0.001 run scoreboard players get #rnd_v editor
 $data modify storage rhythm_axe:maps.editor mapid set value "$(mapid)"
 $tellraw @s [{"text":"[编辑器] 已创建谱面，mapid：","color":"green"},{"text":"$(mapid)","color":"aqua"},{"text":"（尚未保存，退出前记得保存）","color":"yellow"}]
 

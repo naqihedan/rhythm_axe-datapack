@@ -11,6 +11,19 @@
 - 使用截图功能识别游戏内容图像（AI的识图模型烂的要死不如不用）
 - **`data modify … set from <来源路径不存在>` 会「失败并保留旧值」，不会清零**：凡是「先 `set from` 再拿来用」的宏通道值都要防这一手。典型后果（2026-09-13 修复）：事件点 `commands` 为空数组时 `cur_cmd` 沿用上一条/上一局命令，`execute` 的 `if data cur_cmd` 成立 → 宏 `$(cur_cmd)` 执行了残留命令，表现为「跑第二张图时冒出第一张图的事件」。解法：要么先 `data remove` 掉旧值，要么把执行条件写成「来源下标确实存在」（`if data … events[$(ev_idx)].commands[$(cmd_idx)]`）。同一坑在编辑器侧（`editor/visual/event_go_`）早已用 `data remove cur_cmd` 规避——两处要对齐。
 - **「刷新残留值」与「使用残留值」的守卫必须对称**（上一条的推广）：`store result score #x …` 失败时 `#x` 保留旧值，如果**刷新时**守卫是 `if data 来源字段`、而**使用时**守卫是 `if score #x = <期望值>`，两者就不是同一个条件 → 来源缺失时仍可能用残留值走到「使用」分支。凡这类 `#x`（`#birth`、`#ev_time`、`#tp_time` 等）都要么①每次使用前先置**哨兵值**（如 `scoreboard players set #birth play_state 2147483647`，`note/spawn` 就是这么做），要么②把使用守卫改写成与来源同源的「存在性」判断（`event/execute` 改成 `if data … commands[cmd_idx]`）。
+- **「临时通道值」的空列表也算「键存在」⇒ 回退守卫必须用 `[0]`**（2026-10-02 实测修复，用户报「列表里明明勾着音符，【批量复制】却说没有可复制的音符」）：
+
+  | 项 | 内容 |
+  | --- | --- |
+  | 病灶 | `copy.mcfunction` 的回退写成 `execute unless data … note_ids run data modify … note_ids set from … selection` —— 判的是「**键**存在」 |
+  | 触发 | 上一次失败/中断在 `prop.note_ids` 留下**空列表 `[]`**（`set from` 一个空 `selection` 就会），回退从此永远不生效 |
+  | 后果 | 【批量复制】**永久**报「没有可复制的音符」；`prop` 不随 `/reload`、也不随退出编辑器清理（`load` / `clear_state` 都不碰 `prop`）⇒ 只有**重启世界**或一次剪切/删除才解开 |
+  | 修复 | ① 回退条件一律写 `unless data … <key>[0]`（别用裸键）；② 失败路径顺手 `data remove` 掉自己刚写的空列表（成功路径由 `clip_cleanup` 清） |
+  | 实测 | 修复前：`note_ids=[]`+`selection=[461..464]` 点【批量复制】必报错；`/reload` 后仍报错；修复后同一现场同一按钮 → 「已复制 4 个音符」，`note_ids` 被清空 |
+
+  - 同族坑：**`selection` 数组和音符身上的 `selected:1b` 标记是两份数据**。任何「清选区」的入口都必须走 `sel_clear_all_visual`；
+    `give_note_tool` / `give_select_tool` 原来只清数组、不清标记 ⇒ 一开「已选定音符列表」或一次 `refresh` 就 `sel_rebuild`「复活」选区，
+    症状与上面完全一样（列表有、复制说没有）。**以后新增「清选区」入口别自己写，直接调那个共用函数。**
 - **`storage` 的「带点 ID」和路径之间必须有空格**（2026-09-15 修复）：MC 把资源位置里的点号当合法字符**贪婪**吃掉，所以 `data get storage rhythm_axe:maps.$(mapid).notes` 会被解析成「存储 ID = `rhythm_axe:maps.<mapid>.notes`」（一个不存在的存储），而不是「存储 `maps.<mapid>` + 路径 `notes`」；若路径后紧跟 `[`（如 `.notes[$(index)].selected`），则直接是**命令解析失败**（报错 `参数后应有空格分隔，但发现了紧邻的数据`）→ 宏函数**无法实例化**（报错 `无法实例化函数 xxx`）。
   - 正确写法：`data get storage rhythm_axe:maps.$(mapid) notes[$(i)].selected`（ID 与路径之间留空格）；同理 `storage rhythm_axe:maps.editor history[$(i)].notes`。
   - 代价（本次实例）：`save_strip_selected` 的取长度、`save_strip_leaf` 的剔除都这么写 → **保存时「剔除 selected」从来没生效**，还会每次保存刷「无法实例化」错误、把编辑器的 `selected` 原样写进正式谱面。
@@ -59,13 +72,25 @@
   - 隔离实验做法（值得复用）：在 `data/rhythm_axe/function/test/` 放两个只差一个 `$` 的临时函数 → `/reload` → 看哪个进 `Failed to load function`，查完删掉。
 
 - **新增的 `data/<ns>/dialog/*.json` 不会被 `/reload` 加载**（2026-10-01 实测）：
-  - 症状：`dialog show @s rhythm_axe:xxx` 报 `无法在注册表"minecraft:dialog"中找到元素"rhythm_axe:xxx"`，而且**日志里没有任何「解析失败」记录**（易误判成「我写的 JSON 有问题」）。
+  - 症状：`dialog show @s rhythm_axe:xxx` 报 `无法在注册表"minecraft:dialog"中找到元素"rhythm_axe:xxx"`；**对话框 JSON 本身不会报「解析失败」**（易误判成「我写的 JSON 有问题」）。
+  - ⚠️ **引用它的 mcfunction 会直接加载失败**（2026-10-01 补测）：`dialog show @s <id>` 里的 ID 是**加载期**解析的 ⇒ 日志里有
+    `Failed to load function rhythm_axe:… : Whilst parsing command on line N: 无法在注册表"minecraft:dialog"中找到元素"…"`。
+    这条比「点了没反应」更早暴露问题：**改完含 `dialog show` 的函数，先查日志 `Failed to load function`，再去看按钮**。
   - 验证方法：把一个**已经能加载的**对话框原样复制成新文件名 → `/reload` 后依然找不到；**重启世界**（`bridge.ps1 worldrestart`）后再试 → 找到了 ⇒ 说明是「reload 不重扫 dialog 注册表」，不是 JSON 写错。
   - 对策：**新增/改名对话框文件后必须重启世界**（改内容也一样，稳妥起见按同一规矩办）。
+    ★ **想彻底躲开这条就别用注册表**：改用**内联** `dialog show @s {…}`（NBT 用 `data modify` 建好再宏透传，见 `utilization/dialog_show_inline`）—— 内联不查注册表，改文案只需 `/reload`。
+  - ★ **改内容也一样必须重启**（2026-10-01 截图对比实测）：改完只 `/reload` → 弹出来还是**旧正文**；重启世界后才变。
+  - ★ **正文只支持静态文字**：`plain_message.contents` **不解析 nbt / score / selector 组件**（wiki MC-297871 + 截图实测：
+    `{"text":"当前标题：","extra":[{"nbt":…,"interpret":true}]}` 只画出「当前标题：」，后面空白）
+    ⇒ **注册表型对话框**里别指望显示动态内容（要么写死字面量，要么改成**内联**）。
+    ✅ 2026-10-01 已把三个 `confirmation` 框（删谱面/回收站×2、重置标题、排行榜删成绩）改成**内联**：
+    正文用 `data modify` 先占位、再把 `pending_del.detail` / `panel_temp.title` / `lb.del.name` 拼进去（见 `utilization/dialog_show_inline`）。
+  - ★ **z 序坑**：编辑器的时间轴 bossbar 画在对话框**之上**，会盖住正文**第一行**（截图可见）
+    ⇒ 对话框正文第一行别放关键信息。（影响所有对话框，不只是新增的。）
 
 - **删除确认的判定标准（2026-10-01 用户确定）**：只给**会造成不可恢复后果**的删除加原生确认框（删谱面 / 回收站彻底删 / 回收站覆盖还原 / 排行榜删成绩）；
   编辑器内可【撤销】的编辑型删除（时间点、事件、音符）**一律直接删，不要加框**（历史上有过“统一加框”又回退的经历）。
-  加框的三件套：入口写 `maps.editor.pending_del`（`kind`/`detail`/`cursor`/`index`/`mapid`）→ `editor/menu/ops/confirm_delete` → 【删除】跑 `ops/do_delete`（按 king 分发）。详见《编辑器.md》的《删除的二次确认》。
+  加框的三件套：入口写 `maps.editor.pending_del`（`kind`/`detail`/`cursor`/`index`/`mapid`）→ `editor/menu/ops/confirm_delete`（**内联建框 + 把 detail 拼进正文**）→ 【删除】跑 `ops/do_delete`（按 kind 分发）。详见《编辑器.md》的《删除的二次确认》。
   - 顺带：`/reload` 会把 `map_list.open` 清空（`load.mcfunction` 重置菜单态）⇒ 用桥接测菜单按钮前要先 `data modify storage rhythm_axe:map_list open set value 1b`，否则 `menu/consume` 在「菜单没开着」的守卫处直接 `return fail`，表现得像「按钮没反应」。
 
 - **原生确认框（`minecraft:confirmation`）的结构**（2026-10-01 从 `ConfirmationDialog.MAP_CODEC` 核出来，实测可用）：顶层就是 `common`（`title` / `body` / `inputs` / `can_close_with_escape` / `pause` / `after_action`）拍平 + `yes` / `no` 两个 `ActionButton`；

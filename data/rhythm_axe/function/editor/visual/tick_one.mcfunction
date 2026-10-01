@@ -49,3 +49,21 @@ execute \
     unless score #playhead editor > @s editor_n_time \
     unless score #playhead editor < @s editor_n_time run \
         function rhythm_axe:editor/visual/err_note_in_block
+
+# ★ hit_events 的 spawn / tick 情况（仅 editor_play_events=1；与游玩 active_note → spawn_delayed / tick_event 对齐）
+#   · spawn：音符「开始移动那一刻」执行一次（实体首次被本函数处理的刻，用 tag 防重放）
+#   · tick ：此后每一刻执行（直到音符被判定/清除）
+#   · 判定情况（bad/…/miss）走 trigger_、玻璃 damage 走 glass_feedback，三者互不干扰
+#   无 hit_events 数据的音符由 exec_hit_events_ 首行直接 return，不产生额外开销
+#   ⚠ 必须放在本函数最后：run_hit_events 会写 editor.runtime 的 idx/cur_cmd，不影响上面的判定链
+execute if score editor_play_events options matches 1 run data modify storage rhythm_axe:editor.runtime fb_nid set value 0
+execute if score editor_play_events options matches 1 store result storage rhythm_axe:editor.runtime fb_nid int 1 run scoreboard players get @s note_id
+execute if score editor_play_events options matches 1 run data modify storage rhythm_axe:editor.runtime te_idx set value 0
+execute if score editor_play_events options matches 1 store result storage rhythm_axe:editor.runtime te_idx int 1 run scoreboard players get @s editor_n_idx
+execute if score editor_play_events options matches 1 run data modify storage rhythm_axe:editor.runtime te_case set value "spawn"
+execute if score editor_play_events options matches 1 if entity @s[tag=editor_n_spawn_done] run data modify storage rhythm_axe:editor.runtime te_case set value "tick"
+# ★ 执行者/位置 = 配对交互实体（随音符移动）——与游玩 active_note 的 `as @e[type=interaction] at @s` 对齐
+#   展示实体 Pos 恒为判定位置（视觉靠 transformation 偏移），直接在本函数执行会把 ~ ~ ~ 钉在判定点
+scoreboard players operation #te_iid editor = @s note_id
+execute if score editor_play_events options matches 1 as @e[type=interaction,tag=editor_note] if score @s note_id = #te_iid editor at @s run function rhythm_axe:editor/visual/exec_hit_events_ with storage rhythm_axe:editor.runtime
+execute if score editor_play_events options matches 1 run tag @s add editor_n_spawn_done

@@ -18,9 +18,11 @@ data remove storage rhythm_axe:maps.editor time_select
 kill @e[tag=editor_tool_select_glow]
 execute as @e[tag=editor_note,type=item_display] run data remove entity @s Glowing
 execute as @e[tag=editor_note,type=item_display] run data remove entity @s glow_color_override
-data modify storage rhythm_axe:maps.editor selection set value []
-# ★ 2026-09-18：选区被清空 ⇒ 锚点（镜像/旋转中心）也用不着了，一并清（与 sel_clear_all_visual 语义一致）
-function rhythm_axe:editor/menu/note/anchor/anchor_clear
+# ★ 2026-10-02 修复：原来只清 selection 数组，不清音符身上的 selected:1b 标记（也不清交互实体的 editor_note_selected）
+#   ⇒ 之后一开「已选定音符列表」或一次 refresh 就会 sel_rebuild「复活」选区：列表里又冒出选中音符，
+#   但【批量复制】读的 selection 数组是空的 → 报「没有可复制的音符」。
+#   改调清选区的共用入口（selection + selected 标记 + 黄光 + 交互 tag + 锚点 + #sel_count，别再各写一遍）。
+function rhythm_axe:editor/menu/note/selected/sel_clear_all_visual
 
 # 选择工具（金斧头外观；持有时实体交互距离 1.5）
 item replace entity @s container.0 with minecraft:stick[\

@@ -408,6 +408,8 @@ tag @a remove ml_self
 # 无局在跑时清掉所有数据包音符实体，保证从干净状态开始（★ 2026-09-29：正有一局在跑时不清，见顶部 #keep_run）。
 # 所有音符相关实体（展示/交互/玻璃 marker/混凝土 zone marker）都带基础 tag "note"（summon 时打）→ 一条清全。
 execute unless score #keep_run play_state matches 1 run kill @e[tag=note]
+# ★ 2026-10-01 谱面设置面板的「Axiom 改标题」展示实体不跨 reload / 重进存档存活（含撤销 60 秒到期任务）
+execute if entity @e[tag=rhythm_axe_title_display] run function rhythm_axe:editor/menu/map/ops/map_title_display_clear
 # 清空 note_* 计分板残留计分项（scoreboard players reset *；reload 不清计分板项，残留只能靠此清空）
 # ★ 已在上方注册 objective（dummy），reset * 通配所有名字（含已死亡/已卸载音符残留项）
 execute unless score #keep_run play_state matches 1 run function rhythm_axe:utilization/clear_note_scores

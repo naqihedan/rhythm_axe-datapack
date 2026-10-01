@@ -13,6 +13,10 @@ execute store result storage rhythm_axe:prop note_idx int 1 run scoreboard playe
 function rhythm_axe:editor/visual/tick_birth_note_ with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop note_idx
 data remove storage rhythm_axe:prop cursor
+# ★ tick 情况（hit_events enabled.tick）索引参数：本刻历史游标，供下面 tick_one 逐音符复用（仅事件播放开启时需要）
+#   先写 0 兜底：history_cursor 缺失时 store 不执行，宏参数不存在会让函数调用直接报错
+execute if score editor_play_events options matches 1 run data modify storage rhythm_axe:editor.runtime te_cursor set value 0
+execute if score editor_play_events options matches 1 store result storage rhythm_axe:editor.runtime te_cursor int 1 run data get storage rhythm_axe:maps.editor history_cursor
 # 1.1) ★ 补扫出生（2026-09-21 新增）：数组按 time 升序，但出生刻 birth = time − note_base_life×16/流速
 #   在 base_life 不统一时**不单调** ⇒ 只靠上面的游标（队首未出生即停）会漏生成「排在后面前导更长」的音符
 #   （症状：音符只剩后半程才出现、一出现就已经走了一半）。补扫从队首之后按各自出生刻把它补上。

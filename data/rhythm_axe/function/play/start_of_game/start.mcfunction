@@ -2,11 +2,6 @@
 # 把谱面读取成可玩形式并进入主循环
 #arg: mapid
 
-# ★ 2026-10-01：开始游戏 = 停掉大厅的曲目预览（全局状态；房门页【开始游戏】也走这里）
-function rhythm_axe:map_list/preview/stop
-# 本局玩家不再算“正在看大厅面板”（别人切歌时不会把列表刷进他们的游戏聊天）
-execute as @a[team=player] run function rhythm_axe:map_list/view_clear
-
 # 复制谱面到运行存储（运行期只读）
 # 先清空 runtime 的谱面数据键（merge 不会删除源没有的旧键，避免残留）
 # 用 if data 保护，键不存在时不报错

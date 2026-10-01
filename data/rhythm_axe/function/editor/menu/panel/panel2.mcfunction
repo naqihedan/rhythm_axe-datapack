@@ -1,12 +1,13 @@
 # 面板 2：谱面设置。规范v2：值 = 行号×100 + 行内按钮号（行号 100 起）。
-# 文本字段行：标题10001/曲师10101/谱面作者10102/音乐10201/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
+# 文本字段行：标题行100 = 10001 对话框编辑文本 / 10002 生成文本展示实体 / 10003 复制展示实体文字信息；
+#   曲师10101/谱面作者10102/音乐10201/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
 # ★ 行103（2026-10-01 改）：10301/10302 预览起点 ∓10 刻、10303/10304 预览时长 ∓1 刻、
 #    10305【使用当前时间】= 把当前音乐位置填进预览起点；10306【截到播放头】= 把起点到播放头的时差填进预览时长
 #    （原 10301 是「预览音频」文本框，已废弃）
 # spawn 行107: 10701..10706 = X-/X+/Y-/Y+/Z-/Z+；角度行109: 10901..10904 = yaw-/yaw+/pitch-/pitch+
 # 行108 已空（原【整理音符顺序】10801 于 2026-09-15 迁到主菜单，处理分支见 panel1；值不变）
 # 行110 人数 11001/11002；行111 血量 11101/11102；行112 进度条色 11201/11202
-# 行113 用玩家 11301 位置 / 11302 角度；行114 保存11401 / 取消11402
+# 行113 用玩家 11301 位置 / 11302 角度 / 11303 对齐方块中心（XZ）；行114 保存11401 / 取消11402
 # map_panel_open 设 current_panel=2。
 # 入口白名单守卫（值域 10000..11499 覆盖本面板全部按钮）
 execute unless score #click_value editor matches 10000..11499 run function rhythm_axe:editor/menu/wrong_panel
@@ -14,6 +15,9 @@ execute unless score #click_value editor matches 10000..11499 run return fail
 
 # —— 文本输入（每字段一个按钮，列码 01；同一行再挂一个字段时用列码 02，如 10102）——
 execute if score #click_value editor matches 10001 run function rhythm_axe:editor/menu/dialog/dialog_open_title
+# 10002【生成文本展示实体】/ 10003【复制展示实体文字信息】：Axiom 改标题通道（2026-10-01）
+execute if score #click_value editor matches 10002 run function rhythm_axe:editor/menu/map/ops/map_title_display_spawn
+execute if score #click_value editor matches 10003 run function rhythm_axe:editor/menu/map/ops/map_title_display_copy
 execute if score #click_value editor matches 10101 run function rhythm_axe:editor/menu/dialog/dialog_open_author
 execute if score #click_value editor matches 10102 run function rhythm_axe:editor/menu/dialog/dialog_open_charter
 execute if score #click_value editor matches 10201 run function rhythm_axe:editor/menu/dialog/dialog_open_music
@@ -94,12 +98,14 @@ execute if score #click_value editor matches 11201 run data modify storage rhyth
 execute if score #click_value editor matches 11202 run data modify storage rhythm_axe:prop delta set value 1
 execute if score #click_value editor matches 11201..11202 run function rhythm_axe:editor/menu/map/ops/map_progress_color with storage rhythm_axe:prop
 
-# —— 用玩家（行14）：1401 位置 / 1402 角度 ——
+# —— 用玩家（行14）：1401 位置（坐标保留 1 位小数） / 1402 角度（保留整数） / 1403 对齐方块中心（XZ） ——
 execute if score #click_value editor matches 11301 run function rhythm_axe:editor/menu/map/ops/map_use_player_pos
 execute if score #click_value editor matches 11302 run function rhythm_axe:editor/menu/map/ops/map_use_player_rotation
+execute if score #click_value editor matches 11303 run function rhythm_axe:editor/menu/map/ops/map_spawn_snap_center
 
-# —— 保存/取消（行15）：1501 保存 / 1502 取消 ——
+# —— 保存/取消/重置标题（行114）：11401 保存 / 11402 取消 / 11403 重置谱面标题（弹确认框）——
 execute if score #click_value editor matches 11401 run function rhythm_axe:editor/menu/map/panel/map_panel_save
 execute if score #click_value editor matches 11402 run function rhythm_axe:editor/menu/map/panel/map_panel_cancel
+execute if score #click_value editor matches 11403 run function rhythm_axe:editor/menu/map/ops/map_title_reset_ask
 
 # —— 行108【整理音符顺序】：2026-09-15 迁到主菜单（值不变 10801）→ 分支见 panel1
