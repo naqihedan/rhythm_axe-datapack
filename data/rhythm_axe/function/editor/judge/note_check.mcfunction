@@ -13,7 +13,7 @@
 #     「看着」= 视线与**音符**相交（@s editor_n_hit）**或** 视线在**完美判定区域**内（editor_n_looked_perfect）
 #   无记录（保护期内一次都没看着）⇒ 等同无保护：life<0 时放行到分支 B（#ed_pblock），按"相交那一刻的寿命"判
 #   ⚠ 本刻 life == 3x+1 > 3x ⇒ 下面的 predicate 限窗会直接 return，不会意外走到"命中检测"
-# 唱片机末刻兜底（照搬游玩 jukebox_late）：life == -2x 仍未点击 → 看向则 good_late，不看则 miss
+# 唱片机末刻兜底（照搬游玩 jukebox_late）：life == -2x 仍未点击 → 判定窗口内视线相交过（editor_n_jb_seen，probe 每刻记录）则 good_late，全程未相交过则 miss
 # ★ 命中/未命中后立即清除音符对（与游玩「判定即消失」一致；自动预览模式的"到点消失"不受影响）
 # ★ 《同一刻判定限制》（★ 2026-09-26 改）：只约束 life > 0 的候选 —— 同一刻只放行 note_life 最小
 #   （= time 最小、最靠前）的那一批；**life <= 0（已抵达判定位置）不参与竞争，命中即判、同刻可多个一起判**。
@@ -67,6 +67,11 @@ execute if score @s editor_n_type matches 0 if score #ed_life editor matches 1..
 execute if score @s editor_n_type matches 0 if score #ed_life editor matches ..0 if score @s editor_n_hit matches 1 run function rhythm_axe:editor/judge/hit
 # 唱片机（type 2）：点击命中即收尾。**不参与同刻限制** —— 原版每刻每玩家只能与一个交互实体交互，天然单目标
 execute if score @s editor_n_type matches 2 if score @s editor_n_hit matches 1 run function rhythm_axe:editor/judge/hit
-# 唱片机末刻兜底（life == -2x 仍未点击 → miss；命中的情况已由上一行按 goodL 判定）
-execute if score @s editor_n_type matches 2 if score #ed_life editor = #ed_lo editor if score @s editor_n_hit matches 0 run function rhythm_axe:editor/judge/window_out
+# 唱片机末刻兜底（★ 2026-09-29 放宽为「窗口内相交过」）：life == -2x 且本刻未点击 →
+#   判定窗口 [3x, -2x] 内任一刻视线相交过（editor_n_jb_seen，probe 每刻记录）→ good_late（hit 按当前寿命查档）
+#   全程未相交过 → miss
+#   ⚠️ `editor_n_hit matches 0` 守卫必须保留：本刻点击命中时上面那行已判完并删除音符对，
+#     不守卫会在已删除实体上重复判一次（标签若同时满足还会双重反馈）
+execute if score @s editor_n_type matches 2 if score #ed_life editor = #ed_lo editor if score @s editor_n_hit matches 0 if entity @s[tag=editor_n_jb_seen] run function rhythm_axe:editor/judge/hit
+execute if score @s editor_n_type matches 2 if score #ed_life editor = #ed_lo editor if score @s editor_n_hit matches 0 unless entity @s[tag=editor_n_jb_seen] run function rhythm_axe:editor/judge/window_out
 

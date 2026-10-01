@@ -1,5 +1,8 @@
 # 面板 2：谱面设置。规范v2：值 = 行号×100 + 行内按钮号（行号 100 起）。
-# 文本字段行：标题10001/曲师10101/谱面作者10102/音乐10201/预览10301/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
+# 文本字段行：标题10001/曲师10101/谱面作者10102/音乐10201/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
+# ★ 行103（2026-10-01 改）：10301/10302 预览起点 ∓10 刻、10303/10304 预览时长 ∓1 刻、
+#    10305【使用当前时间】= 把当前音乐位置填进预览起点；10306【截到播放头】= 把起点到播放头的时差填进预览时长
+#    （原 10301 是「预览音频」文本框，已废弃）
 # spawn 行107: 10701..10706 = X-/X+/Y-/Y+/Z-/Z+；角度行109: 10901..10904 = yaw-/yaw+/pitch-/pitch+
 # 行108 已空（原【整理音符顺序】10801 于 2026-09-15 迁到主菜单，处理分支见 panel1；值不变）
 # 行110 人数 11001/11002；行111 血量 11101/11102；行112 进度条色 11201/11202
@@ -14,7 +17,26 @@ execute if score #click_value editor matches 10001 run function rhythm_axe:edito
 execute if score #click_value editor matches 10101 run function rhythm_axe:editor/menu/dialog/dialog_open_author
 execute if score #click_value editor matches 10102 run function rhythm_axe:editor/menu/dialog/dialog_open_charter
 execute if score #click_value editor matches 10201 run function rhythm_axe:editor/menu/dialog/dialog_open_music
-execute if score #click_value editor matches 10301 run function rhythm_axe:editor/menu/dialog/dialog_open_preview
+# —— 预览起点/时长（行103：10301/10302 起点 ∓10 刻，10303/10304 时长 ∓1 刻）——
+#   单位都是「刻」，1 刻 = 50ms；显示换算见 map_panel 里的 map_preview_row
+#   ⚠️ delta 只能是 ±1/±10/±100 之外的任意值也没问题（map_int_adjust 用分数中转，不再依赖 const 表）
+execute if score #click_value editor matches 10301 run data modify storage rhythm_axe:prop field_name set value "preview_start"
+execute if score #click_value editor matches 10302 run data modify storage rhythm_axe:prop field_name set value "preview_start"
+execute if score #click_value editor matches 10303 run data modify storage rhythm_axe:prop field_name set value "preview_len"
+execute if score #click_value editor matches 10304 run data modify storage rhythm_axe:prop field_name set value "preview_len"
+execute if score #click_value editor matches 10301 run data modify storage rhythm_axe:prop delta set value -10
+execute if score #click_value editor matches 10302 run data modify storage rhythm_axe:prop delta set value 10
+execute if score #click_value editor matches 10303 run data modify storage rhythm_axe:prop delta set value -1
+execute if score #click_value editor matches 10304 run data modify storage rhythm_axe:prop delta set value 1
+# 10305 = 【使用当前时间】：把当前音乐位置填进预览起点（见 map_preview_use_head）
+execute if score #click_value editor matches 10305 run function rhythm_axe:editor/menu/map/ops/map_preview_use_head
+# 10306 = 【截到播放头】：把「预览起点 → 当前播放头」的时差填进预览时长（见 map_preview_len_span）
+execute if score #click_value editor matches 10306 run function rhythm_axe:editor/menu/map/ops/map_preview_len_span
+execute if score #click_value editor matches 10301..10302 run data modify storage rhythm_axe:prop min set value 0
+execute if score #click_value editor matches 10301..10302 run data modify storage rhythm_axe:prop max set value 100000
+execute if score #click_value editor matches 10303..10304 run data modify storage rhythm_axe:prop min set value 1
+execute if score #click_value editor matches 10303..10304 run data modify storage rhythm_axe:prop max set value 12000
+execute if score #click_value editor matches 10301..10304 run function rhythm_axe:editor/menu/map/ops/map_int_adjust with storage rhythm_axe:prop
 execute if score #click_value editor matches 10401 run function rhythm_axe:editor/menu/dialog/dialog_open_mapid
 execute if score #click_value editor matches 10501 run function rhythm_axe:editor/menu/dialog/dialog_open_end_time
 # —— 传送行（701 不传送 / 702 设为传送 / 703 传送动作）——

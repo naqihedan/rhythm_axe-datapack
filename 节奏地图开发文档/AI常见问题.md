@@ -15,6 +15,19 @@
   - 正确写法：`data get storage rhythm_axe:maps.$(mapid) notes[$(i)].selected`（ID 与路径之间留空格）；同理 `storage rhythm_axe:maps.editor history[$(i)].notes`。
   - 代价（本次实例）：`save_strip_selected` 的取长度、`save_strip_leaf` 的剔除都这么写 → **保存时「剔除 selected」从来没生效**，还会每次保存刷「无法实例化」错误、把编辑器的 `selected` 原样写进正式谱面。
   - 自查：`grep -rn "\$(mapid)\.[a-z]" data/`、`grep -rn "maps\.editor\.[a-z]" data/`。
+- **同一条「贪婪 ID」的另外三种写法**（2026-10-01 实测踩全套：最高分改成二维 storage + 排行榜，连续三次「静默不生效」）：
+
+  | 写法 | 合法性 | 后果 |
+  | --- | --- | --- |
+  | `data modify storage rhythm_axe:scores_index.new_rename set value []` | ❌ 非法 | ID 吃掉整个点分名字 ⇒ 没有路径。**宏函数整行实例化失败**（日志：`无法实例化函数 … 错误的命令参数 at position …`），点了没反应 |
+  | `data modify storage rhythm_axe:scores set value {}` | ❌ 非法 | 想「建存储根」没这种写法（根不是路径）。**整个文件加载失败**（`Whilst parsing command on line N`，调用时报「未知的函数」） |
+  | `execute if data storage rhythm_axe:lb run …` | ❌ 非法 | `data get/remove/merge storage <id>` 可以省略路径，但 **`if/unless data` 条件必须带路径** ⇒ 同样整个文件不加载 |
+  | `data modify storage rhythm_axe:scores <key>.<mapid> set value {…}` | ✅ | 正确：**ID 与路径之间留空格**，点分部分放路径里 |
+  | `data modify storage rhythm_axe:test2 sub set value []` | ✅ | 单层路径的 `set value` **会自动创建存储本身**（不需要先建根） |
+
+  - 定位手段：读 `logs/latest.log` 搜 `Whilst parsing command on line` —— 它直接给出**文件名里第几行 + HERE 指向的那个 token**（本次就是靠它把 `prepare` 第 6 行、`write_enter` 原第 22 行揪出来的）。
+  - ⚠️ `bridge.ps1 logs -Search` 只回**增量**新行，常给 `lines: []` → 会误判成「0 错误」；要连 bridge 一起用就在每次 `command 'reload'` 之后立刻查，或直接读日志文件。
+  - 通用自查：`grep -rn "data \(get\|modify\|remove\) storage [a-z_:]*[a-z_]\.\?[a-z_:]*\s*\(set\|run\)" data/` 人眼过一遍——凡是「storage 后面直接跟 `set`/`run`」的都在嫌疑名单里。
 - **「变化检测 / 手动改过」的基准必须是一个自己不会变的量**（2026-09-17 锚点踩坑）：判「用户有没有手动挪过锚点」如果拿**当前包围盒中心**当基准，那么**选区一变中心就变**而锚点还停在旧中心 ⇒ 每次换选区都被误判成「用户动过」（实测：选完第一个音符再选第二个就变蓝）。正确做法 = **把「上次自动摆放的位置」记下来**（锚点把 `data.anchor_cx/cy/cz` 存在自己身上），再拿实体当前 Pos 与它比。同类风险：凡 `当前值 != 期望值 ⇒ 判定用户改过` 的写法，先问「期望值自己会不会变」。
 
 - **`if score X obj >= 0`（右侧直接写裸常量）是非法语法 ⇒ 整个函数不加载**（2026-09-21 实测：`editor/judge/protect` 因此**从创建起就没加载过**，症状＝「判定保护完全不生效」——从头到尾把准星放在判定位置上也只判 perfectL）。
@@ -34,6 +47,34 @@
   | 修复 | 去掉文件头 3 字节，或用编辑器「以 UTF-8（无 BOM）保存」 |
 
   ⚠️ **最容易漏的一点**：spyglass 不报错、`check_all_macros.ps1` 旧版也照过（它只查宏）⇒ 唯一可靠信号是游戏日志里的 `Failed to load function`。所以**写 `.mcfunction` / `.json` 一律 `encoding='utf-8'`，绝不用 `utf-8-sig`**。
+
+- **`$` 前缀的行必须真的用到一个 `$(...)`；反过来，含 `$(...)` 的行必须带 `$`**（2026-10-01 实测，两个方向都会炸）：
+
+  | 写法 | 结果 |
+  | --- | --- |
+  | `$data modify storage rhythm_axe:lb rebuilt append from storage rhythm_axe:lb tmp`（带 `$` 但没有宏参数） | ❌ **整个函数加载失败**：`Failed to load function … Can't parse function line 5: '…append from…'`。注意这条命令**单独在游戏里跑是合法的**，所以极易误判成「语法不支持」 |
+  | `data modify storage rhythm_axe:lb del.name set from storage rhythm_axe:scores $(key).$(mapid).name`（漏了行首 `$`） | 静默失败：整行按**字面量**解析，`$(key)` 没被替换 → 报「没有与 name 相匹配的元素」，值保持默认（表现为「名字显示成 ?」）。这种不会报加载错误，最难查 |
+
+  - 结论：**写宏行时两头都核一遍**——`$` 开头就必须有 `$(...)`；行里有 `$(...)` 就必须 `$` 开头。`check_all_macros.ps1` 两个方向都查（它现在会报「有 $ 无宏参数」）。
+  - 隔离实验做法（值得复用）：在 `data/rhythm_axe/function/test/` 放两个只差一个 `$` 的临时函数 → `/reload` → 看哪个进 `Failed to load function`，查完删掉。
+
+- **新增的 `data/<ns>/dialog/*.json` 不会被 `/reload` 加载**（2026-10-01 实测）：
+  - 症状：`dialog show @s rhythm_axe:xxx` 报 `无法在注册表"minecraft:dialog"中找到元素"rhythm_axe:xxx"`，而且**日志里没有任何「解析失败」记录**（易误判成「我写的 JSON 有问题」）。
+  - 验证方法：把一个**已经能加载的**对话框原样复制成新文件名 → `/reload` 后依然找不到；**重启世界**（`bridge.ps1 worldrestart`）后再试 → 找到了 ⇒ 说明是「reload 不重扫 dialog 注册表」，不是 JSON 写错。
+  - 对策：**新增/改名对话框文件后必须重启世界**（改内容也一样，稳妥起见按同一规矩办）。
+
+- **删除确认的判定标准（2026-10-01 用户确定）**：只给**会造成不可恢复后果**的删除加原生确认框（删谱面 / 回收站彻底删 / 回收站覆盖还原 / 排行榜删成绩）；
+  编辑器内可【撤销】的编辑型删除（时间点、事件、音符）**一律直接删，不要加框**（历史上有过“统一加框”又回退的经历）。
+  加框的三件套：入口写 `maps.editor.pending_del`（`kind`/`detail`/`cursor`/`index`/`mapid`）→ `editor/menu/ops/confirm_delete` → 【删除】跑 `ops/do_delete`（按 king 分发）。详见《编辑器.md》的《删除的二次确认》。
+  - 顺带：`/reload` 会把 `map_list.open` 清空（`load.mcfunction` 重置菜单态）⇒ 用桥接测菜单按钮前要先 `data modify storage rhythm_axe:map_list open set value 1b`，否则 `menu/consume` 在「菜单没开着」的守卫处直接 `return fail`，表现得像「按钮没反应」。
+
+- **原生确认框（`minecraft:confirmation`）的结构**（2026-10-01 从 `ConfirmationDialog.MAP_CODEC` 核出来，实测可用）：顶层就是 `common`（`title` / `body` / `inputs` / `can_close_with_escape` / `pause` / `after_action`）拍平 + `yes` / `no` 两个 `ActionButton`；
+  `ActionButton` = `label` + `tooltip` + `width` + `action`（`{"type":"run_command","command":"/function …"}`）。**不需要 `exit_action`**（那是 `multi_action` / `dialog_list` 才有的）。
+  - 判断某类型支持哪些字段的可靠办法：从 loom 缓存的 `minecraft-common.jar` 里读类字段（见「排查手法」）——`DialogTypes` 里能查到 `notice/server_links/dialog_list/multi_action/confirmation` 这五种类型名。
+
+- **`/reload` 和「重进存档」跑的是同一个 `load.mcfunction`**（`#minecraft:load`）：想知道「重载会不会丢东西」只看这一个文件。它**只覆盖**三类东西（const 常量、objective 注册、菜单/编辑器临时态）＋**两类清理**（`kill @e[tag=note]`、`clear_note_scores` 把 `note_*` 全 `reset *`）；`maps.*`（谱面）、`maps.editor`（编辑器会话）、`runtime`、`options`、队伍、玩家 tag **都保留**。
+  - ★ 2026-09-29 起，`load` 开头先算 `#keep_run`（`is_running == 1` 且有 `runtime.notes`）⇒ **正有一局在跑时跳过上面所有「清游玩状态」的动作**（连 `play/feedback/init` 的反馈表重建也跳），`/reload` 因此不再打断游玩；配套 `play/main_loop` 顶部加了「本刻已跑过 → `return fail`」的同刻去重（防止载入兜底补挂的第二条链把 `time` 每刻 +2）。
+  - ⚠️ **没有局在跑时，反馈表仍会被 `play/feedback/init` 整表重建**：游戏内（面板 12/13）改的全局击打音效/视效**不持久**，`/reload` 会冲回默认——内容以 `play/feedback/init.mcfunction` 为准。
 
 # 判定区域（选择器体积参数）方面
 
@@ -65,6 +106,10 @@
 - **忘更新文档**：改完 trigger 值要同步 `编辑器.md` 对应面板的表，否则下次照旧表加号必撞。
 - **点按钮后「世界里的音符消失 / 列表按钮少一截」，但数据是对的** → 十有八九是**同一条命令链超上限被截断**（日志搜 `Command execution stopped due to limit`）。上限 `maxCommandChainLength`（`gamerule max_command_sequence_length`，写死在 `data/rhythm_axe/function/load.mcfunction`）**2026-09-12 已由 200000 提高到 1000000**——那时谱面涨到 ~580 音符，`refresh`（整表重建视觉）和列表渲染**各自**就接近 20 万条命令，「操作 + refresh + 面板渲染」同刻必然被截断，属于正常操作踩坑，不再当异常。
 - **宏函数「少一个宏参」= 整个函数静默不执行**：`#arg:a,b` 而调用方只写了 `prop.a`（`b` 在计分板里）→ 调用方会失败，连函数第一行 `scoreboard players set ...` 都不跑，表现是「点了没反应、日志里什么都没有」。教训：**能被宏参数化的才放宏参，已经在计分板/数组里的就直接用计分板读**（`editor/util/op_announce` 原来把音符数当宏参，改成读 `#op_count` 就正常了）。
+- **加减（`±`）按钮「点了没反应」先查 delta 中转**：6 个 ± 助手（`map_adjust` / `map_int_adjust` / `map_spawn_adjust` / `map_progress_color` / `note_pos_adjust` / `timing_panel_adjust`）统一用
+  `scoreboard players set #delta editor $(delta)` + `scoreboard players operation #temp editor += #delta editor` 中转。**别退回这两种写法**：
+  ① `+= $(delta) const` —— `const` 表（`load.mcfunction`）里**没有该值**时源分数按 0 算 ⇒ 按钮**静默空操作**（2026-10-01「预览时长 −」的 `-20` 不在表里，就是这样坏的）；
+  ② `scoreboard players add` —— 26.2 的 `add` **不收负数**（报「整型数据不能小于0」）。
 - **>50 音符的重操作要「先提示、后干活」**：入口拆成 `<操作>`（前置：提示 + 分刻）/ `<操作>_go`（干活）/ `<操作>_next`（跨刻切回玩家上下文）三件套，提示用 `editor/util/op_announce with storage rhythm_axe:prop`（写 `prop.op_label` + 计分板 `#op_count`）。原因见上一条：同刻的 `tellraw` 玩家看不到。
 - **别在玩家正在游玩时做破坏性 bridge 测试**：模拟点击前先确认 `selection` / `current_panel`；像 `trigger editor_click set 8`（撤销）会**真的**回退玩家历史一步（实测把游标 49 退到 48）。优先选无副作用路径：直接调目标函数、或用「空选中」的守卫分支来验证。
 - **聊天栏里的「旧按钮」永远可点**：`clear_lines` 只是推 10 行空行（滚动），被推上去的旧面板行仍在聊天栏里，其 `click_event` 依然有效。所以「面板重绘之后点到上一块面板的按钮」是**正常可达状态**，每个 handler 都必须**按状态自守**（`unless data … editing.batch`、`unless data … editing.orig_index`），**不能只靠「面板上没画这个按钮」**。
@@ -157,5 +202,23 @@
   - 排查口径：`saves/<存档>/data/minecraft/scoreboard.dat` 体积（正常应 < 1MB；> 数 MB 即有残留）＋ `script` 里 `scoreboard players reset *` 对照 objective 清单。日记 `[Server thread/INFO]: Saving and pausing game...` 的时间点与 `scoreboard.dat` 的 `LastWriteTime` 对得上，即可确认是保存卡。
   - **正解**：① 每个 `kill <编辑器音符实体>` 前先 `execute as @e[tag=…] run function rhythm_axe:editor/visual/note_scores_reset_`（`@s` 版清 24 项）；② `utilization/clear_note_scores` 里补 `scoreboard players reset * editor_n_*` 一次性清历史残留（`/reload` 即生效）；③ **新增 `editor_n_*` objective 时这三处（kill 前清、reset 文件、clear_note_scores）必须同步。**
   - 同类隐患自查：任何「实体 UUID 上挂计分板 + 会 kill/重建」的系统（游玩侧 `note_*` / `note_c_*` / `note_g_*` 已在 `clear_note_scores` 覆盖）都要走同一套。
+
+# 时间换算 / 命令口径方面
+
+- **「刻 → 毫秒」有两个口径，千万别混（2026-10-01 用户指出）**：
+  · **编辑器内**（时间轴信息行、主菜单音乐进度）：按工作副本 `timing_points` **分段**换算（每刻 = `60000/(bpm×tpb)` ms）—— 编辑器内 tick rate 随时间点变，**1 刻 ≠ 50ms**。
+  · **编辑器外**（大厅预览 `preview_start` / `preview_len`）：没有 tick rate 调整（20tps），**固定 1 刻 = 50ms**。
+  数据包算不了分段（要遍历数组 + 浮点），所以编辑器内的毫秒**由 mod 每刻算好**写进 `rhythm_axe:editor_time`（`head_ms` / `end_ms`），数据包只做毫秒 → `分:秒.百分秒` 拆解（`editor/util/tick_to_time` 的 `unit_ms`：刻传 50、毫秒传 1）。mod 侧对应 `MusicTime.msAtTick` / `TimelineSync.writeRuntime` / `TimelineGui.musicProgress`。
+  · 派生坑（2026-10-01 用户指出）：**别把编辑器播放头刻直接当预览起点**（预览起点是大厅口径的 50ms/刻）—— 必须先经「音乐毫秒」再 `÷50`（见 `editor/menu/map/ops/map_preview_use_head`）。同理，任何「编辑器刻 ↔ 大厅预览刻」互转都要过一道毫秒。
+- **`/schedule` 没有 `with` 参数，但「时间参数」可以宏注入（26.2 实测）**：`schedule function <fn> <time> with storage <id>` 报「错误的命令参数」✗；但写成一个宏函数 `$schedule function <fn> $(time)t replace` 把时长注进去**完全可行** ✓。
+  · 用途：把「动态时长」排成一次性延时 —— `map_list/preview/arm` 用 `$(pv_len)t` 让预览到点由 `preview/stop` 自己停（**误差 0 刻**），不必「每 N 刻自检一次」轮询；`replace` 会顶掉**同函数**的旧条目，换歌时不会提前停新预览。
+  · 要给被调函数传**宏参数值**（不是时间）时，仍得用 `_next` 包装 + storage / 计分板（`schedule` 的执行者是服务端，没有 `@s`）。
+- **`data` 命令在 storage **根**上的操作受限（26.2）**：`set value {}`、`merge value {}`、`data remove storage <id>`（不带路径）都会报「错误的命令参数 / 未知或不完整的命令」。要整包替换或清空只能：写子路径（`… <path> set value …`）、逐字段 `remove`，或改由 mod 用 Java API 写。
+- **三套聊天栏点击通道，各有各的 trigger + 临时分数板（别混用）**：
+  · 编辑器 `editor_click` → `editor/menu/consume`（按 `current_panel` 分流）
+  · 菜单系统 `menu_click` → `menu/consume`（按**值段**路由）
+  · 游玩系统 `play_click` → `play/end_of_game/consume`（结算界面【重新开始】`101` /【返回选曲】`102`）
+  `trigger` 用过即失效 ⇒ 每个通道都要在 tick 里 `scoreboard players enable` 自愈（菜单/游玩通道各有一行）。
+  另注：点了没反应先查各通道的前置——菜单通道要 `map_list.open:1b`，编辑器通道要 `editor_active`/`current_panel`。
 - 本轮成绩（供参照）：`refresh` 0.903s → **0.112s**（seek 模式 0.093s）；每音符命令数 ~45 → **~9**；`sel_rebuild` 0.030 → 0.018s。
 

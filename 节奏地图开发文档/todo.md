@@ -14,7 +14,10 @@
   - `play/judgement/st_player`/`st_probe`/`st_mark` 里带「★ 2026-09-26 判定延迟补偿」注释的行；`st_lag_apply{,_lin,_nl}`、`st_lag_restore`；
   - `play/active_note/move_self` 的 `#lag_extra` 减法；`move_write_pair` 的位置环维护 + `vis_ring_next`；
   - `load.mcfunction` 的 `net` / `lag_rtt_manual` / 16 个 `note_vis*` objective；`tick.mcfunction` 的 `enable @a lag_rtt_manual`；`utilization/clear_note_scores` 的 `note_vis*` 清理；`test/lag_report{,_one}`；只作为对照的调制函数 `lag_rtt_manual`。
-  - 删除它们要做一遍判定回归测试（改动落在判定热路径）；不删也**完全无害**（补偿恒 0）。
+  - 删除它们要做一遍判定回归测试（改动落在判定热路径）；不删**行为上无害**（补偿恒 0）。
+- ✅ **已做的性能门控（2026-09-29）**：`play/active_note/move_write_pair` 里维护位置环的两条调用原本是**无条件**执行的 ⇒ 已改为 `if score judge_lag_comp options matches 1` 门控。该函数 = **28 条命令 × 每刻 × 每个非线性音符盒/木板**，是本次改动里唯一「量级级」开销；门控后 judge_lag_comp=0 ⇒ 只花 2 次计分板判断，非线性音符每刻开销回到补偿前。
+  - **剩余小头**（未处理，等彻底清理时一并去掉）：`move_self` 每线性音符每刻 +2 条（`#m_t -= #lag_extra` + `st_lag_moved` 判断）、`st_player` 每玩家每刻 +10 条 + 2 次实体查询、`tick` 每刻 `enable @a lag_rtt_manual`、`clear_note_scores` 的 16 条 `reset`（只在开局/结束时跑，无所谓）。
+  - ⚠ 若将来把总开关设回 1：要**先设好再进谱面**（中途打开会让在飞的音符读到过期环位置）。
 - **若将来重做，优先换思路**：目标应是**恒定偏移**（对所有人生效、不随 RTT 飘），候选杠杆 = `play/active_note/move_self` 里那个固定的 `-= 1` 刻（“对齐客户端渲染延迟”用的常数）——拿它按手感标定即可（单机/房主同样能感受到差异）；先用 `lag_rtt_manual`（per-player 常量）扫 `70/120`（2/3 刻）确认量级。
 
 - [x] 编辑器试听「真实判定模式」（**阶段 1 完成 2026-09-20**）

@@ -1,0 +1,50 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "新建谱面"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入新谱面的 id（建议只用字母 / 数字 / 下划线）。\n若该 id 已存在，会直接打开那张已有的谱面。"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "new_mapid",
+      "width": 200,
+      "label": {
+        "text": "谱面 id"
+      },
+      "max_length": 64
+    }
+  ],
+  "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:map_list/maps/new_cancel"
+    }
+  },
+  "can_close_with_escape": true,
+  "pause": false,
+  "actions": [
+    {
+      "label": {
+        "text": "新建"
+      },
+      "tooltip": {
+        "text": "用这个 id 创建谱面并进入编辑器"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "function rhythm_axe:map_list/maps/new_submit {\"mapid\":\"$(new_mapid)\"}"
+      }
+    }
+  ]
+}

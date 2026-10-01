@@ -1,7 +1,7 @@
 # 菜单系统（聊天栏菜单 UI，独立于编辑器与游玩系统）：点击分发。
 #   @s = 点击者；由 tick.mcfunction 检测 @a[scores={menu_click=1..}] 调用。
 #   与 editor/menu/consume 完全分开：菜单按钮发 menu_click，编辑器按钮发 editor_click，两套互不干扰。
-# 分发按**值所属号段**（19 = 谱面总表 / 21 = 房间页；20 留给难度选择）；map_list.panel 仍会写，但不参与分发。
+# 分发按**值所属号段**（19 = 谱面总表 / 21 = 房间页 / 22 = 设置面板；20 留给难度选择）；map_list.panel 仍会写，但不参与分发。
 execute store result score #menu_value menu run scoreboard players get @s menu_click
 scoreboard players reset @s menu_click
 scoreboard players enable @s menu_click
@@ -13,7 +13,20 @@ execute unless data storage rhythm_axe:map_list {open:1b} run return fail
 # ★ 2026-09-26 改：原来按全局 map_list.panel 分发 ⇒ A 打开房间页（panel=21）后，B（正在看谱面总表）
 #   点自己的按钮也会被路由到 21 → 提示「该按钮不属于当前面板」。改成按值段分发后：
 #   房间页能**广播给所有人**，各人点各自的按钮都按值对号入座，互不影响。
+# ⚠️ 菜单层与编辑器层不同：这里是**按值段路由**，新增固定值必须同时扩这里 + panelN 守卫 + panelN 分支，
+#    否则点下去会落到最后的 wrong_panel（跟"有守有分支"无关！2026-09-30 加 11704 时就踩了这个）。
 execute if score #menu_value menu matches 100000..100909 run return run function rhythm_axe:map_list/panel/panel19
-execute if score #menu_value menu matches 11701..11702 run return run function rhythm_axe:map_list/panel/panel19
+execute if score #menu_value menu matches 11701..11705 run return run function rhythm_axe:map_list/panel/panel19
+# 11801..11810 = 排行榜名次行的 [x] 删除（值 = 11800 + 名次）；也是页面 19
+execute if score #menu_value menu matches 11801..11810 run return run function rhythm_axe:map_list/panel/panel19
+# 11901..11904 = 总表操作行【🎮 游玩】【✏️ 编辑】【🏆 排行榜】【＋新建谱面】
+#   · 11901..11903 对「选中的谱面」生效；
+#   · 11904【＋新建谱面】不依赖选中（新建时本来就没歌可选）
+# ⚠️ 菜单层是按**值段路由**：新增固定值必须同时扩这里 + panel19 守卫 + panel19 分支 + 按钮发射点，
+#    漏了本行会直接落到 wrong_panel（「该按钮不属于当前面板」），而 check_all_panel_coverage.py 查不出来。
+execute if score #menu_value menu matches 11901..11904 run return run function rhythm_axe:map_list/panel/panel19
 execute if score #menu_value menu matches 12101..12104 run return run function rhythm_axe:room/panel/panel21
+execute if score #menu_value menu matches 12201..15302 run return run function rhythm_axe:options/panel/panel22
+execute if score #menu_value menu matches 16001..16007 run return run function rhythm_axe:options/panel/panel22
+execute if score #menu_value menu matches 17001..17902 run return run function rhythm_axe:options/panel/panel22
 function rhythm_axe:map_list/wrong_panel

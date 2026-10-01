@@ -3,6 +3,12 @@
 
 # 运行检查
 execute if score is_running play_state matches 0 run return fail
+# ★ 2026-09-29 同刻去重：本刻已经跑过主循环就直接结束。
+#   /reload 或重进存档时可能同时存在两条链（载入兜底补挂的那条）——重复的链在这里自杀，
+#   否则 time 会每刻 +2、整局加速。标记由 init_game 复位成 -1。
+execute store result score #loop_now play_state run time query gametime
+execute if score #loop_done play_state = #loop_now play_state run return fail
+scoreboard players operation #loop_done play_state = #loop_now play_state
 
 # 时间推进（音乐时间轴，time == 0 为音乐起点）
 scoreboard players add time play_state 1

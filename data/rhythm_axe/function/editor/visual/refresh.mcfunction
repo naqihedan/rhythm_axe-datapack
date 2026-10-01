@@ -41,6 +41,10 @@ execute store result storage rhythm_axe:editor.runtime vis_lead_max int 1 run sc
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor playing
 execute as @e[tag=editor_note,type=item_display] at @s if score #temp editor matches 0 if score @s editor_n_type matches 3 if score @s editor_n_density matches 1.. run function rhythm_axe:editor/visual/concrete_seg_check
 execute as @e[tag=editor_note,type=item_display] at @s if score #temp editor matches 0 if score @s editor_n_type matches 0..2 if score #playhead editor = @s editor_n_time unless entity @s[tag=editor_n_triggered] run function rhythm_axe:editor/visual/trigger
+# 快进快退 / 跳转 / 打开谱面 / 编辑后刷新（这些路径不经过 tick_one）同样做「音符位于方块中」检查
+# 门控与播放路径（tick_one）一致：游玩测试【关】 + 音符盒/木板（type 0..1）+ 播放头正停在判定时刻
+# 此处实体刚由 refresh 重建并跑过 place，交互实体已在当前刻位置
+execute as @e[tag=editor_note,type=item_display] at @s if score editor_note_judge options matches 0 if score @s editor_n_type matches 0..1 if score #playhead editor = @s editor_n_time run function rhythm_axe:editor/visual/err_note_in_block
 execute as @e[tag=editor_guide,type=item_display] run function rhythm_axe:editor/visual/guide_tick
 # 无未出生（全部已消失/存活）→ 游标落到末尾（#vis_idx 结束时 = notes 长度）
 execute if score #vis_next editor matches 999999 run scoreboard players operation #vis_next editor = #vis_idx editor

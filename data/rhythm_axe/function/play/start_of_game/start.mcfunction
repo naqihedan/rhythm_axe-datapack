@@ -2,6 +2,11 @@
 # 把谱面读取成可玩形式并进入主循环
 #arg: mapid
 
+# ★ 2026-10-01：开始游戏 = 停掉大厅的曲目预览（全局状态；房门页【开始游戏】也走这里）
+function rhythm_axe:map_list/preview/stop
+# 本局玩家不再算“正在看大厅面板”（别人切歌时不会把列表刷进他们的游戏聊天）
+execute as @a[team=player] run function rhythm_axe:map_list/view_clear
+
 # 复制谱面到运行存储（运行期只读）
 # 先清空 runtime 的谱面数据键（merge 不会删除源没有的旧键，避免残留）
 # 用 if data 保护，键不存在时不报错
@@ -16,9 +21,8 @@ execute if data storage rhythm_axe:runtime hit_events run data remove storage rh
 # 其它根字段（id/title/.../teleport/spawn_pos 等）由 merge 覆盖，无需逐个清
 $data modify storage rhythm_axe:runtime {} merge from storage rhythm_axe:maps.$(mapid)
 $data modify storage rhythm_axe:runtime mapid set value "$(mapid)"
-# 旧谱面无 artist（曲师）/charter（谱面作者）字段 → 补兜底（结算标题行的 nbt 组件必须取得到路径）
+# 旧谱面无 artist（曲师）字段 → 补兜底（结算标题行的 nbt 组件必须取得到路径）
 execute unless data storage rhythm_axe:runtime artist run data modify storage rhythm_axe:runtime artist set value "(未知)"
-execute unless data storage rhythm_axe:runtime charter run data modify storage rhythm_axe:runtime charter set value "(未知)"
 # ===== 音乐预热（越早越好）=====
 # ★ 2026-09-19：从 init_game 末尾提前到这里（谱面刚 merge 完就发），让后台解码与后续初始化并行
 #   见 start_of_game/preload_music.mcfunction；谱面无 music 字段则不预热

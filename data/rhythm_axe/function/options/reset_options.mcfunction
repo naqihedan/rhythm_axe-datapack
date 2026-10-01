@@ -15,22 +15,21 @@ scoreboard players set note_hitsound options 1
 scoreboard players set note_particle options 1
 # 伤害扣血冷却（刻）
 scoreboard players set damage_cooldown options 10
-# 歌曲进度条
+# 歌曲进度条（显示开关；颜色改用**谱面字段** progress_color，不再有全局项）
 scoreboard players set song_progress_display options 1
-scoreboard players set song_progress_color options 0
+# ★ 2026-09-29 废弃：原 song_progress_color（全局颜色）已移除 —— 颜色见谱面设置面板 / play/init_game
 # 编辑器
 scoreboard players set editor_history_limit options 50
-# 可视化时间轴（mod 屏幕覆盖层）开关：编辑器进入自动置 1、退出置 0；0=关 1=开
+# 可视化时间轴（mod 屏幕覆盖层）开关：编辑器进入自动置 1、退出置 0 → **不在设置面板里**（2026-09-29）
 scoreboard players set editor_timeline_gui options 0
 # 编辑器试听：音符真实判定；0=自动预览（等同 auto，到点即播音符事件） 1=真实判定（须在判定窗内被命中才播，超窗 miss）
 scoreboard players set editor_note_judge options 1
 # 编辑器试听：经过事件点是否执行谱面事件（events[]）、经过音符判定时刻是否执行击打事件（hit_events 自定义指令）；0=不执行 1=执行
 # ★ 2026-09-23：原 editor_note_hitevents 已并入本开关（同一个开关同时管事件点与音符击打事件）
 scoreboard players set editor_play_events options 0
-# 编辑器试听：音乐自动对齐游戏（音频偏差 >40ms 且已稳住时，把音频挪到播放头，不动播放头）；0=关 1=开
-scoreboard players set editor_audio_align options 1
-# 正式游玩：音乐自动对齐游戏（同一套机制，对齐目标是歌曲时间轴 play_state.time）；0=关 1=开
-scoreboard players set play_audio_align options 1
+# 音乐自动对齐游戏（编辑器试听 + 正式游玩**共用同一个开关**；0=关 1=开）。2026-09-29 由
+#   editor_audio_align / play_audio_align 两项合并而来（mod 侧 MusicTime 读 options.audio_align）
+scoreboard players set audio_align options 1
 # 多人判定延迟补偿：按每位玩家自己的 RTT（mod 写在计分板 net，毫秒）把他的判定箱回退到
 #   「他眼睛看到的位置」再测 looking_at。0=关（回补偿前行为） 1=开
 scoreboard players set judge_lag_comp options 0
@@ -53,5 +52,8 @@ scoreboard players set Failed options 0
 
 # 调试等级（0=关闭，1/2 逐级显示更多调试信息）
 scoreboard players set debug_output options 0
+
+# 模组开关（mods 计分板；目前只有 auto = 自动模式）：【恢复默认】也一并关掉
+scoreboard players set auto mods 0
 
 tellraw @a [{"text":"设置已重置为初始状态！","color":"green",bold:true}]

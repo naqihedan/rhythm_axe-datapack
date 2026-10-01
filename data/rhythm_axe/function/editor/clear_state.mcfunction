@@ -13,7 +13,6 @@ data remove storage rhythm_axe:maps.editor playhead
 data remove storage rhythm_axe:maps.editor next_note_id
 data remove storage rhythm_axe:maps.editor playing
 data remove storage rhythm_axe:maps.editor play_speed
-data remove storage rhythm_axe:maps.editor timeline_length
 data remove storage rhythm_axe:maps.editor metronome
 data remove storage rhythm_axe:maps.editor tool_group
 data remove storage rhythm_axe:maps.editor tool_page
@@ -41,6 +40,5 @@ scoreboard players reset #playhead editor
 scoreboard players reset #metronome editor
 scoreboard players reset #history_cursor editor
 scoreboard players reset #hist_limit editor
-scoreboard players reset #timeline_length editor
 # 关闭 mod 可视化时间轴覆盖层（退出编辑器/切换谱面时）
 scoreboard players set editor_timeline_gui options 0

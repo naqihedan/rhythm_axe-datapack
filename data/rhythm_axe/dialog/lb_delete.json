@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:confirmation",
+  "title": {
+    "text": "删除这份成绩？"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "删除后不可恢复，排行榜会立即刷新。确定要删除这条成绩吗？"
+      }
+    }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "yes": {
+    "label": {
+      "text": "删除"
+    },
+    "tooltip": {
+      "text": "永久删除这条成绩"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:map_list/lb/del_go"
+    }
+  },
+  "no": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:map_list/lb/del_cancel"
+    }
+  }
+}

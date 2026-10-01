@@ -21,6 +21,8 @@ $data remove storage rhythm_axe:maps.$(mapid) charter
 $data remove storage rhythm_axe:maps.$(mapid) author
 $data remove storage rhythm_axe:maps.$(mapid) music
 $data remove storage rhythm_axe:maps.$(mapid) preview
+$data remove storage rhythm_axe:maps.$(mapid) preview_start
+$data remove storage rhythm_axe:maps.$(mapid) preview_len
 $data remove storage rhythm_axe:maps.$(mapid) teleport
 $data remove storage rhythm_axe:maps.$(mapid) spawn_pos
 $data remove storage rhythm_axe:maps.$(mapid) spawn_x

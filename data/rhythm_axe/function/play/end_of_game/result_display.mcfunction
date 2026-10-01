@@ -126,3 +126,13 @@ execute if score percentage_health score_calculate matches 1..9 run tellraw @a \
     [{"text":"▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃","color":"gray"},{"text":"▃▃▃","color":"blue"}]
 execute if score percentage_health score_calculate matches 0 run tellraw @a \
     [{"text":"▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃","color":"gray"},{"text":"","color":"gray"}]
+
+#=============================结算按钮=============================
+# ★ 2026-10-01 新增一行：【重新开始】【返回选曲】—— 走游玩系统自己的 trigger play_click
+#   （101 = 重新开始 / 102 = 返回选曲，分发见 play/end_of_game/consume；@a 因为结算是公屏输出，各人点各的）
+tellraw @a ""
+tellraw @a [\
+    {"text":"【重新开始】         ","color":"green","click_event":{"action":"run_command","command":"/trigger play_click set 101"},"hover_event":{"action":"show_text","value":"用同一张谱面再来一局"}},\
+    {"text":"      "},\
+    {"text":"【返回选曲】","color":"aqua","click_event":{"action":"run_command","command":"/trigger play_click set 102"},"hover_event":{"action":"show_text","value":"打开谱面总表（大厅）"}}\
+]

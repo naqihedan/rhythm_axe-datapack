@@ -60,20 +60,31 @@ scoreboard players operation score score_calculate /= max_weight score_calculate
 # 传给游玩状态计分板（score 供 result_display 显示）
 scoreboard players operation score play_state = score score_calculate
 
-# ★ 更新最高分（存于谱面 storage，每谱面独立、持久化；play_state.highest_score 仅结算显示副本）
-# 读谱面 storage 历史最高分（字段不存在 → data get 失败 → store result 写 0，安全默认）
-$execute store result score #hs_old play_state run data get storage rhythm_axe:maps.$(mapid) highest_score
-# ★ 自动模式（2026-08-09）：auto 不覆盖最高分——最高记录显示历史值，不写回 storage
-execute if score auto play_state matches 1 run scoreboard players operation highest_score play_state = #hs_old play_state
-# 手动模式：本局分数与历史最高分取大者 → 写入 play_state（结算显示用）
-execute if score auto play_state matches 0 run scoreboard players operation highest_score play_state = score score_calculate
-execute if score auto play_state matches 0 run scoreboard players operation highest_score play_state > #hs_old play_state
-# 手动模式才写回谱面 storage（持久化）；auto 不写回（宏函数独立，score_calculate 是宏函数不能嵌 $execute）
-execute if score auto play_state matches 0 run function rhythm_axe:play/end_of_game/save_highest with storage rhythm_axe:runtime
+# ★ 2026-09-30 最高分改为「按玩家分别存储」（二维 storage rhythm_axe:scores.<玩家UUID>.<mapid>）
+#   本图分数是全员共用的一套判定/分数（perfect/good/miss 都是全局伪玩家）⇒ 本局每位参与者各记一份。
+#   比较与写入集中在 play/highscore/write_all（同时把「你的最高记录」写进 highest_score play_state 供结算显示）。
+#   名单 runtime.hs_players 由 end_of_game 在 team leave 之前采集。
+#   auto 不记榜（与旧行为一致）：write=0b ⇒ 只读取历史最高用于显示。
+# ★ 2026-10-01 只有**跑完全部谱面**才记成绩：end_of_game 判定的 runtime.finished 为 0 ⇒ write=0b。
+#   血量百分比（percentage_health）同期写入成绩条目，供排行榜给分数上色 —— 所以血量换算已上移到本段之前。
+data modify storage rhythm_axe:prop mapid set from storage rhythm_axe:runtime mapid
+execute store result storage rhythm_axe:prop score int 1 run scoreboard players get score score_calculate
+execute store result storage rhythm_axe:prop health int 1 run scoreboard players get percentage_health score_calculate
+data modify storage rhythm_axe:prop write set value 1b
+execute if score auto play_state matches 1 run data modify storage rhythm_axe:prop write set value 0b
+execute unless data storage rhythm_axe:runtime {finished:1b} run data modify storage rhythm_axe:prop write set value 0b
+function rhythm_axe:play/highscore/write_all with storage rhythm_axe:prop
+execute unless data storage rhythm_axe:runtime {finished:1b} run tellraw @a [{"text":"[排行榜] ","color":"gold"},{"text":"谱面没跑完（中途结束），本局成绩不予记录","color":"yellow"}]
+data remove storage rhythm_axe:prop mapid
+data remove storage rhythm_axe:prop score
+data remove storage rhythm_axe:prop health
+data remove storage rhythm_axe:prop write
+data remove storage rhythm_axe:runtime hs_players
 
 # 血量换算百分比（health / 谱面最大血量 × 100）
 # ★ 2026-09-13 先清零再读（同 health / #tp_flag 的 store result 残留问题）：谱面未定义 health 时
 #   store 失败会让 #max_health 带着上一局的脏值 → 百分比乱；现在归 0 并跳过除法（除 0 会被游戏拒绝）
+# ★ 2026-10-01 本段**上移到写榜之前**：成绩条目要连血量百分比一起存（排行榜按它给分数上色）
 scoreboard players set percentage_health score_calculate 0
 scoreboard players set #max_health score_calculate 0
 scoreboard players operation percentage_health score_calculate = health play_state

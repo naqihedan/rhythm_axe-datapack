@@ -1,5 +1,7 @@
 #arg:mapid,cur
-# 保存：备份 highest_score → 逐键清空 maps.<mapid> 根字段 → merge 工作副本 → 写回 highest_score（防字段残留）
+# 保存：逐键清空 maps.<mapid> 根字段 → merge 工作副本（防字段残留）
+# ★ 2026-09-30 最高分已改为按玩家存于独立 storage（rhythm_axe:scores），不再随谱面存储；
+#   这里只把老存档可能残留的 mapid.highest_score 删掉（已无人读取）。
 # 保存不修改历史记录（保存后仍可撤销）；未保存判定 = history_cursor != saved_cursor
 # 若谱面不存在，先写一个临时键确保 storage 被创建（后续逐键删除与 merge 都是无残留覆盖）
 # ★ 2026-09-15 保存前自动整理音符顺序：notes 按 time 升序重排（修复批量改判定时间造成的局部逆序）
@@ -10,8 +12,6 @@ execute store result storage rhythm_axe:prop cursor int 1 run data get storage r
 function rhythm_axe:editor/util/order_repair
 data remove storage rhythm_axe:prop cursor
 $execute unless data storage rhythm_axe:maps.$(mapid) id run data modify storage rhythm_axe:maps.$(mapid) id set value "tmp"
-scoreboard players set #saved_highest editor 0
-$execute store result score #saved_highest editor run data get storage rhythm_axe:maps.$(mapid) highest_score
 $data remove storage rhythm_axe:maps.$(mapid) id
 $data remove storage rhythm_axe:maps.$(mapid) title
 $data remove storage rhythm_axe:maps.$(mapid) artist
@@ -19,6 +19,8 @@ $data remove storage rhythm_axe:maps.$(mapid) charter
 $data remove storage rhythm_axe:maps.$(mapid) author
 $data remove storage rhythm_axe:maps.$(mapid) music
 $data remove storage rhythm_axe:maps.$(mapid) preview
+$data remove storage rhythm_axe:maps.$(mapid) preview_start
+$data remove storage rhythm_axe:maps.$(mapid) preview_len
 $data remove storage rhythm_axe:maps.$(mapid) teleport
 $data remove storage rhythm_axe:maps.$(mapid) spawn_pos
 $data remove storage rhythm_axe:maps.$(mapid) spawn_x
@@ -39,7 +41,6 @@ $data modify storage rhythm_axe:maps.$(mapid) {} merge from storage rhythm_axe:m
 $data modify storage rhythm_axe:maps.$(mapid) id set value "$(mapid)"
 # 保存时剔除音符的 selected（正式谱面不带选中状态；工作副本保留选中）
 $function rhythm_axe:editor/file/save_strip_selected {mapid:"$(mapid)"}
-$execute store result storage rhythm_axe:maps.$(mapid) highest_score int 1 run scoreboard players get #saved_highest editor
 $data modify storage rhythm_axe:maps.$(mapid) editor_playhead set from storage rhythm_axe:maps.editor playhead
 # ★ 2026-09-19 谱面索引入队：保存后这张谱面会出现在大厅【谱面总表】里（幂等：已在索引里就不重复加）
 $function rhythm_axe:maps/index/index_add {mapid:"$(mapid)"}

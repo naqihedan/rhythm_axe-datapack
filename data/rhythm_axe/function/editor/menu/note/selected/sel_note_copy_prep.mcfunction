@@ -15,7 +15,5 @@ data remove storage rhythm_axe:prop index
 data remove storage rhythm_axe:prop note_id
 data remove storage rhythm_axe:prop found_index
 # ★ 2026-09-16 用户要求：行级复制后重开已选定列表刷新面板（此前只发绿色聊天行，面板看起来“没反应”）
-#   复制不产生撤销快照 → 打 no_undo → show_feedback 走纯文本反馈（渲染后自行清 feedback/no_undo）
-data modify storage rhythm_axe:maps.editor feedback set value "已复制音符信息"
-data modify storage rhythm_axe:maps.editor no_undo set value 1b
+#   反馈（"已复制音符信息" + no_undo）现已由共享叶子 note_list_copy_ 统一设置，这里只负责重开列表面板
 function rhythm_axe:editor/menu/note/selected/sel_note_list_open

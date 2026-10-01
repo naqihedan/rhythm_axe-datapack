@@ -49,6 +49,9 @@ scoreboard players set 422500 const 422500
 scoreboard players set 490000 const 490000
 scoreboard players set 562500 const 562500
 scoreboard players set 5000 const 5000
+# ★ 2026-10-01 刻→时间显示（分:秒.百分秒）用：6000 百分秒 = 1 分（见 editor/util/tick_to_time）
+#   缺注册的后果见《AI常见问题》：使用该常量的那行会静默失效
+scoreboard players set 6000 const 6000
 scoreboard players set 10000 const 10000
 # ★ 2026-09-15 混凝土一条曲线模型用：(g+gt)×Δ 再 /20000 求长条中心（漏注册会让那行静默失败 → 中心值暴涨）
 scoreboard players set 20000 const 20000
@@ -68,8 +71,13 @@ scoreboard players set -180 const -180
 function rhythm_axe:utilization/display_animation/init
 
 
-#====================判定反馈组表====================
-function rhythm_axe:play/feedback/init
+# ★ 2026-09-29 /reload 不打断游玩：载入时先判「是否正有一局在跑」——is_running=1 且运行存储里还有音符。
+#   #keep_run play_state = 1 ⇒ 本文件里所有「清空游玩状态」的动作全部跳过，主循环的 schedule 链接着跑。
+#   （TimerQueue 是 SavedData，/reload 不会清它，所以链本来就活着；下面还会再补挂一次作兜底，重复链由 main_loop 自杀）
+scoreboard players set #keep_run play_state 0
+execute if score is_running play_state matches 1 if data storage rhythm_axe:runtime notes run scoreboard players set #keep_run play_state 1
+#====================判定反馈组表==================== ★ 2026-09-29 有局在跑时跳过重建（别把游戏内改过的击打音效/视效冲回默认）
+execute unless score #keep_run play_state matches 1 run function rhythm_axe:play/feedback/init
 
 
 #====================游玩状态====================
@@ -86,6 +94,9 @@ scoreboard objectives add lag_rtt_manual dummy
 # mods 计分板（玩家开始游戏前设置的 mod 开关；start 时复制到 play_state 同名项）
 #   auto：1=自动模式（auto 接管判定，玩家不能判定）
 scoreboard objectives add mods dummy
+# 游戏模组开关（mods 计分板；目前只有 auto = 自动模式）兜底为 0（关）——
+#   开局时 play/start_of_game/start 复制到 play_state 同名项（判定系统读 play_state.auto）
+execute unless score auto mods matches 0..1 run scoreboard players set auto mods 0
 #====================玩家队伍（游玩侧名单）====================
 # team player = 本局的玩家名单：切冒险模式 / 判定 / 扣血 / 进度条 / 音乐 只对 @a[team=player] 生效，
 #   名单外的人 = 观众（原游戏模式、背包、属性一律不动）。名单由大厅「房间页」（room/，页面 21）维护。
@@ -99,11 +110,17 @@ scoreboard objectives add play_player dummy
 #====================菜单系统（菜单层）====================
 # menu_page：每位玩家**自己的**菜单页码（谱面总表用；每人独立 ⇒ 别人翻页不影响我的页）
 scoreboard objectives add menu_page dummy
+# options_page：每位玩家**自己的**设置面板页码（页面 22 用；0=游玩 / 1=编辑器 / 2=高级）
+scoreboard objectives add options_page dummy
 # 运行期 auto 标记（start 从 mods.auto 复制；判定系统读取）
-scoreboard players set auto play_state 0
+execute unless score #keep_run play_state matches 1 run scoreboard players set auto play_state 0
 # is_running 初始化：防上次游玩未正常走完 end_of_game（自动结束未到/退出/重载）导致残留 1，
-#   之后 start_of_game 误判“已有谱面在运行”而无法重开。重载时旧 main_loop 链会因 is_running=0 自动断开。
-scoreboard players set is_running play_state 0
+#   之后 start_of_game 误判“已有谱面在运行”而无法重开。★ 2026-09-29：reload/重进存档时若正有一局在跑则保持 1（见上 #keep_run）——
+# ★ 2026-09-29 /reload 不打断游玩：有局在跑（#keep_run=1）时保持 is_running=1，主循环链接着跑；
+#   否则照旧归零（防残局卡住无法重开）。schedule 这行只为兜底：main_loop 顶部有「本刻已跑过 → return fail」守卫，
+#   重复的链会自己结束，不会双倍推进 time。
+execute unless score #keep_run play_state matches 1 run scoreboard players set is_running play_state 0
+execute if score #keep_run play_state matches 1 run schedule function rhythm_axe:play/main_loop 1t
 # 音符间引导线两端音符 id（引导线展示实体存储：note_guide_a = 前一个、note_guide_b = 当前；清除配对用）
 scoreboard objectives add note_guide_a dummy
 scoreboard objectives add note_guide_b dummy
@@ -263,7 +280,7 @@ gamerule advance_weather false
 #   提高上限后这类「正常操作被截断」不再发生；100 万仍可作为失控递归的报警线。
 gamerule max_command_sequence_length 1000000
 #====================编辑器====================
-# 编辑器运行时计分板（#playhead/#play_speed/#metronome/#history_cursor/#timeline_length 镜像 maps.editor）
+# 编辑器运行时计分板（#playhead/#play_speed/#metronome/#history_cursor 镜像 maps.editor）
 scoreboard objectives add editor dummy
 # 编辑器判定缩放镜像（#ed_scale：真实判定窗口用；由 visual/refresh 的 judge/scale_sync 与 playback/advance_ 维护）
 #   此处兜底为 1，避免"刚进编辑器还没 refresh"时窗口为 0 → 音符一出生就被判 miss
@@ -281,6 +298,22 @@ execute unless score editor_play_events options matches 0..1 run scoreboard play
 execute unless score note_hitsound options matches 1..6 run scoreboard players set note_hitsound options 1
 execute unless score note_particle options matches 1..6 run scoreboard players set note_particle options 1
 execute unless score swing_anim options matches 0..1 run scoreboard players set swing_anim options 1
+# ★ 2026-09-29：options.song_progress_color（全局进度条颜色）已废弃 → 颜色改用谱面字段 progress_color
+#   （见 play/init_game）；老存档残留的这个计分项在这里清掉，免得以后误以为它还在生效
+scoreboard players reset song_progress_color options
+# ★ 2026-09-29：options.editor_timeline_length（时间轴显示长度）已废弃 → 该设置从未被读取
+#   （mod 时间轴长度由客户端按屏幕宽度上报，见 工具组件.md）；老存档残留计分项在这里清掉
+scoreboard players reset editor_timeline_length options
+# ★ 2026-09-29：options.editor_event_per_page（每页事件数）已废弃 → 事件列表写死每页 5 行；清残留
+scoreboard players reset editor_event_per_page options
+# ★ 2026-09-29：options.audio_align（音乐自动对齐游戏）由 editor_audio_align / play_audio_align 合并而来。
+#   老存档：两个旧键只要有一个是 1 就把新键置 1（保住玩家原本的意图），再清掉废弃计分项；最后兜底为 1
+#   （老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，必须在此兜底）
+execute if score editor_audio_align options matches 1 run scoreboard players set audio_align options 1
+execute if score play_audio_align options matches 1 run scoreboard players set audio_align options 1
+scoreboard players reset editor_audio_align options
+scoreboard players reset play_audio_align options
+execute unless score audio_align options matches 0..1 run scoreboard players set audio_align options 1
 # ★ 2026-09-26 设置：options.judge_lag_comp（多人判定延迟补偿）—— ⏸ **该功能已搁置**，见 todo.md
 #   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故必须在此兜底
 #   （0 = 关闭：判定箱不回退，回到补偿前的行为，单人/排查用）
@@ -330,6 +363,10 @@ scoreboard players enable @a editor_click
 scoreboard objectives add menu dummy
 scoreboard objectives add menu_click trigger
 scoreboard players enable @a menu_click
+# 游玩系统聊天栏点击通道（结算界面的【重新开始】/【返回选曲】）：自己的 trigger，不占编辑器/菜单的
+#   值：101 重新开始 / 102 返回选曲，分发在 play/end_of_game/consume
+scoreboard objectives add play_click trigger
+scoreboard players enable @a play_click
 # 编辑器音符交互实体点击检测（时间戳）用
 scoreboard objectives add nc_last_right dummy
 scoreboard objectives add nc_last_attack dummy
@@ -349,20 +386,31 @@ data remove storage rhythm_axe:map_list open
 data remove storage rhythm_axe:map_list room_mapid
 # 菜单页码按玩家存 menu_page 计分项（tag 与计分项都不会因 reload 自动消失，这里一并清）
 scoreboard players reset * menu_page
+# 设置面板页码同理（options_page；页面 22）
+scoreboard players reset * options_page
 data remove storage rhythm_axe:map_list panel
 data remove storage rhythm_axe:map_list page
+# ★ 2026-10-01 曲目预览与「编辑成绩」开关：预览不该跨 reload 活着；[x] 按「默认隐藏」复位
+#   （选中项 map_list.sel 保留 —— 那是"我上次在看哪张"，跨 reload 留着更顺手；失效时按钮会提示找不到谱面）
+data remove storage rhythm_axe:map_list prev
+data remove storage rhythm_axe:map_list lb_edit
+# ★ 2026-10-01 共享大厅的视图标记（谁正在看总表/排行榜）：菜单是临时 UI，reload 后全部清掉
+#   ml_self 是同步过程中的临时排除标记，万一 reload 卡在中间会永久卡住一个人，也一并清
+tag @a remove maplist_view
+tag @a remove lb_view
+tag @a remove ml_self
 
 #====================残留实体清理（★ 修复 2026-08-08）====================
-# reload 会重置 storage/计分板/schedule，但【不会清实体】。若 reload 前游戏进行中/未正常结束，
+# reload/重进存档都不清实体（storage/计分板/schedule 也都是持久的）。若上次这个局没正常结束、
 # 旧音符实体残留且带相同 tag（mapid_nid、note_display 等）→ 新游戏 summon 用 @e[tag=...,limit=1]
 # 配对时可能选中旧实体 → 新音符未初始化（无 note_linear_pending/note_id）→ 停出生位置
 #（用户实测：reload 后第一次游戏前两个音符停出生位置，不 reload 第二次正常）。
-# reload 时清掉所有数据包音符实体，保证从干净状态开始。
+# 无局在跑时清掉所有数据包音符实体，保证从干净状态开始（★ 2026-09-29：正有一局在跑时不清，见顶部 #keep_run）。
 # 所有音符相关实体（展示/交互/玻璃 marker/混凝土 zone marker）都带基础 tag "note"（summon 时打）→ 一条清全。
-kill @e[tag=note]
+execute unless score #keep_run play_state matches 1 run kill @e[tag=note]
 # 清空 note_* 计分板残留计分项（scoreboard players reset *；reload 不清计分板项，残留只能靠此清空）
 # ★ 已在上方注册 objective（dummy），reset * 通配所有名字（含已死亡/已卸载音符残留项）
-function rhythm_axe:utilization/clear_note_scores
+execute unless score #keep_run play_state matches 1 run function rhythm_axe:utilization/clear_note_scores
 # ★ reload 的 clear_note_scores 用 reset * 会清掉【编辑器音符实体】的 note_id（展示↔交互配对计分板）。
 #   编辑器实体带 tag=editor_note（非 note），不被上面的 kill 清除，但仍存活且靠 note_id 配对；
 #   note_id 被清空后 place 无法移动交互实体（滞留召唤位置=混凝土判定位置）、tick_kill 无法按 id 清除交互实体。

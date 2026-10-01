@@ -3,6 +3,8 @@
 # 用法：function rhythm_axe:editor/editor {mapid:"xx"}
 # 由玩家执行（@s 必须是玩家）
 execute unless entity @s[type=player] run return fail
+# ★ 2026-10-01 进编辑器 = 离开共享大厅视图（别人切歌时不再把总表刷到他这里）
+function rhythm_axe:map_list/view_clear
 # ① 单人锁：若已有其他玩家在编辑 → 拒绝
 execute if entity @a[tag=editor_active] unless entity @s[tag=editor_active] run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"编辑器正在被使用；请让房主用【协作工具】右键你，把你加入协作","color":"red"}]
 execute if entity @a[tag=editor_active] unless entity @s[tag=editor_active] run return fail

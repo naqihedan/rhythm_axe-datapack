@@ -8,7 +8,8 @@ $data modify storage rhythm_axe:maps.editor history append value {\
     artist:"unknown",\
     charter:"unknown",\
     music:"rhythm_axe:rhythm_axe.audio",\
-    preview:"rhythm_axe:rhythm_axe.audio",\
+    preview_start:0,\
+    preview_len:200,\
     health:10,\
     player_count:1,\
     teleport:1b,\

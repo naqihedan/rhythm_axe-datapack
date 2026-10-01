@@ -31,6 +31,19 @@ execute as @a[team=player] if score @s play_player matches 1 run gamemode creati
 execute as @a[team=player] if score @s play_player matches 2 run gamemode adventure @s
 execute as @a[team=player] if score @s play_player matches 3 run gamemode spectator @s
 execute as @a[team=player] unless score @s play_player matches 0..3 run gamemode creative @s
+# ★ 2026-10-01 「是否跑完全部谱面」→ runtime.finished（结算写榜据此决定记不记成绩），
+#   判定细节见 play/end_of_game/check_finished（单独成函数以便脱开整局结算实测）
+function rhythm_axe:play/end_of_game/check_finished
+# ★ 2026-09-30 per-player 最高分：先采集本局名单（team leave 之后 @a[team=player] 就空了）
+#   采集只拿「玩家名 + UUID」，分数在结算（score_calculate）里才写回 —— 两段式，见 play/highscore/
+data modify storage rhythm_axe:runtime hs_players set value []
+execute as @a[team=player] run function rhythm_axe:play/highscore/collect_
+# ★ 2026-10-01 兜底：本局名单为空（用 /function 直接开局、或房间页没点【加入游玩】）→ 退化为「所有在线玩家」
+#   旧行为是「整张谱面一个最高分」、与参与者无关，所以兜底到 @a 不会比旧行为更宽松；
+#   单人游玩也是这条路径（大厅单人开局会 team join，但命令开局不会）
+scoreboard players set #hs_roster play_state 0
+execute store result score #hs_roster play_state run data get storage rhythm_axe:runtime hs_players
+execute if score #hs_roster play_state matches 0 as @a run function rhythm_axe:play/highscore/collect_
 # ★ 2026-09-26：结束游玩 = 清空本局名单（队伍 player）。下次要玩得重新在房间页【加入游玩】。
 #   ⚠ 必须放在「按 play_player 还原游戏模式」**之后**（上面那 5 条是按 @a[team=player] 遍历的）：
 #     名单先空 → 谁都不还原 → 所有人卡在冒险模式。

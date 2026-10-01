@@ -21,7 +21,11 @@ execute unless data storage rhythm_axe:maps.editor panel_temp.title run data mod
 execute unless data storage rhythm_axe:maps.editor panel_temp.artist run data modify storage rhythm_axe:maps.editor panel_temp.artist set value ""
 execute unless data storage rhythm_axe:maps.editor panel_temp.charter run data modify storage rhythm_axe:maps.editor panel_temp.charter set value ""
 execute unless data storage rhythm_axe:maps.editor panel_temp.music run data modify storage rhythm_axe:maps.editor panel_temp.music set value ""
-execute unless data storage rhythm_axe:maps.editor panel_temp.preview run data modify storage rhythm_axe:maps.editor panel_temp.preview set value ""
+# ★ 2026-10-01：旧版「预览音频」字符串字段已废弃 —— 打开设置面板时丢掉，免得保存时又写回谱面
+data remove storage rhythm_axe:maps.editor panel_temp.preview
+# 预览起点/时长（刻；缺省 0 / 200，对应「从 0 秒起播 10 秒」）
+execute unless data storage rhythm_axe:maps.editor panel_temp.preview_start run data modify storage rhythm_axe:maps.editor panel_temp.preview_start set value 0
+execute unless data storage rhythm_axe:maps.editor panel_temp.preview_len run data modify storage rhythm_axe:maps.editor panel_temp.preview_len set value 200
 execute unless data storage rhythm_axe:maps.editor panel_temp.teleport run data modify storage rhythm_axe:maps.editor panel_temp.teleport set value 0b
 execute unless data storage rhythm_axe:maps.editor panel_temp.player_count run data modify storage rhythm_axe:maps.editor panel_temp.player_count set value 1
 execute unless data storage rhythm_axe:maps.editor panel_temp.health run data modify storage rhythm_axe:maps.editor panel_temp.health set value 10

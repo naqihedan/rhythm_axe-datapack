@@ -13,6 +13,12 @@ scoreboard players enable @a[tag=editor_active] editor_click
 # 玩家点击菜单按钮（/trigger menu_click set N）→ 本行检测后分发到菜单层 consume
 execute as @a[scores={menu_click=1..}] run function rhythm_axe:menu/consume
 
+# ========== 游玩系统：聊天栏点击逐刻消费 ==========
+# 结算界面按钮（/trigger play_click set 101/102）→ 分发到 play/end_of_game/consume
+execute as @a[scores={play_click=1..}] run function rhythm_axe:play/end_of_game/consume
+# trigger 用过即失效 ⇒ 每刻重 enable（同下方 lag_rtt_manual 的自愈写法）
+scoreboard players enable @a play_click
+
 # ========== 判定延迟补偿：手动覆盖的自助入口 ==========
 # lag_rtt_manual = 该玩家自己的判定箱回退量（毫秒，0 = 不补偿；不设 = 自动读 net）
 #   ★ 非 OP 玩家也能自己用：/trigger lag_rtt_manual set <毫秒>（/trigger 用过即失效 ⇒ 每刻重 enable）

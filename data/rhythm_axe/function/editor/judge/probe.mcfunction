@@ -31,6 +31,9 @@ scoreboard players set #ed_hit editor 0
 scoreboard players operation #ed_nid editor = @s note_id
 execute if score @s editor_n_type matches 2 as @e[type=interaction,tag=editor_note,tag=editor_n_clicked] if score @s note_id = #ed_nid editor run scoreboard players set #ed_hit editor 1
 execute if score #ed_hit editor matches 1 run scoreboard players set @s editor_n_hit 1
+# 唱片机（type 2）：判定保护记录 —— 判定窗口内任一刻视线与唱片机相交过 → editor_n_jb_seen
+#   （末刻兜底用，见 note_check；只记一次，记上后不再扫。走到这里已确认本刻在判定窗口 [3x, -2x] 内）
+execute if score @s editor_n_type matches 2 if entity @s[tag=!editor_n_jb_seen] run function rhythm_axe:editor/judge/jb_seen
 # 音符盒/木板（type 0/1）：视线命中（配对交互实体打临时标签 → 谓词检测 → 撤标签）
 execute unless score @s editor_n_type matches 2 run function rhythm_axe:editor/judge/look_check
 # ===== 候选 ⇒ 更新最小寿命（保护中不算候选、不占名额）=====

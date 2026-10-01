@@ -19,6 +19,12 @@ applyTo: "**/data/rhythm_axe/**"
 
 **给菜单系统加/改按钮时，把下文所有 `editor_click` 换成 `menu_click`、`#click_value editor` 换成 `#menu_value menu`、面板路径换成页面自己的。**
 
+⚠️ **菜单层比编辑器层多一道“值段路由”**：`menu/consume` 是按**值所属号段**决定跑哪个页面的
+（`execute if score #menu_value menu matches <本页值段> run return run function .../panelN`）。
+⇒ 菜单层新增固定值要同步 **4 处**：① 发射点 ② **`menu/consume` 的号段**（编辑器层没有这一步，切忽照抄）③ `panelN` 守卫 ④ `panelN` 分支。
+漏掉 ② 的话，守卫/分支写得再对也会掉到最后的 `map_list/wrong_panel`，表现是「该按钮不属于当前面板」
+（2026-09-30 加 `11704` 时就踩了：`check_all_panel_coverage.py` 查不出来——它只比对守卫/分支，不模拟 consume 的值段路由）。
+
 ## 核心规则
 
 值 = `行号×100 + 列码`（行号 ≥ 100，列码从 1 起）：

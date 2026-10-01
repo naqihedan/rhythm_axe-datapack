@@ -19,6 +19,8 @@ $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhy
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) author
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) music
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) preview
+$execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) preview_start
+$execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) preview_len
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) teleport
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) spawn_pos
 $execute if data storage rhythm_axe:maps.$(mapid) id run data remove storage rhythm_axe:maps.$(mapid) spawn_x

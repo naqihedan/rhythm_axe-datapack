@@ -19,3 +19,6 @@ advancement revoke @s only rhythm_axe:editor/note_deselect
 tag @s remove editor_active
 function rhythm_axe:editor/clear_state
 tellraw @s [{"text":"[编辑器] 已退出编辑器","color":"yellow"}]
+# ★ 2026-10-01 用户要求：退出编辑器后直接打开谱面总表（否则留在空菜单，还得自己再点一次）
+#   三条退出路径（无未保存 / 保存并退出 / 不保存并退出）与删除谱面后的退出都走本文件
+function rhythm_axe:map_list/open

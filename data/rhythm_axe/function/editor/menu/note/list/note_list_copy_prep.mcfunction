@@ -22,3 +22,7 @@ data remove storage rhythm_axe:prop index
 data remove storage rhythm_axe:prop count
 data remove storage rhythm_axe:prop target
 data remove storage rhythm_axe:prop found_index
+# ★ 2026-09-30 用户要求：行级复制后重开活跃音符列表刷新面板（此前只发绿色聊天行，面板看起来“没反应”）
+#   复制不改谱面 → 无需 refresh，直接重开列表；反馈“已复制音符信息”在十行换行下方渲染
+#   当前面板仍是 10 → note_list_open 不会清掉刚写入的 note_clip（见其顶部剪贴板会话判定）
+function rhythm_axe:editor/menu/note/list/note_list_open

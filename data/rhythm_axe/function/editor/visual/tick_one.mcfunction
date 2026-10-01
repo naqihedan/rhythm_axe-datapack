@@ -39,3 +39,13 @@ execute if score editor_note_judge options matches 1 if score @s editor_n_type m
 execute unless score #playhead editor > #pe_place editor unless score #playhead editor < @s editor_n_birth run function rhythm_axe:editor/visual/place
 # ★ 玻璃真实判定（必须在 place 之后：此刻 editor_n_v* = 当前刻视觉中心、vv* = 上一刻）
 execute if score editor_note_judge options matches 1 if score @s editor_n_type matches 4 run function rhythm_axe:editor/judge/glass_check
+
+# ★ 谱面报错提示（2026-09-30）：游玩测试【关】（自动预览）时，判定时刻检查【配对交互实体】自身是否处于方块中
+#   交互实体 = 音符判定箱（Pos 在方块底部、Y = 判定位置 − size/2）⇒ 能抓到「音符下半埋进地板/方块」这种
+#   ⚠ cave_air / void_air 也算「非空气」（会误报，编辑器世界基本遇不到）；只提示、不影响播放
+execute \
+    if score editor_note_judge options matches 0 \
+    if score @s editor_n_type matches 0..1 \
+    unless score #playhead editor > @s editor_n_time \
+    unless score #playhead editor < @s editor_n_time run \
+        function rhythm_axe:editor/visual/err_note_in_block

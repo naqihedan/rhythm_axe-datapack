@@ -37,11 +37,34 @@ tellraw @s [\
 {"nbt":"panel_temp.music","storage":"rhythm_axe:maps.editor","color":"white"},\
 {"text":" [编辑文本]","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10201"},"hover_event":{"action":"show_text","value":"编辑音乐文件"}}\
 ]
-tellraw @s [\
-{"text":"预览音频：","color":"gray"},\
-{"nbt":"panel_temp.preview","storage":"rhythm_axe:maps.editor","color":"white"},\
-{"text":" [编辑文本]","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10301"},"hover_event":{"action":"show_text","value":"编辑预览音频"}}\
-]
+# 预览起点 / 预览时长（刻度；大厅总表的 ▶️ 按钮用：从第几刻起播、播多少刻）
+# ★ 2026-10-01 取代原「预览音频」字符串字段（那个字段从没有消费者）
+#   值：行103 六个按钮 10301/10302 起点 ∓10 刻（0.5 秒）、10303/10304 时长 ∓1 刻（0.05 秒）、
+#       10305【使用当前时间】、10306【截到播放头】
+#   行尾换成换算后的时间（1 刻 = 50ms）：起点 分:秒.百分秒、时长 秒.百分秒
+#   到下限/上限时对应按钮变红（红色仍带 click，处理端会钳制，只是点了不再变）
+execute store result score #temp editor run data get storage rhythm_axe:maps.editor panel_temp.preview_start
+function rhythm_axe:editor/util/tick_to_time {"src":"#temp","dst":"#tz","unit_ms":"50"}
+data modify storage rhythm_axe:prop label set value "预览起点："
+data modify storage rhythm_axe:prop tz_kind set value "start"
+data modify storage rhythm_axe:prop m_val set value 10301
+data modify storage rhythm_axe:prop p_val set value 10302
+data modify storage rhythm_axe:prop m_color set value "green"
+execute if score #temp editor matches 0 run data modify storage rhythm_axe:prop m_color set value "red"
+data modify storage rhythm_axe:prop p_color set value "green"
+execute if score #temp editor matches 100000.. run data modify storage rhythm_axe:prop p_color set value "red"
+function rhythm_axe:editor/menu/map/panel/map_preview_row with storage rhythm_axe:prop
+execute store result score #temp editor run data get storage rhythm_axe:maps.editor panel_temp.preview_len
+function rhythm_axe:editor/util/tick_to_time {"src":"#temp","dst":"#tz","unit_ms":"50"}
+data modify storage rhythm_axe:prop label set value "预览时长："
+data modify storage rhythm_axe:prop tz_kind set value "len"
+data modify storage rhythm_axe:prop m_val set value 10303
+data modify storage rhythm_axe:prop p_val set value 10304
+data modify storage rhythm_axe:prop m_color set value "green"
+execute if score #temp editor matches ..1 run data modify storage rhythm_axe:prop m_color set value "red"
+data modify storage rhythm_axe:prop p_color set value "green"
+execute if score #temp editor matches 12000.. run data modify storage rhythm_axe:prop p_color set value "red"
+function rhythm_axe:editor/menu/map/panel/map_preview_row with storage rhythm_axe:prop
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor panel_temp.teleport
 execute if score #temp editor matches 1 run tellraw @s [\
 {"text":"传送玩家：","color":"gray"},\

@@ -11,6 +11,8 @@ $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) author
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) music
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) preview
+$execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) preview_start
+$execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) preview_len
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) teleport
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) spawn_pos
 $execute if data storage rhythm_axe:maps.$(old_mapid) id run data remove storage rhythm_axe:maps.$(old_mapid) spawn_x
@@ -32,6 +34,8 @@ $data modify storage rhythm_axe:maps.editor mapid set value "$(new_mapid)"
 # ★ 2026-09-19 谱面索引同步：旧名出队 + 新名入队（索引机制上线前就存在的谱面借此首次登记）
 #   ⚠️ 代价是顺序变化：改名后的谱面会挪到总表末尾（总表按索引顺序显示）
 $function rhythm_axe:maps/index/index_rename {old:"$(old_mapid)",new:"$(new_mapid)"}
+# ★ 2026-09-30 排行榜数据随改名搬移（成绩按 mapid 当内层键存；不搬就会留在旧名字下）
+$function rhythm_axe:play/highscore/rename {old:"$(old_mapid)",new:"$(new_mapid)"}
 $tellraw @s [{"text":"[编辑器] 已修改谱面 id 为 ","color":"green"},{"text":"$(new_mapid)","color":"aqua"}]
 tellraw @s [{"text":"（改名不进撤销历史；如需改回原名，请再次修改谱面 id）","color":"gray","italic":true}]
 function rhythm_axe:editor/menu/map/panel/map_panel_open

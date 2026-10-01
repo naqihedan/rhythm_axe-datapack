@@ -6,6 +6,8 @@
 # ★ 2026-09-26 用户定：总表可无条件打开（编辑中也能翻看）；「编辑中不能开局」的拦截放在这里（游玩按钮）
 execute if entity @s[tag=editor_active] run tellraw @s [{"text":"[大厅] ","color":"gold"},{"text":"请先退出编辑器，再来游玩","color":"gray"}]
 execute if entity @s[tag=editor_active] run return fail
+# ★ 2026-10-01：去游玩 = 停掉曲目预览（全局状态）
+function rhythm_axe:map_list/preview/stop
 scoreboard players set #ml_online menu 0
 execute store result score #ml_online menu if entity @a
 execute if score #ml_online menu matches 1 run team join player @s

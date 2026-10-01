@@ -6,6 +6,8 @@ scoreboard objectives add play_state dummy
 
 # 运行标记（结束游戏时置 0）
 scoreboard players set is_running play_state 1
+# ★ 2026-09-29 主循环同刻去重标记：新局复位（见 play/main_loop 顶部）
+scoreboard players set #loop_done play_state -1
 
 # 时间起点：time = min(0, 所有音符里最早的出生时刻) - 1
 
@@ -73,7 +75,7 @@ scoreboard players set #guide_last_fp_new play_state 0
     # 分数（最高分保留）
     scoreboard players set score play_state 0
 
-# ===== 歌曲进度条（bossbar；设置 song_progress_display / song_progress_color）=====
+# ===== 歌曲进度条（bossbar；显示开关 song_progress_display / 颜色 = 谱面字段 progress_color）=====
 # max = end_time - 时间起点（time 初始 = 最早出生-1）；value = time - 时间起点（main_loop 每 tick 更新）
 scoreboard players operation #song_start play_state = time play_state
 scoreboard players set #song_max play_state 0
@@ -84,14 +86,18 @@ execute if score song_progress_display options matches 1 run bossbar set rhythm_
 execute if score song_progress_display options matches 1 run bossbar set rhythm_axe:song_progress value 0
 execute if score song_progress_display options matches 1 run execute store result storage rhythm_axe:runtime bp int 1 run scoreboard players get #song_max play_state
 execute if score song_progress_display options matches 1 run function rhythm_axe:play/note/song_progress/bossbar_max with storage rhythm_axe:runtime
-# 颜色映射（song_progress_color：0白 1粉 2蓝 3红 4绿 5黄 6紫）
-execute if score song_progress_display options matches 1 if score song_progress_color options matches 0 run bossbar set rhythm_axe:song_progress color white
-execute if score song_progress_display options matches 1 if score song_progress_color options matches 1 run bossbar set rhythm_axe:song_progress color pink
-execute if score song_progress_display options matches 1 if score song_progress_color options matches 2 run bossbar set rhythm_axe:song_progress color blue
-execute if score song_progress_display options matches 1 if score song_progress_color options matches 3 run bossbar set rhythm_axe:song_progress color red
-execute if score song_progress_display options matches 1 if score song_progress_color options matches 4 run bossbar set rhythm_axe:song_progress color green
-execute if score song_progress_display options matches 1 if score song_progress_color options matches 5 run bossbar set rhythm_axe:song_progress color yellow
-execute if score song_progress_display options matches 1 if score song_progress_color options matches 6 run bossbar set rhythm_axe:song_progress color purple
+# 颜色映射（0白 1粉 2蓝 3红 4绿 5黄 6紫；缺省 / 越界 = 白）
+# ★ 2026-09-29：颜色从「全局 options.song_progress_color」改为**谱面字段 progress_color**
+#   （与编辑器那条播放进度条同源；runtime 已在 start 里 merge 了整份谱面数据）
+scoreboard players set #song_color play_state 0
+execute if data storage rhythm_axe:runtime progress_color run execute store result score #song_color play_state run data get storage rhythm_axe:runtime progress_color
+execute if score song_progress_display options matches 1 if score #song_color play_state matches 1 run bossbar set rhythm_axe:song_progress color pink
+execute if score song_progress_display options matches 1 if score #song_color play_state matches 2 run bossbar set rhythm_axe:song_progress color blue
+execute if score song_progress_display options matches 1 if score #song_color play_state matches 3 run bossbar set rhythm_axe:song_progress color red
+execute if score song_progress_display options matches 1 if score #song_color play_state matches 4 run bossbar set rhythm_axe:song_progress color green
+execute if score song_progress_display options matches 1 if score #song_color play_state matches 5 run bossbar set rhythm_axe:song_progress color yellow
+execute if score song_progress_display options matches 1 if score #song_color play_state matches 6 run bossbar set rhythm_axe:song_progress color purple
+execute if score song_progress_display options matches 1 unless score #song_color play_state matches 1..6 run bossbar set rhythm_axe:song_progress color white
 
 # ===== 音乐预热（mod 流式播放器）=====
 # ★ 2026-09-19 已提前到 start 开头（谱面 merge 之后立刻预热）；详见 start_of_game/preload_music.mcfunction

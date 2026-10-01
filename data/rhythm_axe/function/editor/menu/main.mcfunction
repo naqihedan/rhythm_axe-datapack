@@ -80,6 +80,8 @@ tellraw @s [\
     {"text":"【退出编辑】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10402"},"hover_event":{"action":"show_text","value":"退出编辑器"}},\
     {"text":"  【删除谱面】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10404"},"hover_event":{"action":"show_text","value":"把谱面移入回收站（可找回）"}}\
 ]
+# 注：行104 列06【重置谱面最高分】(10406) 已于 2026-10-01 **移除** ——
+#     删成绩改成排行榜页面每个名次行前面的 [x]（值 11801~11810，带二次确认对话柜），见 map_list/lb/
 
 tellraw @s [{"text":"── 播放 ────────────────","color":"dark_gray"}]
 # 时间控件行（播放 ▶/⏸ 按状态显示）+ 速度按钮：同一行，按钮组件经 prop 注入宏 play_row
@@ -110,10 +112,24 @@ data modify storage rhythm_axe:prop jm set value '{"text":"【游玩测试：关
 execute if score editor_note_judge options matches 1 run data modify storage rhythm_axe:prop jm set value '{"text":"【游玩测试：开】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10502"},"hover_event":{"action":"show_text","value":"当前：【游玩测试】进行中——音符要在判定窗内被命中/看向/点击才播音符事件（不计成绩/连击）。点击关闭"}}'
 data modify storage rhythm_axe:prop end set value '{"text":" / ","color":"gray"},{"score":{"name":"#prog_end","objective":"editor"},"color":"white"},{"text":" 刻","color":"gray"}'
 execute unless score #prog_end editor matches 1.. run data modify storage rhythm_axe:prop end set value '{"text":" / ","color":"gray"},{"text":"未定义","color":"red"},{"text":" 刻","color":"gray"}'
+# 音乐进度（摆「当前刻/最终刻」左边的「分:秒.百分秒 / 分:秒.百分秒」）
+# ⚠️ 编辑器内 1 刻 ≠ 50ms（tick rate 随时间点变）⇒ 毫秒由 mod 每刻按工作副本时间点分段算好，
+#    写进 rhythm_axe:editor_time（见 TimelineSync）；这里只做毫秒→分:秒.百分秒 的拆解（unit_ms = 1）。
+#    大厅预览那边没有 tick rate 调整，才是固定 50ms/刻（unit_ms = 50）。
+# 结束时间未定义时 end_ms = -1，会被 tick_to_time 当 0 处理（右边 $(end) 已用红字「未定义」提示）
+# 读不到（旧版 mod / 未进编辑器）时保持 0 → 显示 0:00.00
+scoreboard players set #mu_src editor 0
+scoreboard players set #me_src editor 0
+execute store result score #mu_src editor run data get storage rhythm_axe:editor_time head_ms
+execute store result score #me_src editor run data get storage rhythm_axe:editor_time end_ms
+function rhythm_axe:editor/util/tick_to_time {"src":"#mu_src","dst":"#mu","unit_ms":"1"}
+function rhythm_axe:editor/util/tick_to_time {"src":"#me_src","dst":"#me","unit_ms":"1"}
+data modify storage rhythm_axe:prop mus set value '{"score":{"name":"#mu_m","objective":"editor"},"color":"aqua"},{"text":":","color":"gray"},{"score":{"name":"#mu_s10","objective":"editor"},"color":"aqua"},{"score":{"name":"#mu_s1","objective":"editor"},"color":"aqua"},{"text":".","color":"gray"},{"score":{"name":"#mu_c10","objective":"editor"},"color":"aqua"},{"score":{"name":"#mu_c1","objective":"editor"},"color":"aqua"},{"text":" / ","color":"gray"},{"score":{"name":"#me_m","objective":"editor"},"color":"white"},{"text":":","color":"gray"},{"score":{"name":"#me_s10","objective":"editor"},"color":"white"},{"score":{"name":"#me_s1","objective":"editor"},"color":"white"},{"text":".","color":"gray"},{"score":{"name":"#me_c10","objective":"editor"},"color":"white"},{"score":{"name":"#me_c1","objective":"editor"},"color":"white"}'
 function rhythm_axe:editor/menu/metronome_row with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop met
 data remove storage rhythm_axe:prop jm
 data remove storage rhythm_axe:prop end
+data remove storage rhythm_axe:prop mus
 # 行107：事件播放 + 音符判定文字反馈（聊天栏 / hotbar）三个开关，位于音符流速行上方
 # ★【事件播放】（10701）= options.editor_play_events：同时管【谱面事件点 events[]】与【音符击打事件 hit_events】
 # ★【音符聊天反馈】（10702）= options.feedback_chat、【音符hotbar反馈】（10703）= options.feedback_actionbar

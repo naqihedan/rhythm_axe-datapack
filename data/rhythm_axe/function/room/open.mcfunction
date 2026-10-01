@@ -9,6 +9,8 @@ $execute unless data storage rhythm_axe:maps.$(mapid) id run return fail
 execute if score is_running play_state matches 1 run tellraw @s [{"text":"[房间] ","color":"gold"},{"text":"已有谱面正在运行，无法开始。请先执行 /function rhythm_axe:play/end_of_game/stop","color":"gray"}]
 execute if score is_running play_state matches 1 run return fail
 # 房间状态（与谱面总表共用 rhythm_axe:map_list 这一个菜单层存储）
+# ★ 2026-10-01 切到房间页 = 离开共享大厅视图（别人切歌时不再把总表刷到他这里）
+function rhythm_axe:map_list/view_clear
 data modify storage rhythm_axe:map_list open set value 1b
 data modify storage rhythm_axe:map_list panel set value 21
 $data modify storage rhythm_axe:map_list room_mapid set value "$(mapid)"
