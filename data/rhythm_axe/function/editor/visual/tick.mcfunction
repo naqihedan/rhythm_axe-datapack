@@ -25,12 +25,12 @@ function rhythm_axe:editor/visual/scan_due
 # 1.4) ★ 游玩测试（真实判定）播放期间：视线/交互距离对齐游玩 4.5
 #   游玩侧硬编码：play/start_of_game/start.mcfunction 把 entity_interaction_range 设为 4.5
 #   （looked_at 谓词的射线长度由该属性决定；编辑器不设则只剩原版 3.0 ⇒ 判定距离比游玩短）。
-#   ⚠ 音符/选择工具自带主手修饰符 entity_interaction_range -1.0（防误触远处实体）
-#     ⇒ 手持带 attribute_modifiers 的物品时把 base 补到 5.5，叠加后仍是 4.5。
+#   ⚠ 音符/选择工具自带主手修饰符 entity_interaction_range -4.0（防误触远处实体）
+#     ⇒ 手持带 attribute_modifiers 的物品时把 base 补到 8.5，叠加后仍是 4.5。
 #   每刻设（而非只在 play_ 设一次）：玩家中途换手持物品也能立即跟上。
 #   暂停时由 playback/pause 恢复 3.0。
 execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} as @a[tag=editor_active] run attribute @s entity_interaction_range base set 4.5
-execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} as @a[tag=editor_active] if items entity @s weapon.mainhand *[minecraft:attribute_modifiers] run attribute @s entity_interaction_range base set 5.5
+execute if score editor_note_judge options matches 1 if data storage rhythm_axe:maps.editor {playing:1b} as @a[tag=editor_active] if items entity @s weapon.mainhand *[minecraft:attribute_modifiers] run attribute @s entity_interaction_range base set 8.5
 # 1.5) ★ 真实判定：判定保护用的射线步进（每刻重算 —— 先清上一刻标记，再按编辑者视线重新打）
 #   必须在下面 tick_one（→ judge/note_check）之前，保证"保护进入"检查读到的是本刻结果
 execute if score editor_note_judge options matches 1 run tag @e[type=item_display,tag=editor_note,tag=editor_n_looked_perfect] remove editor_n_looked_perfect

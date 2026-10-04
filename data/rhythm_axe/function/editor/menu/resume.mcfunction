@@ -28,5 +28,7 @@ execute if score #panel_id editor matches 16 run function rhythm_axe:editor/menu
 execute if score #panel_id editor matches 17 run function rhythm_axe:editor/menu/trash/trash_panel_open
 # 面板 18（已选定音符列表）：恢复已选定音符列表面板
 execute if score #panel_id editor matches 18 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
+# 面板 20（分布与填充）：重绘面板（参数存把在 editing.df）
+execute if score #panel_id editor matches 20 run function rhythm_axe:editor/menu/note/df/df_render
 # 兜底：current_panel 缺失或异常 → 主菜单
 execute unless data storage rhythm_axe:maps.editor current_panel run function rhythm_axe:editor/menu/main

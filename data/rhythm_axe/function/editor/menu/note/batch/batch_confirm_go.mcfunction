@@ -5,6 +5,15 @@ scoreboard players operation #from editor = #batch_from editor
 function rhythm_axe:editor/file/begin
 data modify storage rhythm_axe:maps.editor op_label set value "批量修改音符"
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
+# ★ 2026-10-03：先判定「本次是否改了判定时间」（决定 apply 时要不要登记下标）—— 必须在 apply 之前算好
+#   判断：绝对模式看 batch_set.time，相对模式看 rel.on.time（byte 0b 对 if data 也为真，故用计分板取值判断）
+scoreboard players set #ord_need editor 0
+execute if data storage rhythm_axe:maps.editor editing.batch_set.time run scoreboard players set #ord_need editor 1
+scoreboard players set #ord_rel editor 0
+execute store result score #ord_rel editor run data get storage rhythm_axe:maps.editor editing.rel.on.time
+execute if score #ord_rel editor matches 1 run scoreboard players set #ord_need editor 1
+data modify storage rhythm_axe:prop move_idx set value []
+data modify storage rhythm_axe:prop move_out set value []
 scoreboard players set #bidx editor 0
 scoreboard players set #btotal editor 0
 execute store result score #btotal editor run data get storage rhythm_axe:maps.editor editing.batch_ids
@@ -12,16 +21,17 @@ execute store result score #btotal editor run data get storage rhythm_axe:maps.e
 data modify storage rhythm_axe:prop batch_cursor set value 0
 function rhythm_axe:editor/menu/note/batch/batch_apply_drive
 
-# ★ 2026-09-14 D1：批量修改的「判定时间」是**原地改 time**（batch_apply_one），只改选中子集 → 一挪动就跨过未选中的邻居 → 局部逆序（回退量 = 增量）。
-#   这里立刻做一次相邻交换修复（成本 ∝ 逆序数），保证 notes 仍按 time 升序：
-#   逆序会连累 insert_find（插入点错）、二分选区、出生游标、列表顺序。
-#   判断「这次批量改了判定时间」：绝对模式看 batch_set.time，相对模式看 rel.on.time（byte 0b 对 if data 也为真，故用计分板取值判断）
-scoreboard players set #ord_need editor 0
-execute if data storage rhythm_axe:maps.editor editing.batch_set.time run scoreboard players set #ord_need editor 1
-scoreboard players set #ord_rel editor 0
-execute store result score #ord_rel editor run data get storage rhythm_axe:maps.editor editing.rel.on.time
-execute if score #ord_rel editor matches 1 run scoreboard players set #ord_need editor 1
-execute if score #ord_need editor matches 1 run function rhythm_axe:editor/util/order_repair
+# ★ 重排（仅改了判定时间时）：把选中音符整体移出、再按新时间二分插回
+#   batch_apply_one 是**原地改 time**（只改选中子集）⇒ 选中组一挪动就跨过未选中的邻居 → 局部逆序，
+#   而 notes 必须保持按 time 升序（否则连累 insert_find 插入点、二分选区、出生游标、列表顺序）。
+#   ❌ 原先用 editor/util/order_repair（相邻交换冒泡）：代价 = 逆序数 ≈ N²/2，实测每步 ≈80 条命令
+#     ⇒ 一条链（上限 100 万）最多 ≈1.2 万步，大平移会**静默截断**（截断后数组带逆序，保存时才被发现）。
+#   ✅ 现改为：判时间被改 → apply 时登记下标（升序）→ 按下标降序移出 → 按新时间二分插回。
+#      = O(M + N·log M)，**无 N² 项**；与时间轴翻转共用 editor/util/move_out_drive + move_in_drive。
+execute if score #ord_need editor matches 1 run function rhythm_axe:editor/util/move_out_drive
+execute if score #ord_need editor matches 1 run function rhythm_axe:editor/util/move_in_drive
+data remove storage rhythm_axe:prop move_idx
+data remove storage rhythm_axe:prop move_out
 data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop idx
 data remove storage rhythm_axe:prop note_id

@@ -24,7 +24,9 @@ function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"append"} run function rhythm_axe:editor/event/create_append with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"insert"} run function rhythm_axe:editor/event/create_insert with storage rhythm_axe:prop
 function rhythm_axe:editor/file/commit
-function rhythm_axe:editor/refresh
+# ★ 创建事件点【不刷新音符】（2026-10-02）：事件点只存 events[]，与音符视觉 / #ed_scale 均无关，
+#   不需要任何刷新（原先这里调 editor/refresh 会整体重建全部音符实体，谱面大时明显卡顿）。
+#   面板/列表的重绘由各调用方自己负责（如 event_panel_new_confirm → event_list_open）。
 # ★ 走 feedback 机制（显示反馈 + 附撤销/重做按钮），供 show_feedback 读取
 data modify storage rhythm_axe:maps.editor feedback set value "已创建事件点"
 

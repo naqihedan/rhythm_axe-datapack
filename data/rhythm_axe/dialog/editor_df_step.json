@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "插值填充：每段间隔（刻）"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "每对相邻选中音符之间每隔几刻插一个新音符（1~9999）"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "value",
+      "width": 100,
+      "label": { "text": "间隔（刻）" },
+      "max_length": 8
+    }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": { "text": "取消" },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+  "actions": [
+    {
+      "label": { "text": "确认" },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "function rhythm_axe:editor/menu/dialog/dialog_submit_df_step {\"value\":\"$(value)\"}"
+      }
+    }
+  ]
+}

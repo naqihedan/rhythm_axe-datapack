@@ -9,6 +9,11 @@ $data modify storage rhythm_axe:prop note set from storage rhythm_axe:maps.edito
 # 读取音符字段（非宏命令，无展开成本）
 execute store result score #n_time editor run data get storage rhythm_axe:prop note.time
 execute store result score #n_type editor run data get storage rhythm_axe:prop note.type
+# ★ 2026-10-03 窗口化：窗口模式下「time > playhead + lead_max」之后的音符必未出生 → 直接结束遍历
+#   （这样窗口化只需从「首个 time ≥ playhead − 尾长上界」开始走到这里；全表模式下 #vis_win=0，本行不生效）
+execute if score #vis_win editor matches 1 if score #n_time editor > #vis_hi_t editor run scoreboard players set #vis_stop editor 1
+# ★ 2026-10-03 窗口化：type 3/4（混凝土/玻璃）的尾长统计（供下界缓存；只增不减 ⇒ 保守）
+execute if score #n_type editor matches 3.. run function rhythm_axe:editor/visual/spawn_trail3_
 # ★ 2026-09-14 快速①：已过判定时刻的普通音符（0..2）必然已消失（end = time）
 #   refresh 要遍历全部音符，而同一时刻只存活几个到几十个 → 绝大多数音符走的就是这条路径：只需 2 次 data get
 #   （推进由 spawn_drive 负责，这里直接 return 即可）

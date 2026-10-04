@@ -1,6 +1,6 @@
 # 原生确认框的【删除】：按 maps.editor.pending_del.kind 执行真正的删除 —— **只有这里会删**
-#   kind=timing        → editor/timing/delete（删时间点，自带 begin/commit/refresh，可撤销）
-#   kind=event         → editor/event/delete（删事件点，同上）
+#   kind=timing        → editor/timing/delete（删时间点，自带 begin/commit/scale_sync，可撤销）
+#   kind=event         → editor/event/delete（删事件点，自带 begin/commit，可撤销）
 #   kind=map           → editor/file/delete（移入回收站）+ 退出编辑器（复刻原 map_delete_go 的行为）
 #   kind=trash_delete  → trash_delete_go（彻底删回收站条目 + 清该谱排行榜数据）
 #   kind=trash_restore → trash_restore_go（用回收站版本覆盖同名谱面）

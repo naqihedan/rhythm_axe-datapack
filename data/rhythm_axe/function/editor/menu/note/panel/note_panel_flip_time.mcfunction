@@ -1,7 +1,7 @@
 # 时间轴翻转（批量面板【时间轴翻转】按钮 909）：对选中音符把判定时间在 [min,max] 区间做镜像反转
 #   new_time = min + max - old_time；只改 time，其余字段不变；翻转后按新 time 升序重排（一次历史快照可撤销）
 # 前置：current_panel（=10 活跃列表 / 18 已选定列表）；处理对象 = selection（当前选中音符 id 列表）
-# 流程：① file/begin ② 算选中音符 time 的 min/max ③ 逐个音符 find→改 time→remove→按新 time 重插 ④ commit+refresh+反馈
+# 流程：① file/begin ② 算选中音符 time 的 min/max ③ 逐个音符算出镜像新时间（顺序游标，仅登记不动数组）④ 全部移出 + 二分插回 ⑤ commit（refresh+反馈 推迟到下一刻）
 # ★ 2026-09-07 按钮移到活跃/已选定列表底部行，翻转对象改为 selection（不再用 editing.batch_ids）
 # ★ 2026-09-12 加固：
 #   ① 无选中直接返回。否则 selection 为空时 `#flip_total` 的 store 失败会保留上一轮的旧值，

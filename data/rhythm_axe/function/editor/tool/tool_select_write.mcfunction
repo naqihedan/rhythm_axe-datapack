@@ -7,7 +7,7 @@ $item replace entity @s $(slot) with minecraft:stick[\
     enchantment_glint_override=true,\
     attack_range={max_reach:1.5f,max_creative_reach:1.5f},\
     attribute_modifiers=[\
-        {type:"minecraft:entity_interaction_range",amount:-1.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},\
+        {type:"minecraft:entity_interaction_range",amount:-4.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},\
         {type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}\
         ],\
     item_name={"text":"【$(shown)】","color":"$(color)","bold":true,"extra":[{"text":"  $(hint)","color":"gray","italic":true}]},\

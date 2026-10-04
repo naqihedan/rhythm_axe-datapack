@@ -36,7 +36,9 @@ function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"append"} run function rhythm_axe:editor/timing/create_append with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"insert"} run function rhythm_axe:editor/timing/create_insert with storage rhythm_axe:prop
 function rhythm_axe:editor/file/commit
-function rhythm_axe:editor/refresh
+# ★ 创建时间点【不刷新音符】（2026-10-02）：时间点不碰 notes[]，世界里的音符实体无需重建（原先调 editor/refresh 纯属浪费）。
+#   但时间点会影响播放头所在段的 judgement_scale → #ed_scale，故只同步这一项（不重建实体）。
+function rhythm_axe:editor/judge/scale_sync
 # ★ 走 feedback 机制（显示反馈 + 附撤销/重做按钮），供 show_feedback 读取
 data modify storage rhythm_axe:maps.editor feedback set value "已创建时间点"
 

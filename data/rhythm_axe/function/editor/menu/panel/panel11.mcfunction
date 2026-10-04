@@ -17,7 +17,7 @@ execute if score #click_value editor matches 12501..12502 run function rhythm_ax
 execute if score #click_value editor matches 12601..12604 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12701..12704 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12003..12004 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
-# 判定时间【使用当前时间】(12005)：切到绝对模式 + 设为当前播放头（不在 12001..12004 内，故单独分发）
+# 判定时间【使用当前时间】(12005)：绝对模式=设为播放头 / 相对模式=增量设为「播放头−最早音符时间」（不在 12001..12004 内，故单独分发）
 execute if score #click_value editor matches 12005 run function rhythm_axe:editor/menu/note/panel/note_panel_use_playhead
 execute if score #click_value editor matches 12005 run return 0
 execute if score #click_value editor matches 12203..12204 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust

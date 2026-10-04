@@ -29,7 +29,7 @@ execute if score #op_page menu matches 3 run function rhythm_axe:options/page/p3
 #   点【恢复默认】(16004) 只进入待确认状态（map_list.reset_confirm）并重绘，
 #   确认态下页脚换成醒目警告 + 【确认恢复】(16005) / 【取消】(16006)。
 execute if data storage rhythm_axe:map_list reset_confirm run tellraw @s [{"text":"【警告】","color":"dark_red","bold":true},{"text":"恢复默认会把所有设置重置为初始值，且不可撤销！","color":"red","bold":true}]
-execute if data storage rhythm_axe:map_list reset_confirm run tellraw @s [{"text":"【确认恢复】","color":"red","bold":true,"click_event":{"action":"run_command","command":"/trigger menu_click set 16005"},"hover_event":{"action":"show_text","value":"确认：把所有设置重置为初始值"}},{"text":"  "},{"text":"【取消】","color":"green","click_event":{"action":"run_command","command":"/trigger menu_click set 16006"},"hover_event":{"action":"show_text","value":"取消，不修改任何设置"}}]
+execute if data storage rhythm_axe:map_list reset_confirm run tellraw @s [{"text":""},{"text":"【确认恢复】","color":"red","bold":true,"click_event":{"action":"run_command","command":"/trigger menu_click set 16005"},"hover_event":{"action":"show_text","value":"确认：把所有设置重置为初始值"}},{"text":"  ","color":"red","bold":true},{"text":"【取消】","color":"green","bold":true,"click_event":{"action":"run_command","command":"/trigger menu_click set 16006"},"hover_event":{"action":"show_text","value":"取消，不修改任何设置"}}]
 #   ★ 2026-09-30：页脚最后那个按钮**按页不同** —— 模组页（页 1）= 【关闭所有模组】(16007)、
 #   其它页 = 【恢复默认】(16004)。所以页脚拆成「公共部分 foot_head（用 extra 包成一个组件）」
 #   +「最后按钮 foot_tail」，交给宏叶子 footer_emit 输出（两个参数经 storage op_ui 传）。

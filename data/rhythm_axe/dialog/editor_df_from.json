@@ -1,0 +1,55 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "分布：从（起点位置）"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "输入「从」的 X / Y / Z 坐标（可小数，如 1.5 / -2 / 0）"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "x",
+      "width": 100,
+      "label": { "text": "X" },
+      "max_length": 16
+    },
+    {
+      "type": "minecraft:text",
+      "key": "y",
+      "width": 100,
+      "label": { "text": "Y" },
+      "max_length": 16
+    },
+    {
+      "type": "minecraft:text",
+      "key": "z",
+      "width": 100,
+      "label": { "text": "Z" },
+      "max_length": 16
+    }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": { "text": "取消" },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+  "actions": [
+    {
+      "label": { "text": "确认" },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "function rhythm_axe:editor/menu/dialog/dialog_submit_df_from {\"x\":\"$(x)\",\"y\":\"$(y)\",\"z\":\"$(z)\"}"
+      }
+    }
+  ]
+}

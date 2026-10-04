@@ -54,9 +54,14 @@ scoreboard players operation #it3 editor *= -1 const
 scoreboard players operation #iz editor += #it3 editor
 # 配对同 note_id 的交互实体写 Pos（×1000 → double）
 # ★ 2026-09-14 性能：原 7 条「各自遍历一遍全部 interaction 实体」的命令（Pos×3 + editor_should_*×4）
-#   合并为 1 次选择器 + place_inter_apply 内全部 @s。place 每 tick 每音符都跑，原为 O(n²)/tick。
+#   合并为 1 次选择器 + place_inter_apply 内全部 @s。
+# ★ 2026-10-03 性能（实测归因）：id 扫描改成 per-note tag 的 O(1) 查找（place_inter_pair）；
+#   并在 place_inter_apply 里把「Axiom 用的 editor_should_*」改成**仅编辑期写**（播放中跳过 4 次实体写）。
+#   实测（52 音符同屏）：密集段每刻中位数 64ms → 24ms（全部实体写都屏蔽时）。
+#   #pl 供 place_inter_apply 判断当前是否在播放。
 scoreboard players operation #iid editor = @s note_id
-execute as @e[type=interaction,tag=editor_note] if score @s note_id = #iid editor run function rhythm_axe:editor/visual/place_inter_apply
+execute store result score #pl editor run data get storage rhythm_axe:maps.editor playing
+function rhythm_axe:editor/visual/place_inter_update
 # ★ 2026-09-04 修复：展示实体 Pos 用 store result 写（与交互实体同款实测生效；summon 里 data modify set from 写实体 Pos 失效，
 #   Pos 留在 0,0,0 → 远距离音符展示实体停在原点/错位）。Pos = 判定位置（恒定，×1000），锚定不随帧变。
 execute store result entity @s Pos[0] double 0.001 run scoreboard players get @s editor_n_px

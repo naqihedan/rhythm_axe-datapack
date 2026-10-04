@@ -10,6 +10,8 @@ function rhythm_axe:editor/util/find_by_id
 execute unless data storage rhythm_axe:prop found_index run data modify storage rhythm_axe:prop index set value 0
 execute unless data storage rhythm_axe:prop found_index run function rhythm_axe:editor/util/find_by_id
 execute if data storage rhythm_axe:prop found_index run data modify storage rhythm_axe:prop index set from storage rhythm_axe:prop found_index
+# ★ 2026-10-03：本次改了判定时间（#ord_need=1）→ 登记下标（升序；供收尾的 move_out/move_in 重排）
+execute if data storage rhythm_axe:prop found_index if score #ord_need editor matches 1 run data modify storage rhythm_axe:prop move_idx append from storage rhythm_axe:prop found_index
 execute if data storage rhythm_axe:prop found_index run function rhythm_axe:editor/menu/note/batch/batch_apply_one with storage rhythm_axe:prop
 # 命中后把游标推进到 found_index+1，下一个 id 从这里继续找
 execute if data storage rhythm_axe:prop found_index run execute store result score #tmp editor run data get storage rhythm_axe:prop found_index

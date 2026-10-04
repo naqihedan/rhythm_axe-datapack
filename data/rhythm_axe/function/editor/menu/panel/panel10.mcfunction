@@ -4,8 +4,8 @@
 #   翻转组沿用固定值 11501(翻转时间) / 11502,11503,11504,11505(X/Y/Z/S 开关) / 11506(执行翻转) / 11507,11508,11509(15°/45°/90°旋转) / 11510(锚点重置【⌖】) / 11511(应用锚点变换)（面板 10/18 共用）
 # note_list_open 设 current_panel=10。本面板刷新用 note_list_*。
 # 入口白名单守卫
-execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11511 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11511 run return fail
+execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11513 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 1 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11301..11308 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11513 run return fail
 
 execute if score #click_value editor matches 1 run function rhythm_axe:editor/menu/main
 # —— 动态行（值 = 100000 + 页内序×100 + 列码）：先抠列码（#temp = (click-100000) % 100）再分发 ——
@@ -91,3 +91,6 @@ execute if score #click_value editor matches 11510 run return 0
 #   应用后锚点完全重置（位置回新中心 + 旋转归零 + 清 manual）⇒ 面板上【⌖】变回红
 execute if score #click_value editor matches 11511 run function rhythm_axe:editor/menu/note/panel/note_panel_anchor_apply
 execute if score #click_value editor matches 11511 run return 0
+# 【分布】11512 /【插值填充】11513（面板 20 入口）：打开「分布与填充」面板（来源面板记在 editing.df.from）
+execute if score #click_value editor matches 11512..11513 run function rhythm_axe:editor/menu/note/df/df_open
+execute if score #click_value editor matches 11512..11513 run return 0

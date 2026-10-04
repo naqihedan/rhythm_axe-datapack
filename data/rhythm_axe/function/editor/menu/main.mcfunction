@@ -36,14 +36,14 @@ execute store result score #temp_cursor editor run data get storage rhythm_axe:m
 execute store result score #history_size editor run data get storage rhythm_axe:maps.editor history
 scoreboard players operation #temp_playhead editor = #history_size editor
 scoreboard players remove #temp_playhead editor 1
-execute if score #temp_cursor editor matches 1.. if score #temp_cursor editor < #temp_playhead editor run tellraw @s [\
+execute if score #temp_cursor editor matches 1.. if score #temp_cursor editor < #temp_playhead editor run tellraw @s [{"text":""},\
     {"text":"【撤销】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10301"},"hover_event":{"action":"show_text","value":"回退到上一个快照"}},\
     {"text":"  ","color":"white"},\
     {"text":"【重做】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10302"},"hover_event":{"action":"show_text","value":"恢复到下一个快照"}},\
     {"text":"  ","color":"white"},\
     {"text":"【查找】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10303"},"hover_event":{"action":"show_text","value":"按时间/id 查找时间点、事件、音符"}}\
 ]
-execute if score #temp_cursor editor matches 1.. unless score #temp_cursor editor < #temp_playhead editor run tellraw @s [\
+execute if score #temp_cursor editor matches 1.. unless score #temp_cursor editor < #temp_playhead editor run tellraw @s [{"text":""},\
     {"text":"【撤销】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10301"},"hover_event":{"action":"show_text","value":"回退到上一个快照"}},\
     {"text":"  ","color":"white"},\
 {"text":"【重做】","color":"red"},\

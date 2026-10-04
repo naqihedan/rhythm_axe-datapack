@@ -1,0 +1,1 @@
+kill @e[tag=blackglass_warning]

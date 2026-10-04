@@ -52,6 +52,9 @@ execute if score #click_value editor matches 26 run function rhythm_axe:editor/p
 execute if score #click_value editor matches 27 run function rhythm_axe:editor/menu/cycle_speed
 execute if score #click_value editor matches 28 run function rhythm_axe:editor/menu/jump/jump_start
 execute if score #click_value editor matches 29 run function rhythm_axe:editor/menu/jump/jump_end
+# ★ 2026-10-03：时间控件移动了播放头 ⇒「活跃音符」（交互实体存在者）集合可能变化 ⇒
+#   若正停在活跃列表（面板 10）就重绘一次。延到下一格：等播放头 / 视觉 / 存活标记刷新完再画，否则画的还是旧的。
+execute if score #click_value editor matches 20..29 if data storage rhythm_axe:maps.editor {current_panel:10} run schedule function rhythm_axe:editor/menu/note/list/note_list_open 1t
 execute if score #click_value editor matches 20..29 run data remove storage rhythm_axe:prop kind
 execute if score #click_value editor matches 20..29 run return 0
 
@@ -88,5 +91,6 @@ execute if score #panel_id editor matches 15 run return run function rhythm_axe:
 execute if score #panel_id editor matches 16 run return run function rhythm_axe:editor/menu/panel/panel16
 execute if score #panel_id editor matches 17 run return run function rhythm_axe:editor/menu/panel/panel17
 execute if score #panel_id editor matches 18 run return run function rhythm_axe:editor/menu/panel/panel18
+execute if score #panel_id editor matches 20 run return run function rhythm_axe:editor/menu/panel/panel20
 # 兜底（面板号异常未命中时；正常到不了）
 function rhythm_axe:editor/menu/wrong_panel

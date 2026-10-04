@@ -3,13 +3,15 @@
 #   （每条遍历全部 interaction 实体）合并为「1 次选择器 + 本函数全 @s」。
 #   place 每 tick 每音符都调用 ⇒ 原为 O(n²)/tick，现降 7 倍。
 # ★ 本文件【不得】出现宏行（$ 开头）。
-# 前置（place 已算好）：editor 计分板 #ix #iy #iz（世界坐标 ×1000）
+# 前置（place 已算好）：editor 计分板 #ix #iy #iz（世界坐标 ×1000）；#pl = 当前是否播放中（0/1）
+# ★ 2026-10-03 性能（实测归因）：实体 NBT 写很贵（每次写都会把实体标脏→向客户端同步）。
+#   实测：52 音符同屏时全部屏蔽掉 → 密集段每刻中位数 64ms → 24ms。
+#   ① Pos 分 3 次写（Pos[0..2]）——尝试合并成 1 次整表写实测会把 Pos 写成 0（26.2 不可用），故保持分写。
+#   ② Axiom 用的 editor_should_* 拆到 place_inter_should，仅在编辑期（非播放）执行。
 execute store result entity @s Pos[0] double 0.001 run scoreboard players get #ix editor
 execute store result entity @s Pos[1] double 0.001 run scoreboard players get #iy editor
 execute store result entity @s Pos[2] double 0.001 run scoreboard players get #iz editor
+execute unless score #pl editor matches 1 run function rhythm_axe:editor/visual/place_inter_should
 # 快照"应该在的位置"到交互实体（Axiom 偏移检测用；每次 place 覆写）
-#   交互实体实际 Pos 被 Axiom 移动后，其与 editor_should_x/y/z 的差 = 手动偏移，shift+左击时读到判定位置
-data merge entity @s {data:{editor_should_x:0.0d,editor_should_y:0.0d,editor_should_z:0.0d}}
-execute store result entity @s data.editor_should_x double 0.001 run scoreboard players get #ix editor
-execute store result entity @s data.editor_should_y double 0.001 run scoreboard players get #iy editor
-execute store result entity @s data.editor_should_z double 0.001 run scoreboard players get #iz editor
+#   ★ 2026-10-03：拆入 place_inter_should，并**仅在编辑期（非播放）执行**（播放中 4 次实体写纯浪费）
+execute unless score #pl editor matches 1 run function rhythm_axe:editor/visual/place_inter_should

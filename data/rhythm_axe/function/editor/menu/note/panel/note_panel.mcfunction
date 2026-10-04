@@ -15,7 +15,7 @@ execute if score #batch_mode editor matches 0 run tellraw @s [\
 # 类型（显示类型名；0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）
 execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.type
 # 类型（行首[x]= 已修改红可点重置(893)/未修改灰；批量未修改显示 -）
-execute if score #temp editor matches 0 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
+execute if score #temp editor matches 0 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -31,7 +31,7 @@ execute if score #temp editor matches 0 if score #batch_mode editor matches 1 un
 {"text":"-","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 0 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
+execute if score #temp editor matches 0 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -47,7 +47,7 @@ execute if score #temp editor matches 0 unless score #batch_mode editor matches 
 {"text":" 音符盒 ","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 1 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
+execute if score #temp editor matches 1 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -63,7 +63,7 @@ execute if score #temp editor matches 1 if score #batch_mode editor matches 1 un
 {"text":"-","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 1 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
+execute if score #temp editor matches 1 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -79,7 +79,7 @@ execute if score #temp editor matches 1 unless score #batch_mode editor matches 
 {"text":" 木板 ","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 2 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
+execute if score #temp editor matches 2 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -95,7 +95,7 @@ execute if score #temp editor matches 2 if score #batch_mode editor matches 1 un
 {"text":"-","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 2 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
+execute if score #temp editor matches 2 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -111,7 +111,7 @@ execute if score #temp editor matches 2 unless score #batch_mode editor matches 
 {"text":" 唱片机 ","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
+execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -127,7 +127,7 @@ execute if score #temp editor matches 3 if score #batch_mode editor matches 1 un
 {"text":"-","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
+execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -143,7 +143,7 @@ execute if score #temp editor matches 3 unless score #batch_mode editor matches 
 {"text":" 混凝土 ","color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 4 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
+execute if score #temp editor matches 4 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -159,7 +159,7 @@ execute if score #temp editor matches 4 if score #batch_mode editor matches 1 un
 {"text":"-","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
 ]
-execute if score #temp editor matches 4 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
+execute if score #temp editor matches 4 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符类型：","color":"white"},\
@@ -243,21 +243,21 @@ scoreboard players set #ntype editor 0
 execute store result score #ntype editor run data get storage rhythm_axe:maps.editor editing.temp.type
 # ★ 批量编辑：所有属性一律显示（不按音符类型隐藏），引导线同样按 0/1/2 型放行
 execute if score #batch_mode editor matches 1 run scoreboard players set #ntype editor 0
-execute if score #ntype editor matches 0..2 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.following_point if score #fp_tmp editor matches ..0 run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前禁用：不连接前一个 0/1/2 音符的引导线"}}]
-execute if score #ntype editor matches 0..2 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.following_point if score #fp_tmp editor matches 1 run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前启用：生成前后 0/1/2 音符的引导线"}}]
+execute if score #ntype editor matches 0..2 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.following_point if score #fp_tmp editor matches ..0 run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前禁用：不连接前一个 0/1/2 音符的引导线"}}]
+execute if score #ntype editor matches 0..2 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.following_point if score #fp_tmp editor matches 1 run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前启用：生成前后 0/1/2 音符的引导线"}}]
 execute if score #ntype editor matches 0..2 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.following_point run tellraw @s [{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【-】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"未修改：点击切换为启用/禁用"}}]
-execute if score #ntype editor matches 0..2 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.following_point if score #fp_tmp editor matches ..0 run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前禁用：不连接前一个 0/1/2 音符的引导线"}}]
-execute if score #ntype editor matches 0..2 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.following_point if score #fp_tmp editor matches 1 run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前启用：生成前后 0/1/2 音符的引导线"}}]
+execute if score #ntype editor matches 0..2 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.following_point if score #fp_tmp editor matches ..0 run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前禁用：不连接前一个 0/1/2 音符的引导线"}}]
+execute if score #ntype editor matches 0..2 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.following_point if score #fp_tmp editor matches 1 run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14005"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前启用：生成前后 0/1/2 音符的引导线"}}]
 execute if score #ntype editor matches 0..2 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.following_point if score #fp_tmp editor matches ..0 run tellraw @s [{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前禁用：不连接前一个 0/1/2 音符的引导线"}}]
 execute if score #ntype editor matches 0..2 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.following_point if score #fp_tmp editor matches 1 run tellraw @s [{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},{"text":"      ","color":"white"},{"text":"引导线：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13201"},"hover_event":{"action":"show_text","value":"当前启用：生成前后 0/1/2 音符的引导线"}}]
 # 无视流速（开=出生时刻=判定时间-基础寿命，忽略流速；出生时刻不再可指定，游玩时自动计算）
 scoreboard players set #igit editor 0
 execute store result score #igit editor run data get storage rhythm_axe:maps.editor editing.temp.ignore_note_speed
-execute if score #igit editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.ignore_note_speed run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前启用：出生时刻=判定时间-基础寿命（忽略流速）"}}]
-execute if score #igit editor matches 0 if data storage rhythm_axe:maps.editor editing.batch_set.ignore_note_speed run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前禁用：出生时刻=判定时间-基础寿命×16/流速"}}]
+execute if score #igit editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.ignore_note_speed run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前启用：出生时刻=判定时间-基础寿命（忽略流速）"}}]
+execute if score #igit editor matches 0 if data storage rhythm_axe:maps.editor editing.batch_set.ignore_note_speed run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为 -）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前禁用：出生时刻=判定时间-基础寿命×16/流速"}}]
 execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.ignore_note_speed run tellraw @s [{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【-】","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"未修改：点击切换为启用/禁用"}}]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.ignore_note_speed if score #igit editor matches 1 run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前启用：出生时刻=判定时间-基础寿命（忽略流速）"}}]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.ignore_note_speed if score #igit editor matches 0 run tellraw @s [{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前禁用：出生时刻=判定时间-基础寿命×16/流速"}}]
+execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.ignore_note_speed if score #igit editor matches 1 run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前启用：出生时刻=判定时间-基础寿命（忽略流速）"}}]
+execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.ignore_note_speed if score #igit editor matches 0 run tellraw @s [{"text":""},{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14006"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前禁用：出生时刻=判定时间-基础寿命×16/流速"}}]
 execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.ignore_note_speed if score #igit editor matches 1 run tellraw @s [{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前启用】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前启用：出生时刻=判定时间-基础寿命（忽略流速）"}}]
 execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.ignore_note_speed if score #igit editor matches 0 run tellraw @s [{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},{"text":"      ","color":"white"},{"text":"无视流速：","color":"white"},{"text":"【当前禁用】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13202"},"hover_event":{"action":"show_text","value":"当前禁用：出生时刻=判定时间-基础寿命×16/流速"}}]
 # 持续时长（3/4 型；批量模式下不看音符类型，一律显示；支持相对/绝对）
@@ -341,7 +341,7 @@ execute if score #temp editor matches 3..4 if score #cv editor matches 1.. run f
 data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop cname
 # 密度（仅 3 型混凝土；行首[x]= 已修改红可点重置(892)/未修改灰；批量未修改显示 -）
-execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.density run tellraw @s [\
+execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.density run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14003"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
@@ -361,7 +361,7 @@ execute if score #temp editor matches 3 if score #batch_mode editor matches 1 un
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
 {"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
-execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.density run tellraw @s [\
+execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.density run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14003"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
@@ -397,7 +397,7 @@ execute if score #vi editor matches ..-1 run scoreboard players operation #vi ed
 scoreboard players operation #vf editor = #vi editor
 scoreboard players operation #vi editor /= 10 const
 scoreboard players operation #vf editor %= 10 const
-execute if score #rel_on editor matches 1 unless score #v editor matches 0 if score #nz editor matches 1 run tellraw @s [\
+execute if score #rel_on editor matches 1 unless score #v editor matches 0 if score #nz editor matches 1 run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"取消本项修改（增量归 0）"}},\
 {"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\
 {"text":"音符尺寸：","color":"white"},\
@@ -405,7 +405,7 @@ execute if score #rel_on editor matches 1 unless score #v editor matches 0 if sc
 {"text":"-","color":"white"},{"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"大小 +0.1"}}\
 ]
-execute if score #rel_on editor matches 1 unless score #v editor matches 0 if score #nz editor matches 0 run tellraw @s [\
+execute if score #rel_on editor matches 1 unless score #v editor matches 0 if score #nz editor matches 0 run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"取消本项修改（增量归 0）"}},\
 {"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\
 {"text":"音符尺寸：","color":"white"},\
@@ -428,7 +428,7 @@ execute if score #batch_mode editor matches 0 run execute store result score #or
 execute if score #batch_mode editor matches 0 run scoreboard players operation #orig_s editor += 5 const
 execute if score #batch_mode editor matches 0 run scoreboard players operation #orig_s editor /= 10 const
 execute if score #rel_on editor matches 0 if score #batch_mode editor matches 0 unless score #v editor = #orig_s editor run scoreboard players set #mod_size editor 1
-execute if score #rel_on editor matches 0 if score #mod_size editor matches 1 run tellraw @s [\
+execute if score #rel_on editor matches 0 if score #mod_size editor matches 1 run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"取消本项修改（还原为打开时的值）"}},\
 {"text":"[~]","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"绝对模式：直接设为设定值；点击切换为相对"}},\
 {"text":"音符尺寸：","color":"white"},\
@@ -675,16 +675,17 @@ execute if score #batch_mode editor matches 0 if data storage rhythm_axe:maps.ed
 # 行首 [x]：红=已修改（可点重置）/ 灰=未修改
 execute if score #mod_e editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14010\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（重置为未修改，显示 -）\"}}"
 execute if score #mod_e editor matches 0 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
-# 缓动类型文字：单音符=实际值；批量=只在被改过时显示实际值，否则显示 -
+# 缓动类型 [x]→单按钮循环：单音符=显示实际值并可点；批量=只在被改过时显示实际值，否则显示 -
+#   ★ 2026-10-02：改成单按钮循环（点值本身往后切），与面板 20「缓动」一致；按钮值仍用 12702（下一个）
 scoreboard players set #anim_e editor 0
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_easing run scoreboard players set #anim_e editor 1
 execute if score #batch_mode editor matches 0 run scoreboard players set #anim_e editor 1
 scoreboard players set #anim_t editor 0
 execute if score #anim_e editor matches 1 run execute store result score #anim_t editor run data get storage rhythm_axe:maps.editor editing.temp.anim_easing
-execute if score #anim_t editor matches 1 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" 缓入 \",\"color\":\"gold\"}"
-execute if score #anim_t editor matches 2 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" 缓出 \",\"color\":\"gold\"}"
-execute if score #anim_t editor matches 3 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" 缓入缓出 \",\"color\":\"gold\"}"
-execute if score #anim_t editor matches 0 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" - \",\"color\":\"gold\"}"
+execute if score #anim_t editor matches 1 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓入] \",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓入。点击切换 → 缓出\"}}"
+execute if score #anim_t editor matches 2 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓出] \",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓出。点击切换 → 缓入缓出\"}}"
+execute if score #anim_t editor matches 3 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓入缓出] \",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓入缓出。点击切换 → 缓入\"}}"
+execute if score #anim_t editor matches 0 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [-] \",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"本项未修改（显示 -）。点击开始修改：从 缓入 往后切\"}}"
 # 缓动强度：单音符=实际值；批量=只在被改过时显示实际值，否则显示 -
 scoreboard players set #anim_p editor 0
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_power run scoreboard players set #anim_p editor 1
@@ -696,7 +697,7 @@ data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop ecomp
 data remove storage rhythm_axe:prop pcomp
 # 击打音效（行首[x]= 已修改红可点重置(904)/未修改灰；批量未修改显示 -）
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hitsound run tellraw @s [\
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hitsound run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14011"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
@@ -704,7 +705,7 @@ execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.ed
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
-execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hitsound run tellraw @s [\
+execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hitsound run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
@@ -712,7 +713,7 @@ execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:map
 {"text":"-","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [\
+execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14011"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
@@ -720,7 +721,7 @@ execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:map
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
-execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [\
+execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
@@ -729,7 +730,7 @@ execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
 # 击打视效（行首[x]= 已修改红可点重置(905)/未修改灰；批量未修改显示 -）
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [\
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14012"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
@@ -737,7 +738,7 @@ execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.ed
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
-execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [\
+execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
@@ -745,7 +746,7 @@ execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:map
 {"text":"-","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [\
+execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14012"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
@@ -753,7 +754,7 @@ execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:map
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
-execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [\
+execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
@@ -762,7 +763,7 @@ execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe
 {"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
 # 击打事件（行首[x]= 已修改红可点重置(906)/未修改灰；批量未修改显示 -）
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_events run tellraw @s [\
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_events run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14013"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打事件：","color":"white"},\
@@ -775,7 +776,7 @@ execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:map
 {"text":"-","color":"gold"},\
 {"text":"【二级菜单】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13006"},"hover_event":{"action":"show_text","value":"编辑该音符的击打事件指令列表"}}\
 ]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hit_events run tellraw @s [\
+execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hit_events run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14013"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打事件：","color":"white"},\
@@ -788,7 +789,7 @@ execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe
 {"text":"【二级菜单】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13006"},"hover_event":{"action":"show_text","value":"编辑该音符的击打事件指令列表"}}\
 ]
 # 音符标签（行首[x]= 已修改红可点重置(907)/未修改灰；批量未修改显示 -）
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.custom_tag run tellraw @s [\
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.custom_tag run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14014"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符标签：","color":"white"},\
@@ -802,7 +803,7 @@ execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:map
 {"text":"-","color":"gold"},\
 {"text":" 【设置标签】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13106"},"hover_event":{"action":"show_text","value":"设置音符标签"}}\
 ]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.custom_tag run tellraw @s [\
+execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.custom_tag run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14014"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"音符标签：","color":"white"},\

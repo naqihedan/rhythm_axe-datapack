@@ -1,11 +1,18 @@
 #arg:idx
-# 时间轴翻转应用叶子（宏函数，不递归）：读 batch_ids[$(idx)] → find_by_id（全扫，因前一个音符 remove/reinsert 已改变数组）
-#   → 命中后调 flip_apply_one（读完整音符→改 time→移除→重插）
+# 时间轴翻转·收集叶子（宏函数，不递归）：读 selection[$(idx)] → find_by_id（**顺序游标** flip_cursor；未命中兜底从 0 全扫）
+#   → 命中后调 flip_apply_one（原地改时间 + 登记下标；下标不变 ⇒ 游标全程有效）
 $execute store result storage rhythm_axe:prop note_id int 1 run data get storage rhythm_axe:maps.editor selection[$(idx)]
-data modify storage rhythm_axe:prop index set value 0
+execute store result storage rhythm_axe:prop index int 1 run data get storage rhythm_axe:prop flip_cursor
 data remove storage rhythm_axe:prop found_index
 function rhythm_axe:editor/util/find_by_id
+# 兜底：游标起未命中（乱序）→ 从 0 全扫再找一次
+execute unless data storage rhythm_axe:prop found_index run data modify storage rhythm_axe:prop index set value 0
+execute unless data storage rhythm_axe:prop found_index run function rhythm_axe:editor/util/find_by_id
 execute if data storage rhythm_axe:prop found_index run data modify storage rhythm_axe:prop index set from storage rhythm_axe:prop found_index
 execute if data storage rhythm_axe:prop found_index run function rhythm_axe:editor/menu/note/panel/note_panel_flip_apply_one with storage rhythm_axe:prop
+# 命中后把顺序游标推进到 found_index+1，下一个 id 从这里继续找
+execute if data storage rhythm_axe:prop found_index run execute store result score #tmp editor run data get storage rhythm_axe:prop found_index
+execute if data storage rhythm_axe:prop found_index run scoreboard players add #tmp editor 1
+execute if data storage rhythm_axe:prop found_index run execute store result storage rhythm_axe:prop flip_cursor int 1 run scoreboard players get #tmp editor
 data remove storage rhythm_axe:prop note_id
 data remove storage rhythm_axe:prop found_index

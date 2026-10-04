@@ -1,7 +1,7 @@
 #arg:label,xcomp,tcomp,paux,bxm,bxp,bym,byp,bzm,bzp,bxm2,bxp2,bym2,byp2,bzm2,bzp2
 # 判定位置/起始位置：首行【x】【~】+标签+辅助按钮；第二行三轴
 
-$tellraw @s [$(xcomp),$(tcomp),{"text":"$(label)","color":"white"},$(paux)]
+$tellraw @s [{"text":""},$(xcomp),$(tcomp),{"text":"$(label)","color":"white"},$(paux)]
 $execute if score #nx editor matches 0 if score #ny editor matches 0 if score #nz editor matches 0 run tellraw @s [\
 {"text":"                [--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set $(bxm2)"},"hover_event":{"action":"show_text","value":"X -1 格"}},\
 {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set $(bxm)"},"hover_event":{"action":"show_text","value":"X -0.1"}},\

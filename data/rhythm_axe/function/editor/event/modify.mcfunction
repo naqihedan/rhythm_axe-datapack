@@ -7,7 +7,7 @@ data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.edit
 
 function rhythm_axe:editor/event/modify_ with storage rhythm_axe:prop
 function rhythm_axe:editor/file/commit
-function rhythm_axe:editor/refresh
+# ★ 事件点改动与音符视觉 / #ed_scale 均无关 → 不需要刷新（2026-10-02）
 tellraw @s [{"text":"[编辑器] 已修改事件点 ","color":"green"},{"nbt":"index","storage":"rhythm_axe:prop","color":"aqua"}]
 
 data remove storage rhythm_axe:prop index

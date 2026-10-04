@@ -87,7 +87,9 @@ execute if score #rel_bl editor matches 0 if score #click_value editor matches 1
 execute if score #rel_bl editor matches 1 if score #click_value editor matches 12601..12604 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.base_life int 1 run scoreboard players get #temp editor
 # 批量：基础寿命被改时打 batch_set.base_life 标记（供【x】状态判断）
 execute if score #click_value editor matches 12601..12604 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.base_life set value 1b
-# 缓动类型 anim_easing（778/779，循环 1-3）
+# 缓动类型 anim_easing（12701 上一个 / 12702 下一个，循环 1-3）
+#   ★ 2026-10-02：渲染端已改成**单按钮循环**（点值本身），实际只会发 12702。
+#     12701（上一个）保留，让聊天栏里的旧行仍然可用，行为不变。
 execute if score #click_value editor matches 12701..12702 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.anim_easing
 execute if score #click_value editor matches 12701 run scoreboard players remove #temp editor 1
 execute if score #click_value editor matches 12702 run scoreboard players add #temp editor 1

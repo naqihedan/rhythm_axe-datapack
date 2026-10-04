@@ -1,0 +1,2 @@
+execute as @e[tag=title1264_shrink] run data merge entity @s {transformation:{scale:[2.5f,2.5f,2.5f]},start_interpolation:0,interpolation_duration:2}
+tag @e[tag=title1264_shrink] remove title1264_shrink

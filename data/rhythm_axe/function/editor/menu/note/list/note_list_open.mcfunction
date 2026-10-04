@@ -3,6 +3,10 @@
 function rhythm_axe:editor/menu/clear_lines
 function rhythm_axe:editor/menu/show_feedback
 data modify storage rhythm_axe:maps.editor current_panel set value 10
+# ★ 2026-10-03：#sel_count 只是「选中数」的**缓存** —— 有些选择路径（时间轴框选 / 别处选中 / 重进编辑器）
+#   不会同步它，于是会出现「列表里明明有 ✓、按钮却还是灰的」。打开列表时用 selection 的实际长度重算。
+scoreboard players set #sel_count editor 0
+execute store result score #sel_count editor run data get storage rhythm_axe:maps.editor selection
 tellraw @s [{"text":"=====当前活跃音符列表=====","color":"gold","bold":true}]
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 # 页号缺省 0
@@ -38,12 +42,12 @@ scoreboard players operation #page_show editor = #note_page editor
 scoreboard players add #page_show editor 1
 scoreboard players operation #temp_playhead editor = #note_pages editor
 scoreboard players remove #temp_playhead editor 1
-execute if score #note_page editor matches 1.. if score #note_page editor < #temp_playhead editor run tellraw @s [\
+execute if score #note_page editor matches 1.. if score #note_page editor < #temp_playhead editor run tellraw @s [{"text":""},\
 {"text":"【上一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11601"},"hover_event":{"action":"show_text","value":"上一页"}},\
 {"text":" ","color":"white"},{"score":{"name":"#page_show","objective":"editor"},"color":"white"},{"text":"/","color":"gray"},{"score":{"name":"#note_pages","objective":"editor"},"color":"white"},{"text":" 共","color":"gray"},{"score":{"name":"#note_alive","objective":"editor"},"color":"white"},{"text":"个音符","color":"gray"},\
 {"text":" 【下一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11602"},"hover_event":{"action":"show_text","value":"下一页"}},{"text":" 【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}\
 ]
-execute if score #note_page editor matches 1.. unless score #note_page editor < #temp_playhead editor run tellraw @s [\
+execute if score #note_page editor matches 1.. unless score #note_page editor < #temp_playhead editor run tellraw @s [{"text":""},\
 {"text":"【上一页】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 11601"},"hover_event":{"action":"show_text","value":"上一页"}},\
 {"text":" ","color":"white"},{"score":{"name":"#page_show","objective":"editor"},"color":"white"},{"text":"/","color":"gray"},{"score":{"name":"#note_pages","objective":"editor"},"color":"white"},{"text":" 共","color":"gray"},{"score":{"name":"#note_alive","objective":"editor"},"color":"white"},{"text":"个音符","color":"gray"},\
 {"text":" 【下一页】","color":"red"},{"text":" 【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}\
@@ -128,6 +132,10 @@ execute if entity @e[tag=editor_anchor_manual] run data modify storage rhythm_ax
 #   悬停写全说明（按你定的「按钮文字=选项 2、hover 用选项 3 的完整说明」）
 data modify storage rhythm_axe:prop f11 set value "{\"text\":\"【应用锚点变换】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
 execute if score #sel_count editor matches 1.. run data modify storage rhythm_axe:prop f11 set value "{\"text\":\"【应用锚点变换】\",\"color\":\"light_purple\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11511\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"以锚点变换数据更改音符判定位置：把锚点的缩放、旋转与位移当成一个整体变换套到选中音符上 —— 以包围盒中心为中心，按「锚点旋转」旋转、按「锚点 scale 三轴各自×4」（可各轴不同比例）缩放，再按「锚点位置 − 包围盒中心」平移；[S] 开则起始位置跟着一起转+缩放（来向跟着变）\"}}"
+# 【分布与填充】11512（面板 20 入口；需要 ≥2 个选中音符）
+#   ★ 2026-10-03：原【分布】11512 /【插值填充】11513 合并成一个按钮（两者打开的是同一个面板）
+data modify storage rhythm_axe:prop f12 set value "{\"text\":\"【分布与填充】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要至少选中 2 个音符\"}}"
+execute if score #sel_count editor matches 2.. run data modify storage rhythm_axe:prop f12 set value "{\"text\":\"【分布与填充】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11512\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"打开「分布与填充」面板：时间/空间分布 + 插值填充都在里面，进去后按需点【执行时间分布】【执行空间分布】【填充分布】\"}}"
 # 输出两行 + 清理临时组件
 function rhythm_axe:editor/menu/note/list/note_list_bottom with storage rhythm_axe:prop
 function rhythm_axe:editor/menu/note/list/note_flip_bottom with storage rhythm_axe:prop
@@ -150,3 +158,5 @@ data remove storage rhythm_axe:prop f8
 data remove storage rhythm_axe:prop f9
 data remove storage rhythm_axe:prop f10
 data remove storage rhythm_axe:prop f11
+data remove storage rhythm_axe:prop f12
+data remove storage rhythm_axe:prop f13
