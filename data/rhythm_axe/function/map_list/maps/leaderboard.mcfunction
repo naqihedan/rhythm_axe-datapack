@@ -1,5 +1,5 @@
 #arg:mapid
-# 谱面排行榜（聊天栏输出前 10 名）——由谱面总表每行【排行榜】按钮触发（行值列码 5）
+# 谱面排行榜（聊天栏输出前 10 名）——由总表操作行的【🏆 排行榜】按钮触发（11903，作用于选中的谱面）
 # 数据：rhythm_axe:scores.<玩家key>.<mapid> = {name:"..",score:N,health:P}；rhythm_axe:scores_index.<mapid> = ["key",...]
 # 玩家 key = UUID 四个 int 拼串（原版拿不到 UUID 字符串，见 play/highscore/collect_ 顶部说明）
 function rhythm_axe:editor/menu/clear_lines

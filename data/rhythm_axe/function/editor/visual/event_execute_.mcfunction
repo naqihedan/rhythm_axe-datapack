@@ -1,10 +1,11 @@
-# 事件指令执行（宏参数：ev_idx, cmd_idx, cur_cmd；@s = 编辑玩家，~ ~ ~ 相对玩家）
-# 递归推进在独立函数内完成（宏快照：游标+1 后必须用新快照的 cmd_idx 预置 cur_cmd 再递归）
+# 事件指令执行（宏参数：cursor, ev_idx, cmd_idx, cur_cmd；@s = 编辑玩家）
+# ★ 执行位置与游玩模式对齐：固定 `positioned 0.0 0.0 0.0`（世界原点），不再用编辑玩家脚下的 ~ ~ ~
+# ★ 递归推进必须在独立函数 event_execute_next_ 完成（宏展开快照问题，与 play/event/execute_next 同解）
 #arg: cursor, ev_idx, cmd_idx, cur_cmd
 # 执行当前指令（宏展开 cur_cmd）
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].events[$(ev_idx)].commands[$(cmd_idx)] run $(cur_cmd)
-# 游标+1，有下一条 → 预置 cur_cmd 后递归（新快照 cmd_idx）
+$execute if data storage rhythm_axe:maps.editor history[$(cursor)].events[$(ev_idx)].commands[$(cmd_idx)] run execute positioned 0.0 0.0 0.0 run $(cur_cmd)
+# 游标+1（有下一条才推进）
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].events[$(ev_idx)].commands[$(cmd_idx)] run scoreboard players add #ev_cmd_idx editor 1
 execute store result storage rhythm_axe:prop cmd_idx int 1 run scoreboard players get #ev_cmd_idx editor
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].events[$(ev_idx)].commands[$(cmd_idx)] run data modify storage rhythm_axe:prop cur_cmd set from storage rhythm_axe:maps.editor history[$(cursor)].events[$(ev_idx)].commands[$(cmd_idx)]
-$execute if data storage rhythm_axe:maps.editor history[$(cursor)].events[$(ev_idx)].commands[$(cmd_idx)] run function rhythm_axe:editor/visual/event_execute_ with storage rhythm_axe:prop
+# 有下一条 → 交给 event_execute_next_（重新快照 cmd_idx=新值）预置 cur_cmd 后继续递归
+$execute if data storage rhythm_axe:maps.editor history[$(cursor)].events[$(ev_idx)].commands[$(cmd_idx)] run function rhythm_axe:editor/visual/event_execute_next_ with storage rhythm_axe:prop

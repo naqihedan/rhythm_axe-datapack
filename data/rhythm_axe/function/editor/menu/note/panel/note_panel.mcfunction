@@ -12,169 +12,38 @@ execute if score #batch_mode editor matches 0 run tellraw @s [\
 {"text":"音符 #","color":"gray"},\
 {"nbt":"editing.temp.id","storage":"rhythm_axe:maps.editor","color":"gray"}\
 ]
-# 类型（显示类型名；0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）
-execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.type
-# 类型（行首[x]= 已修改红可点重置(893)/未修改灰；批量未修改显示 -）
-execute if score #temp editor matches 0 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 音符盒 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 0 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":"-","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 0 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 音符盒 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 0 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 音符盒 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 1 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 木板 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 1 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":"-","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 1 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 木板 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 1 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 木板 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 2 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 唱片机 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 2 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":"-","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 2 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 唱片机 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 2 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 唱片机 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 混凝土 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 3 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":"-","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 混凝土 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 混凝土 ","color":"gold"},\
-{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 4 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 染色玻璃 ","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 4 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":"-","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 4 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14004"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 染色玻璃 ","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
-execute if score #temp editor matches 4 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.type run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符类型：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"上一个类型（0 音符盒/1 木板/2 唱片机/3 混凝土/4 染色玻璃）"}},\
-{"text":" 染色玻璃 ","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12101"},"hover_event":{"action":"show_text","value":"下一个类型（循环切换）"}}\
-]
+# 音符类型（★ 2026-10-04 用户定：类型是**互斥选项**，不再用「[-] 值 [+]」循环，改成 5 个按钮平铺）
+#   值 = 12100 + 类型号 + 1（列码 1..5）：12101 音符盒 / 12102 木板 / 12103 唱片机 / 12104 混凝土 / 12105 染色玻璃
+#   选中 = **绿加粗**，未选中 = **黄**；批量模式「未修改」时 5 个全黄（哪个都不高亮）
+#   行首 [x] = 14004（红=已修改可点重置 / 灰=未修改）
+scoreboard players set #mod_ty editor 0
+execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.type run scoreboard players set #mod_ty editor 1
+execute if score #batch_mode editor matches 0 if data storage rhythm_axe:maps.editor editing.changed.type run scoreboard players set #mod_ty editor 1
+data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
+execute if score #mod_ty editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14004\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（重置为未修改）\"}}"
+# 要高亮的类型号 #cur_ty：单音符 = 实际类型；批量 = **只在改过时**才高亮（未修改 → -1 = 5 个都不亮）
+scoreboard players set #cur_ty editor -1
+execute if score #batch_mode editor matches 0 run execute store result score #cur_ty editor run data get storage rhythm_axe:maps.editor editing.temp.type
+execute if score #batch_mode editor matches 1 if score #mod_ty editor matches 1 run execute store result score #cur_ty editor run data get storage rhythm_axe:maps.editor editing.temp.type
+# 5 个按钮组件：默认黄（未选中）
+data modify storage rhythm_axe:prop ty0 set value "{\"text\":\"[音符盒]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12101\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把音符类型设为 音符盒\"}}"
+data modify storage rhythm_axe:prop ty1 set value "{\"text\":\"[木板]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12102\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把音符类型设为 木板\"}}"
+data modify storage rhythm_axe:prop ty2 set value "{\"text\":\"[唱片机]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12103\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把音符类型设为 唱片机\"}}"
+data modify storage rhythm_axe:prop ty3 set value "{\"text\":\"[混凝土]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12104\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把音符类型设为 混凝土（长条）\"}}"
+data modify storage rhythm_axe:prop ty4 set value "{\"text\":\"[染色玻璃]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12105\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把音符类型设为 染色玻璃（长条）\"}}"
+# 命中的那个换成绿加粗
+execute if score #cur_ty editor matches 0 run data modify storage rhythm_axe:prop ty0 set value "{\"text\":\"[音符盒]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12101\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前类型：音符盒\"}}"
+execute if score #cur_ty editor matches 1 run data modify storage rhythm_axe:prop ty1 set value "{\"text\":\"[木板]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12102\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前类型：木板\"}}"
+execute if score #cur_ty editor matches 2 run data modify storage rhythm_axe:prop ty2 set value "{\"text\":\"[唱片机]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12103\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前类型：唱片机\"}}"
+execute if score #cur_ty editor matches 3 run data modify storage rhythm_axe:prop ty3 set value "{\"text\":\"[混凝土]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12104\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前类型：混凝土（长条）\"}}"
+execute if score #cur_ty editor matches 4 run data modify storage rhythm_axe:prop ty4 set value "{\"text\":\"[染色玻璃]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12105\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前类型：染色玻璃（长条）\"}}"
+function rhythm_axe:editor/menu/note/panel/note_type_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop xcomp
+data remove storage rhythm_axe:prop ty0
+data remove storage rhythm_axe:prop ty1
+data remove storage rhythm_axe:prop ty2
+data remove storage rhythm_axe:prop ty3
+data remove storage rhythm_axe:prop ty4
 # 判定时间行：组件化渲染 note_time_row（宏叶子）。行尾固定【使用当前时间】(12005)。
 #   相对模式：显示增量（加减均可）；绝对模式：显示 temp.time（下界 0 时减号变红禁用）
 scoreboard players set #rel_on editor 0
@@ -195,12 +64,12 @@ execute if score #rel_on editor matches 0 unless score #mod_time editor matches 
 data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13301\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"相对模式：在原值基础上增减；点击切换为绝对\"}}"
 execute if score #rel_on editor matches 0 run data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13301\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"绝对模式：直接设为设定值；点击切换为相对\"}}"
 # [--][-]（绝对且 time<=0 时减号变红=禁用）
-execute if score #rel_on editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻\"}}"
-execute if score #rel_on editor matches 0 if score #disp_time editor matches ..0 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻（最少 0）\"}}"
-execute if score #rel_on editor matches 0 if score #disp_time editor matches 1.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻（最少 0）\"}}"
+execute if score #rel_on editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb\"}},{\"text\":\"[-] \",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻\"}}"
+execute if score #rel_on editor matches 0 if score #disp_time editor matches ..0 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻（最少 0）\"}}"
+execute if score #rel_on editor matches 0 if score #disp_time editor matches 1.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12003\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12001\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 -1 刻（最少 0）\"}}"
 # [+] [++]
-execute if score #rel_on editor matches 1 run data modify storage rhythm_axe:prop pcomp set value "{\"text\":\" [+]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12002\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +1 刻\"}},{\"text\":\"[++]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12004\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +tpb\"}}"
-execute if score #rel_on editor matches 0 run data modify storage rhythm_axe:prop pcomp set value "{\"text\":\" [+]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12002\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +1 刻\"}},{\"text\":\"[++]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12004\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +tpb（当前播放头时间点）\"}}"
+execute if score #rel_on editor matches 1 run data modify storage rhythm_axe:prop pcomp set value "{\"text\":\" [+]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12002\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +1 刻\"}},{\"text\":\" [++]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12004\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +tpb\"}}"
+execute if score #rel_on editor matches 0 run data modify storage rhythm_axe:prop pcomp set value "{\"text\":\" [+]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12002\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +1 刻\"}},{\"text\":\" [++]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12004\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"判定时间 +tpb（当前播放头时间点）\"}}"
 function rhythm_axe:editor/menu/note/panel/note_time_row with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop tcomp
@@ -224,9 +93,9 @@ execute if score #mod_bl editor matches 1 run data modify storage rhythm_axe:pro
 data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13306\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"绝对模式：直接设为设定值；点击切换为相对\"}}"
 execute if score #rel_bl editor matches 1 run data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13306\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"相对模式：在原值基础上增减；点击切换为绝对\"}}"
 # [--]/[-] 组件（绝对模式且当前值 ≤1 时减号禁用显示红色；相对模式增量可负）
-data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -1（最少 1）\"}}"
-execute if score #rel_bl editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -1\"}}"
-execute if score #rel_bl editor matches 0 if score #disp_bl editor matches 2.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -1（最少 1）\"}}"
+data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -1（最少 1）\"}}"
+execute if score #rel_bl editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -1\"}}"
+execute if score #rel_bl editor matches 0 if score #disp_bl editor matches 2.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12603\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12601\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"基础寿命 -1（最少 1）\"}}"
 # 数值组件（相对=增量，绝对=设定值）
 data modify storage rhythm_axe:prop vcomp set value "{\"score\":{\"name\":\"#disp_bl\",\"objective\":\"editor\"},\"color\":\"gold\"}"
 # 渲染（全类型都显示）
@@ -284,9 +153,9 @@ execute if score #mod_dur editor matches 1 run data modify storage rhythm_axe:pr
 data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13305\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"绝对模式：直接设为设定值；点击切换为相对\"}}"
 execute if score #rel_dur editor matches 1 run data modify storage rhythm_axe:prop tcomp set value "{\"text\":\"[~]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 13305\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"相对模式：在原值基础上增减；点击切换为绝对\"}}"
 # [--]/[-] 组件（绝对模式且当前值 ≤0 时减号禁用显示红色；相对模式增量可负）
-data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12203\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12201\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -1（最少 0）\"}}"
-execute if score #rel_dur editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12203\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12201\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -1\"}}"
-execute if score #rel_dur editor matches 0 if score #disp_dur editor matches 1.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12203\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -tpb（当前播放头时间点）\"}},{\"text\":\"[-]\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12201\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -1\"}}"
+data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12203\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12201\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -1（最少 0）\"}}"
+execute if score #rel_dur editor matches 1 run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12203\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12201\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"增量 -1\"}}"
+execute if score #rel_dur editor matches 0 if score #disp_dur editor matches 1.. run data modify storage rhythm_axe:prop mcomp set value "{\"text\":\"[--]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12203\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -tpb（当前播放头时间点）\"}},{\"text\":\"[-] \",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12201\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"持续 -1\"}}"
 # 数值组件（相对=增量，绝对=设定值）
 data modify storage rhythm_axe:prop vcomp set value "{\"score\":{\"name\":\"#disp_dur\",\"objective\":\"editor\"},\"color\":\"gold\"}"
 # 渲染：批量模式一律显示；单音符仅 3/4 型显示
@@ -316,25 +185,25 @@ execute if score #mod_c editor matches 1 run data modify storage rhythm_axe:prop
 scoreboard players set #clr_set editor 0
 execute if score #batch_mode editor matches 0 run scoreboard players set #clr_set editor 1
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.color run scoreboard players set #clr_set editor 1
-execute if score #cv editor matches 1 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 白 \",\"color\":\"white\"}"
-execute if score #cv editor matches 2 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 灰 \",\"color\":\"gray\"}"
-execute if score #cv editor matches 3 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 淡灰 \",\"color\":\"#9d9d97\"}"
-execute if score #cv editor matches 4 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 黑 \",\"color\":\"black\"}"
-execute if score #cv editor matches 5 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 棕 \",\"color\":\"#835432\"}"
-execute if score #cv editor matches 6 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 红 \",\"color\":\"red\"}"
-execute if score #cv editor matches 7 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 橙 \",\"color\":\"#f9801d\"}"
-execute if score #cv editor matches 8 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 黄 \",\"color\":\"yellow\"}"
-execute if score #cv editor matches 9 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 黄绿 \",\"color\":\"#80c71f\"}"
-execute if score #cv editor matches 10 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 绿 \",\"color\":\"green\"}"
-execute if score #cv editor matches 11 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 青 \",\"color\":\"#169c9c\"}"
-execute if score #cv editor matches 12 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 淡蓝 \",\"color\":\"#3ab3da\"}"
-execute if score #cv editor matches 13 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 蓝 \",\"color\":\"blue\"}"
-execute if score #cv editor matches 14 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 紫 \",\"color\":\"#8932b8\"}"
-execute if score #cv editor matches 15 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 品红 \",\"color\":\"#c74ebd\"}"
-execute if score #cv editor matches 16 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" 粉 \",\"color\":\"#ff00ea\"}"
+execute if score #cv editor matches 1 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"白\",\"color\":\"white\"}"
+execute if score #cv editor matches 2 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"灰\",\"color\":\"gray\"}"
+execute if score #cv editor matches 3 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"淡灰\",\"color\":\"#9d9d97\"}"
+execute if score #cv editor matches 4 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"黑\",\"color\":\"black\"}"
+execute if score #cv editor matches 5 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"棕\",\"color\":\"#835432\"}"
+execute if score #cv editor matches 6 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"红\",\"color\":\"red\"}"
+execute if score #cv editor matches 7 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"橙\",\"color\":\"#f9801d\"}"
+execute if score #cv editor matches 8 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"黄\",\"color\":\"yellow\"}"
+execute if score #cv editor matches 9 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"黄绿\",\"color\":\"#80c71f\"}"
+execute if score #cv editor matches 10 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"绿\",\"color\":\"green\"}"
+execute if score #cv editor matches 11 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"青\",\"color\":\"#169c9c\"}"
+execute if score #cv editor matches 12 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"淡蓝\",\"color\":\"#3ab3da\"}"
+execute if score #cv editor matches 13 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"蓝\",\"color\":\"blue\"}"
+execute if score #cv editor matches 14 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"紫\",\"color\":\"#8932b8\"}"
+execute if score #cv editor matches 15 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"品红\",\"color\":\"#c74ebd\"}"
+execute if score #cv editor matches 16 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"粉\",\"color\":\"#ff00ea\"}"
 # ★ 批量模式且颜色未被改过 → 显示 -（与 击打音效/动画类型 等一致；确认时也不会写入）。
 #   放在 16 条颜色名之后覆盖：这样不用给每条都加 #clr_set 守卫（后写覆盖更不易漏）。
-execute if score #clr_set editor matches 0 run data modify storage rhythm_axe:prop cname set value "{\"text\":\" - \",\"color\":\"gold\"}"
+execute if score #clr_set editor matches 0 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"-\",\"color\":\"gold\"}"
 # 渲染颜色行（仅 3/4 型且有颜色）
 execute if score #temp editor matches 3..4 if score #cv editor matches 1.. run function rhythm_axe:editor/menu/note/panel/note_color_row with storage rhythm_axe:prop
 # 清理
@@ -346,40 +215,40 @@ execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
 {"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"nbt":"editing.temp.density","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":" [++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 execute if score #temp editor matches 3 if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.density run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
 {"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"text":"-","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":" [++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.density run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14003"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
 {"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"nbt":"editing.temp.density","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":" [++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 execute if score #temp editor matches 3 unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.density run tellraw @s [\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"判定密度：","color":"white"},\
 {"text":"[--]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12403"},"hover_event":{"action":"show_text","value":"密度 -tpb（当前播放头时间点，最少 1）"}},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12401"},"hover_event":{"action":"show_text","value":"密度 -1（最少 1）"}},\
 {"nbt":"editing.temp.density","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
-{"text":"[++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12402"},"hover_event":{"action":"show_text","value":"密度 +1"}},\
+{"text":" [++]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 12404"},"hover_event":{"action":"show_text","value":"密度 +tpb（当前播放头时间点）"}}\
 ]
 # 大小（全类型，float 一位小数去 f；与文档一致 1.0）
 # 相对模式显示增量（delta.size 为 ×100，转为 ×10 与绝对同尺度），绝对显示 temp.size
@@ -401,7 +270,7 @@ execute if score #rel_on editor matches 1 unless score #v editor matches 0 if sc
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"取消本项修改（增量归 0）"}},\
 {"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\
 {"text":"音符尺寸：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
 {"text":"-","color":"white"},{"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"大小 +0.1"}}\
 ]
@@ -409,7 +278,7 @@ execute if score #rel_on editor matches 1 unless score #v editor matches 0 if sc
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"取消本项修改（增量归 0）"}},\
 {"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\
 {"text":"音符尺寸：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
 {"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"大小 +0.1"}}\
 ]
@@ -417,7 +286,7 @@ execute if score #rel_on editor matches 1 if score #v editor matches 0 run tellr
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：增量归 0"}},\
 {"text":"[~]","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"相对模式：在原值基础上增减；点击切换为绝对"}},\
 {"text":"音符尺寸：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
 {"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"大小 +0.1"}}\
 ]
@@ -432,7 +301,7 @@ execute if score #rel_on editor matches 0 if score #mod_size editor matches 1 ru
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14017"},"hover_event":{"action":"show_text","value":"取消本项修改（还原为打开时的值）"}},\
 {"text":"[~]","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"绝对模式：直接设为设定值；点击切换为相对"}},\
 {"text":"音符尺寸：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
 {"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"大小 +0.1"}}\
 ]
@@ -440,7 +309,7 @@ execute if score #rel_on editor matches 0 unless score #mod_size editor matches 
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"[~]","color":"gray","click_event":{"action":"run_command","command":"/trigger editor_click set 13302"},"hover_event":{"action":"show_text","value":"绝对模式：直接设为设定值；点击切换为相对"}},\
 {"text":"音符尺寸：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12501"},"hover_event":{"action":"show_text","value":"大小 -0.1（最少 0.1）"}},\
 {"score":{"name":"#vi","objective":"editor"},"color":"gold"},{"text":".","color":"gold"},{"score":{"name":"#vf","objective":"editor"},"color":"gold"},\
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"大小 +0.1"}}\
 ]
@@ -675,17 +544,19 @@ execute if score #batch_mode editor matches 0 if data storage rhythm_axe:maps.ed
 # 行首 [x]：红=已修改（可点重置）/ 灰=未修改
 execute if score #mod_e editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14010\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（重置为未修改，显示 -）\"}}"
 execute if score #mod_e editor matches 0 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
-# 缓动类型 [x]→单按钮循环：单音符=显示实际值并可点；批量=只在被改过时显示实际值，否则显示 -
+# 缓动类型 [x]→单按钮循环：单音符=显示实际值并可点；批量=只在被改过时显示实际值，否则显示 【 - 】（黄色）
 #   ★ 2026-10-02：改成单按钮循环（点值本身往后切），与面板 20「缓动」一致；按钮值仍用 12702（下一个）
+#   ★ 2026-10-04：未修改态由灰色 `[-]` 改成黄色 `【 - 】` —— 原来的 `[-]` 和右边「强度 [-]」长得一模一样，
+#     挨在一起看着像重复渲染（用户实拍反馈）；【 】也是本面板单击类字段（引导线 / 无视流速）的既定样式。
 scoreboard players set #anim_e editor 0
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_easing run scoreboard players set #anim_e editor 1
 execute if score #batch_mode editor matches 0 run scoreboard players set #anim_e editor 1
 scoreboard players set #anim_t editor 0
 execute if score #anim_e editor matches 1 run execute store result score #anim_t editor run data get storage rhythm_axe:maps.editor editing.temp.anim_easing
-execute if score #anim_t editor matches 1 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓入] \",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓入。点击切换 → 缓出\"}}"
-execute if score #anim_t editor matches 2 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓出] \",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓出。点击切换 → 缓入缓出\"}}"
-execute if score #anim_t editor matches 3 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓入缓出] \",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓入缓出。点击切换 → 缓入\"}}"
-execute if score #anim_t editor matches 0 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [-] \",\"color\":\"gray\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"本项未修改（显示 -）。点击开始修改：从 缓入 往后切\"}}"
+execute if score #anim_t editor matches 1 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓入]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓入。点击切换 → 缓出\"}}"
+execute if score #anim_t editor matches 2 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓出]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓出。点击切换 → 缓入缓出\"}}"
+execute if score #anim_t editor matches 3 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" [缓入缓出]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"动画缓动：缓入缓出。点击切换 → 缓入\"}}"
+execute if score #anim_t editor matches 0 run data modify storage rhythm_axe:prop ecomp set value "{\"text\":\" 【 - 】\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12702\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"本项未修改（显示 -）。点击开始修改：从 缓入 往后切\"}}"
 # 缓动强度：单音符=实际值；批量=只在被改过时显示实际值，否则显示 -
 scoreboard players set #anim_p editor 0
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.anim_power run scoreboard players set #anim_p editor 1
@@ -701,66 +572,66 @@ execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.ed
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14011"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
 execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hitsound run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"text":"-","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
 execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14011"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
 execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hitsound run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打音效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12801"},"hover_event":{"action":"show_text","value":"上一个音效组（0-6）"}},\
 {"nbt":"editing.temp.hitsound","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12802"},"hover_event":{"action":"show_text","value":"下一个音效组"}},\
 ]
 # 击打视效（行首[x]= 已修改红可点重置(905)/未修改灰；批量未修改显示 -）
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14012"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
 execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"text":"-","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
 execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14012"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
 execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.hit_particles run tellraw @s [{"text":""},\
 {"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
 {"text":"      ","color":"white"},\
 {"text":"击打视效：","color":"white"},\
-{"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
+{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12901"},"hover_event":{"action":"show_text","value":"上一个视效组（0-6）"}},\
 {"nbt":"editing.temp.hit_particles","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" [+] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
+{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12902"},"hover_event":{"action":"show_text","value":"下一个视效组"}},\
 ]
 # 击打事件（行首[x]= 已修改红可点重置(906)/未修改灰；批量未修改显示 -）
 execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.hit_events run tellraw @s [{"text":""},\

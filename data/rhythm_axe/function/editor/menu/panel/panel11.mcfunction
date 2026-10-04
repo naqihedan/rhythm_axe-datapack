@@ -9,7 +9,7 @@ execute unless score #click_value editor matches 12001..14019 unless score #clic
 
 # —— 各字段 ± 调整（note_panel_adjust 依 field 判别）——
 execute if score #click_value editor matches 12001..12002 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
-execute if score #click_value editor matches 12101 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
+execute if score #click_value editor matches 12101..12105 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12201..12202 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12301..12302 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12401..12404 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust

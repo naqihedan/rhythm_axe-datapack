@@ -1,5 +1,5 @@
 #arg:cmd_index
-# 事件指令行遍历：值 = (1000+指令序号)×100 + 列码（编辑3 / 删除7）—— 规范v2 动态表行号从 1000 起
+# 事件指令行遍历：值 = (1000+指令序号)×100 + 列码（上移4 / 编辑3 / 复制5 / 粘贴6 / 删除7 / 下移8）—— 规范v2 动态表行号从 1000 起
 execute store result score #temp_playhead editor run data get storage rhythm_axe:prop cmd_index
 scoreboard players operation #temp editor = #temp_playhead editor
 scoreboard players add #temp editor 1000
@@ -9,6 +9,19 @@ execute store result storage rhythm_axe:prop edit_val int 1 run scoreboard playe
 scoreboard players remove #temp editor 3
 scoreboard players add #temp editor 7
 execute store result storage rhythm_axe:prop delete_val int 1 run scoreboard players get #temp editor
+# 行内按钮值（列码：3 编辑 / 4 上移 / 5 复制 / 6 粘贴 / 7 删除 / 8 下移；同一套「(1000+序号)×100 + 列码」动态行编码）
+scoreboard players remove #temp editor 7
+scoreboard players add #temp editor 4
+execute store result storage rhythm_axe:prop up_val int 1 run scoreboard players get #temp editor
+scoreboard players remove #temp editor 4
+scoreboard players add #temp editor 8
+execute store result storage rhythm_axe:prop down_val int 1 run scoreboard players get #temp editor
+scoreboard players remove #temp editor 8
+scoreboard players add #temp editor 5
+execute store result storage rhythm_axe:prop copy_val int 1 run scoreboard players get #temp editor
+scoreboard players remove #temp editor 5
+scoreboard players add #temp editor 6
+execute store result storage rhythm_axe:prop paste_val int 1 run scoreboard players get #temp editor
 scoreboard players add #temp_playhead editor 1
 $execute if data storage rhythm_axe:maps.editor editing.temp.commands[$(cmd_index)] run function rhythm_axe:editor/menu/event/panel/event_panel_cmd_line with storage rhythm_axe:prop
 $execute unless data storage rhythm_axe:maps.editor editing.temp.commands[$(cmd_index)] run return 0

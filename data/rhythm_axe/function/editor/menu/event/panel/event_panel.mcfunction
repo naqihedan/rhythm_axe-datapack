@@ -24,6 +24,10 @@ function rhythm_axe:editor/menu/event/panel/event_panel_cmd_row with storage rhy
 data remove storage rhythm_axe:prop cmd_index
 data remove storage rhythm_axe:prop edit_val
 data remove storage rhythm_axe:prop delete_val
+data remove storage rhythm_axe:prop up_val
+data remove storage rhythm_axe:prop down_val
+data remove storage rhythm_axe:prop copy_val
+data remove storage rhythm_axe:prop paste_val
 # 添加指令
 tellraw @s [{"text":"【添加一个指令】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10402"},"hover_event":{"action":"show_text","value":"在末尾追加一条空指令"}}]
 # 上一个/下一个事件

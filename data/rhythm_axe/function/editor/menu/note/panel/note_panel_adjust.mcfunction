@@ -1,4 +1,4 @@
-# 音符面板字段调整（spec-v2 号段）：12001 时间-1 / 12002 时间+1 / 12003 时间-tpb / 12004 时间+tpb / 12101 类型循环 0-4
+# 音符面板字段调整（spec-v2 号段）：12001 时间-1 / 12002 时间+1 / 12003 时间-tpb / 12004 时间+tpb / 12101..12105 直接选类型（12100+类型号+1）
 # （12005【使用当前时间】不在此文件：由 panel11 直接分发到 note_panel_use_playhead）
 # 判定时间：[--]/[++] = ±当前播放头所在时间点 tpb；[-]/[+] = ±1 刻
 # 绝对模式改 temp.time（下界 0）；相对模式改 editing.rel.delta.time（可负，确认时统一钳制）
@@ -18,10 +18,10 @@ execute if score #rel_on editor matches 0 if score #click_value editor matches 1
 execute if score #rel_on editor matches 0 if score #click_value editor matches 12003..12004 run execute store result storage rhythm_axe:maps.editor editing.temp.time int 1 run scoreboard players get #temp editor
 execute if score #rel_on editor matches 1 if score #click_value editor matches 12001..12002 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.time int 1 run scoreboard players get #temp editor
 execute if score #rel_on editor matches 1 if score #click_value editor matches 12003..12004 run execute store result storage rhythm_axe:maps.editor editing.rel.delta.time int 1 run scoreboard players get #temp editor
-execute if score #click_value editor matches 12101 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.type
-execute if score #click_value editor matches 12101 run scoreboard players add #temp editor 1
-execute if score #click_value editor matches 12101 if score #temp editor matches 5.. run scoreboard players set #temp editor 0
-execute if score #click_value editor matches 12101 run execute store result storage rhythm_axe:maps.editor editing.temp.type int 1 run scoreboard players get #temp editor
+# 音符类型（★ 2026-10-04：5 个互斥按钮，值 12101..12105 = 12100 + 类型号 + 1 ⇒ 直接取类型号）
+execute if score #click_value editor matches 12101..12105 run scoreboard players operation #temp editor = #click_value editor
+execute if score #click_value editor matches 12101..12105 run scoreboard players remove #temp editor 12101
+execute if score #click_value editor matches 12101..12105 run execute store result storage rhythm_axe:maps.editor editing.temp.type int 1 run scoreboard players get #temp editor
 # 持续 duration（12201/12202 单步 ±1 刻；12203/12204 双步 ±tpb）
 # 绝对模式改 temp.duration（下界 0）；相对模式改 editing.rel.delta.duration（可负，确认时统一钳制）
 scoreboard players set #rel_dur editor 0
@@ -118,8 +118,8 @@ execute if score #click_value editor matches 12901..12902 if score #temp editor 
 execute if score #click_value editor matches 12901..12902 if score #temp editor matches 7.. run scoreboard players set #temp editor 0
 execute if score #click_value editor matches 12901..12902 run execute store result storage rhythm_axe:maps.editor editing.temp.hit_particles int 1 run scoreboard players get #temp editor
 # 批量：标记被改动的同值字段（确认时对全部选中应用同值；@x 撤销=清除标记）
-execute if score #click_value editor matches 12101 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.type set value 1b
-execute if score #click_value editor matches 12101 run data modify storage rhythm_axe:maps.editor editing.changed.type set value 1b
+execute if score #click_value editor matches 12101..12105 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.type set value 1b
+execute if score #click_value editor matches 12101..12105 run data modify storage rhythm_axe:maps.editor editing.changed.type set value 1b
 execute if score #click_value editor matches 12201..12202 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.duration set value 1b
 execute if score #click_value editor matches 12203..12204 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.duration set value 1b
 execute if score #click_value editor matches 12201..12202 run data modify storage rhythm_axe:maps.editor editing.changed.duration set value 1b
