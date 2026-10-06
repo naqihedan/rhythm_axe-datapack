@@ -302,6 +302,9 @@ $execute if score #note_type play_state matches 4 run execute store result entit
 # 给展示实体与交互实体记录 note_id（配对用；note_id 为独立计分板）
 $execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_id $(id)
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_id $(id)
+# ★ 2026-10-07：展示实体也记录颜色（**全类型**）—— 该音符作为引导线起点 A 时，线的颜色取这里的 note_color
+$execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_color 0
+$execute if data storage rhythm_axe:runtime cur_note.color run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run execute store result score @s note_color run data get storage rhythm_axe:runtime cur_note.color
 
 # ===== 音符间引导线：★ 2026-09-15 改为「按 **A 端** following_point 判定」（与编辑器一致）=====
 # 语义：在前一个 0/1/2 音符 A 上开启 following_point → 画 A→（数组顺序上它后面第一个 0/1/2）的引导线；

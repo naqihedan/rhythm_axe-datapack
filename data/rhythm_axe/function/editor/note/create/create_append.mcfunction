@@ -1,4 +1,4 @@
-#arg:cursor,new_id,new_time,type,size,position_x,position_y,position_z,start_x,start_y,start_z,note_base_life,anim_easing,anim_power,hitsound,hit_particles,duration,color,density,following_point,custom_tag
+#arg:cursor,new_id,new_time,type,size,position_x,position_y,position_z,start_x,start_y,start_z,note_base_life,anim_easing,anim_power,hitsound,hit_particles,duration,color,density,following_point
 # 追加到 notes 末尾
 $data modify storage rhythm_axe:maps.editor history[$(cursor)].notes append value {\
     id:$(new_id),\
@@ -15,6 +15,5 @@ $data modify storage rhythm_axe:maps.editor history[$(cursor)].notes append valu
     duration:$(duration),\
     color:$(color),\
     density:$(density),\
-    following_point:$(following_point),\
-    custom_tag:"$(custom_tag)"\
+    following_point:$(following_point)\
 }

@@ -127,6 +127,8 @@ scoreboard objectives add note_guide_b dummy
 scoreboard objectives add note_guide_x dummy
 scoreboard objectives add note_guide_y dummy
 scoreboard objectives add note_guide_z dummy
+# 引导线颜色（1~16 = 对应染色玻璃；0 / 缺省 = 默认青色）★ 2026-10-07
+scoreboard objectives add note_guide_color dummy
 # 当前音符（B）出生点（×100；B 未出生时引导线连此点）
 scoreboard objectives add note_guide_sx dummy
 scoreboard objectives add note_guide_sy dummy
@@ -282,6 +284,14 @@ gamerule max_command_sequence_length 1000000
 #====================编辑器====================
 # 编辑器运行时计分板（#playhead/#play_speed/#metronome/#history_cursor 镜像 maps.editor）
 scoreboard objectives add editor dummy
+# ★ 2026-10-06：工具选项栏（面板 23）设置 —— 音符工具"锁定坐标"（全局、跨谱面；不是 options，免受【恢复默认】影响）
+scoreboard objectives add tool_opt dummy
+execute unless score note_lock_x tool_opt matches 0..1 run scoreboard players set note_lock_x tool_opt 0
+execute unless score note_lock_y tool_opt matches 0..1 run scoreboard players set note_lock_y tool_opt 0
+execute unless score note_lock_z tool_opt matches 0..1 run scoreboard players set note_lock_z tool_opt 0
+execute unless score note_lock_x_val tool_opt matches -30000000..30000000 run scoreboard players set note_lock_x_val tool_opt 0
+execute unless score note_lock_y_val tool_opt matches -30000000..30000000 run scoreboard players set note_lock_y_val tool_opt 0
+execute unless score note_lock_z_val tool_opt matches -30000000..30000000 run scoreboard players set note_lock_z_val tool_opt 0
 # 编辑器判定缩放镜像（#ed_scale：真实判定窗口用；由 visual/refresh 的 judge/scale_sync 与 playback/advance_ 维护）
 #   此处兜底为 1，避免"刚进编辑器还没 refresh"时窗口为 0 → 音符一出生就被判 miss
 scoreboard players set #ed_scale editor 1

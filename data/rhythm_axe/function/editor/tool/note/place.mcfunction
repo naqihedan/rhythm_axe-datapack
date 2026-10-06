@@ -9,6 +9,12 @@ data modify storage rhythm_axe:prop position_x set from entity @e[tag=editor_too
 data modify storage rhythm_axe:prop position_y set from entity @e[tag=editor_tool_place_pos,limit=1] Pos[1]
 data modify storage rhythm_axe:prop position_z set from entity @e[tag=editor_tool_place_pos,limit=1] Pos[2]
 kill @e[tag=editor_tool_place_pos]
+# ①.5 应用坐标锁定（工具选项栏面板 23）：被锁定的轴改成设定值
+#   ★ 故意放在「混凝土 Y+0.1」之前 —— 这样锁 Y 时**仍然 +0.1**（用户 2026-10-06 定）
+#   值存 ×10（0.1 精度），×0.1 写回 double ⇒ 精确
+execute if score note_lock_x tool_opt matches 1 run execute store result storage rhythm_axe:prop position_x double 0.1 run scoreboard players get note_lock_x_val tool_opt
+execute if score note_lock_y tool_opt matches 1 run execute store result storage rhythm_axe:prop position_y double 0.1 run scoreboard players get note_lock_y_val tool_opt
+execute if score note_lock_z tool_opt matches 1 run execute store result storage rhythm_axe:prop position_z double 0.1 run scoreboard players get note_lock_z_val tool_opt
 # ② time = 播放头
 execute store result storage rhythm_axe:prop time int 1 run scoreboard players get #playhead editor
 # ③ type = 当前工具类型
@@ -18,14 +24,14 @@ $data modify storage rhythm_axe:prop type set value $(note_type)
 execute if data storage rhythm_axe:prop {type:3} run execute store result score #place_off editor run data get storage rhythm_axe:prop position_y 100
 execute if data storage rhythm_axe:prop {type:3} run scoreboard players add #place_off editor 10
 execute if data storage rhythm_axe:prop {type:3} run execute store result storage rhythm_axe:prop position_y double 0.01 run scoreboard players get #place_off editor
-# ④ 继承同类"往前最近"音符属性（同类中 time <= 当前且 time 最大，含同拍；除 time/id/hit_events/position/custom_tag 外全部）
+# ④ 继承同类"往前最近"音符属性（同类中 time <= 当前且 time 最大，含同拍；除 time/id/hit_events/position 外全部）
 #    找不到（如第一个音符）→ start_pos 走 create 默认 [0,0,24]，其余属性走默认值
 scoreboard players set #inh_found editor 0
 function rhythm_axe:editor/tool/note/inherit
 # ⑤ 创建（含历史快照、视觉刷新、反馈）
 function rhythm_axe:editor/note/create/create
-# ★ 工具创建接 feedback 机制：打开面板时显示"已创建音符"+【撤销】按钮
-data modify storage rhythm_axe:maps.editor feedback set value "已创建音符"
+# ★ 工具创建接 feedback 机制：打开面板时显示"已创建音符"（若坐标被锁定则注明锁了哪几轴）+【撤销】按钮
+function rhythm_axe:editor/tool/note/place_feedback
 # ⑥ 打开新音符的属性控制面板（返回：从已选定列表来回已选定列表，否则回活跃音符列表）
 # ★ 2026-09-14 性能：新音符的数组下标由 create 直接给出（insert_find 的插入点 / 追加时的旧长度），
 #   不再用 find_by_id 按 id 全表扫描（973 音符时单次 100ms 级）

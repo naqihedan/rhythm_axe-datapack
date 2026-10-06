@@ -18,6 +18,11 @@ execute store result score #guide_az play_state run scoreboard players get @s no
 # ★ 2026-09-21：@s = A 端音符展示实体（Pos = A 判定位置，恒定）→ 引导线直接生成在 A 的判定位置（锚点）
 #   初始 scale.z=0（不可见）：真正的几何由 guide/tick 每刻写入（首刻即到位）
 $execute at @s run summon item_display ~ ~ ~ {item:{id:"minecraft:cyan_stained_glass",count:1},Tags:["note_guide","$(mapid)_guide$(id)","map_$(mapid)"],brightness:{block:15,sky:15},view_range:10000f,interpolation_duration:1,transformation:{translation:[0f,0f,0f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[0.15f,0.15f,0f]}}
+# ★ 2026-10-07：引导线颜色 = A（起点音符）的颜色 —— 此处 @s = A 端展示实体（其 note_color 由 summon 全类型写入）
+#   0 / 未设置 → 保持默认青色；染色表见 utilization/guide_color_set
+scoreboard players operation #guide_col play_state = @s note_color
+$execute as @e[tag=$(mapid)_guide$(id),type=item_display,limit=1] run scoreboard players operation @s note_guide_color = #guide_col play_state
+$execute as @e[tag=$(mapid)_guide$(id),type=item_display,limit=1] run function rhythm_axe:utilization/guide_color_set
 $execute as @e[tag=$(mapid)_guide$(id),type=item_display,limit=1] run scoreboard players set @s note_guide_a $(guide_prev)
 $execute as @e[tag=$(mapid)_guide$(id),type=item_display,limit=1] run scoreboard players set @s note_guide_b $(id)
 $execute as @e[tag=$(mapid)_guide$(id),type=item_display,limit=1] run scoreboard players operation @s note_guide_x = #guide_ax play_state

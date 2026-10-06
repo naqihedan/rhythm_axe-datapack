@@ -7,3 +7,7 @@
 $execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note unless entity @e[tag=glow_$(gid)] run summon item_display ~ ~ ~ {item:{id:"minecraft:yellow_stained_glass",count:1},Tags:["editor_tool_glow","glow_$(gid)"],Glowing:1b,glow_color_override:16776960,brightness:{block:15,sky:15},transformation:{translation:[0f,0f,0f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1.01f,1.01f,1.01f]}}
 $execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note run tag @e[tag=glow_$(gid)] add glow_alive
 $execute if data entity @s SelectedItem.components."minecraft:custom_data".editor_tool_note anchored eyes positioned ^ ^ ^4 align xyz positioned ~0.5 ~0.5 ~0.5 run tp @e[tag=glow_$(gid)] ~ ~ ~
+# 坐标锁定（面板 23）：光标也跟着锁定的轴走 —— 否则锁了 X 却看见光标在原地，会以为没生效
+$execute if score note_lock_x tool_opt matches 1 run execute store result entity @e[tag=glow_$(gid),limit=1] Pos[0] double 0.1 run scoreboard players get note_lock_x_val tool_opt
+$execute if score note_lock_y tool_opt matches 1 run execute store result entity @e[tag=glow_$(gid),limit=1] Pos[1] double 0.1 run scoreboard players get note_lock_y_val tool_opt
+$execute if score note_lock_z tool_opt matches 1 run execute store result entity @e[tag=glow_$(gid),limit=1] Pos[2] double 0.1 run scoreboard players get note_lock_z_val tool_opt

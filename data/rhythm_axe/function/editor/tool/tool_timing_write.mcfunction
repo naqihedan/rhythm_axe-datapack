@@ -4,7 +4,7 @@ $item replace entity @s $(slot) with minecraft:stick[\
     item_model="$(model)",\
     consumable={animation:none,consume_seconds:0.05f,has_consume_particles:false,sound:"minecraft:intentionally_empty"},\
     enchantment_glint_override=true,\
-    item_name={"text":"【$(shown)】","color":"yellow","bold":true,"extra":[{"text":"  $(hint)","color":"gray","italic":true}]},\
+    item_name={"text":"$(shown)","color":"yellow","bold":true,"extra":[{"text":"  $(hint)","color":"gray","italic":true}]},\
     custom_data={editor_tool:true,editor_tool_timing:true,editor_tool_state:$(state)}\
 ] 1
 

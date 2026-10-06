@@ -30,5 +30,7 @@ execute if score #panel_id editor matches 17 run function rhythm_axe:editor/menu
 execute if score #panel_id editor matches 18 run function rhythm_axe:editor/menu/note/selected/sel_note_list_open
 # 面板 20（分布与填充）：重绘面板（参数存把在 editing.df）
 execute if score #panel_id editor matches 20 run function rhythm_axe:editor/menu/note/df/df_render
+# 面板 23（工具选项栏）：按 maps.editor.tool_panel_gid 重绘（换手打开的对话框）
+execute if score #panel_id editor matches 23 run function rhythm_axe:editor/menu/tool/panel/tool_panel
 # 兜底：current_panel 缺失或异常 → 主菜单
 execute unless data storage rhythm_axe:maps.editor current_panel run function rhythm_axe:editor/menu/main

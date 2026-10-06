@@ -47,6 +47,7 @@ scoreboard players reset * note_vis4_z
 # ============ 引导线实体（note_guide_*；原先漏清，实体 kill 后计分项不会自动消失） ============
 scoreboard players reset * note_guide_a
 scoreboard players reset * note_guide_b
+scoreboard players reset * note_guide_color
 scoreboard players reset * note_guide_x
 scoreboard players reset * note_guide_y
 scoreboard players reset * note_guide_z

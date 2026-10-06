@@ -26,4 +26,6 @@ summon minecraft:text_display -1.5 0.5625 0.5625 {\
     Tags: ["subtitle"]\
     }
 
+# 出生后缓慢缩小（从头到尾）：2 刻后接管，56 刻内缩到 75%
+schedule function rhythm_axe:maps/goodworld/title528_shrink 2t
 schedule function rhythm_axe:maps/goodworld/title528_2 64t

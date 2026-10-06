@@ -31,11 +31,10 @@ execute unless data storage rhythm_axe:maps.editor editing.orig.anim_easing run 
 execute unless data storage rhythm_axe:maps.editor editing.orig.anim_power run data modify storage rhythm_axe:maps.editor editing.orig.anim_power set value 1
 execute unless data storage rhythm_axe:maps.editor editing.orig.hitsound run data modify storage rhythm_axe:maps.editor editing.orig.hitsound set value 0
 execute unless data storage rhythm_axe:maps.editor editing.orig.hit_particles run data modify storage rhythm_axe:maps.editor editing.orig.hit_particles set value 0
-execute unless data storage rhythm_axe:maps.editor editing.orig.custom_tag run data modify storage rhythm_axe:maps.editor editing.orig.custom_tag set value ""
 execute unless data storage rhythm_axe:maps.editor editing.orig.hit_events run data modify storage rhythm_axe:maps.editor editing.orig.hit_events set value []
 execute unless data storage rhythm_axe:maps.editor editing.orig.position run data modify storage rhythm_axe:maps.editor editing.orig.position set value [0.0d,0.0d,0.0d]
 execute unless data storage rhythm_axe:maps.editor editing.orig.start_pos run data modify storage rhythm_axe:maps.editor editing.orig.start_pos set value [0.0d,0.0d,24.0d]
-execute unless data storage rhythm_axe:maps.editor editing.temp.custom_tag run data modify storage rhythm_axe:maps.editor editing.temp.custom_tag set value ""
+
 execute unless data storage rhythm_axe:maps.editor editing.temp.hit_events run data modify storage rhythm_axe:maps.editor editing.temp.hit_events set value []
 execute unless data storage rhythm_axe:maps.editor editing.temp.position run data modify storage rhythm_axe:maps.editor editing.temp.position set value [0.0d,0.0d,0.0d]
 execute unless data storage rhythm_axe:maps.editor editing.temp.start_pos run data modify storage rhythm_axe:maps.editor editing.temp.start_pos set value [0.0d,0.0d,24.0d]

@@ -5,13 +5,9 @@ data modify storage rhythm_axe:maps.editor current_panel set value 11
 # 批量模式：复用完整面板（所有字段 + 相对/绝对开关）；editing.temp 作"同值"、editing.rel.delta 作"相对增量"
 scoreboard players set #batch_mode editor 0
 execute if data storage rhythm_axe:maps.editor editing.batch run scoreboard players set #batch_mode editor 1
-execute if score #batch_mode editor matches 0 run tellraw @s [{"text":"====音符属性控制面板====","color":"gold","bold":true}]
+execute if score #batch_mode editor matches 0 run tellraw @s [{"text":"====音符属性控制面板====","color":"gold","bold":true},{"text":" #","color":"gray"},{"nbt":"editing.temp.id","storage":"rhythm_axe:maps.editor","color":"gray"}]
 execute if score #batch_mode editor matches 1 run execute store result score #batch_n editor run data get storage rhythm_axe:maps.editor editing.batch_ids
 execute if score #batch_mode editor matches 1 run tellraw @s [{"text":"====批量编辑","color":"gold","bold":true},{"score":{"name":"#batch_n","objective":"editor"},"color":"gold","bold":true},{"text":" 个音符====","color":"gold","bold":true}]
-execute if score #batch_mode editor matches 0 run tellraw @s [\
-{"text":"音符 #","color":"gray"},\
-{"nbt":"editing.temp.id","storage":"rhythm_axe:maps.editor","color":"gray"}\
-]
 # 音符类型（★ 2026-10-04 用户定：类型是**互斥选项**，不再用「[-] 值 [+]」循环，改成 5 个按钮平铺）
 #   值 = 12100 + 类型号 + 1（列码 1..5）：12101 音符盒 / 12102 木板 / 12103 唱片机 / 12104 混凝土 / 12105 染色玻璃
 #   选中 = **绿加粗**，未选中 = **黄**；批量模式「未修改」时 5 个全黄（哪个都不高亮）
@@ -38,6 +34,8 @@ execute if score #cur_ty editor matches 2 run data modify storage rhythm_axe:pro
 execute if score #cur_ty editor matches 3 run data modify storage rhythm_axe:prop ty3 set value "{\"text\":\"[混凝土]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12104\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前类型：混凝土（长条）\"}}"
 execute if score #cur_ty editor matches 4 run data modify storage rhythm_axe:prop ty4 set value "{\"text\":\"[染色玻璃]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 12105\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前类型：染色玻璃（长条）\"}}"
 function rhythm_axe:editor/menu/note/panel/note_type_row with storage rhythm_axe:prop
+# 颜色行（★ 2026-10-06 用户定：挪到「音符类型」下面；行内不再带“颜色：”标签）
+function rhythm_axe:editor/menu/note/panel/note_color_block
 data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop ty0
 data remove storage rhythm_axe:prop ty1
@@ -165,50 +163,7 @@ data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop tcomp
 data remove storage rhythm_axe:prop mcomp
 data remove storage rhythm_axe:prop vcomp
-# 颜色（3/4 型，或批量模式一律显示；1-16=16 色，无 0；显示颜色名且字体为当前颜色）
-execute if score #temp editor matches 3..4 run execute store result score #cv editor run data get storage rhythm_axe:maps.editor editing.temp.color
-# ★ 批量模式：颜色尚未设定（0 或越界）→ 补默认 1（白），否则 #cv 不在 1..16 时颜色行不渲染
-# （temp.color 只有被 batch_set.color 标记时才会写回，故补默认不影响未修改的批量应用）
-execute if score #batch_mode editor matches 1 if score #cv editor matches ..0 run data modify storage rhythm_axe:maps.editor editing.temp.color set value 1b
-execute if score #batch_mode editor matches 1 if score #cv editor matches ..0 run scoreboard players set #cv editor 1
-execute if score #batch_mode editor matches 1 if score #cv editor matches 17.. run data modify storage rhythm_axe:maps.editor editing.temp.color set value 1b
-execute if score #batch_mode editor matches 1 if score #cv editor matches 17.. run scoreboard players set #cv editor 1
-# 已修改标志（绝=temp.color!=orig.color；批量=batch_set.color）
-scoreboard players set #mod_c editor 0
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.color run scoreboard players set #mod_c editor 1
-execute if score #batch_mode editor matches 0 run execute store result score #ov_c editor run data get storage rhythm_axe:maps.editor editing.orig.color
-execute if score #batch_mode editor matches 0 unless score #cv editor = #ov_c editor run scoreboard players set #mod_c editor 1
-# [x] 组件（红=已修改/灰=未修改）
-data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"未修改：此项暂未更改\"}}"
-execute if score #mod_c editor matches 1 run data modify storage rhythm_axe:prop xcomp set value "{\"text\":\"[x]\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 14015\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"取消本项修改（重置为未修改，显示 -）\"}}"
-# 颜色名（按 #cv 取值；批量模式下「没改过」时整行显示 -，见下方覆盖）
-scoreboard players set #clr_set editor 0
-execute if score #batch_mode editor matches 0 run scoreboard players set #clr_set editor 1
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.color run scoreboard players set #clr_set editor 1
-execute if score #cv editor matches 1 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"白\",\"color\":\"white\"}"
-execute if score #cv editor matches 2 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"灰\",\"color\":\"gray\"}"
-execute if score #cv editor matches 3 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"淡灰\",\"color\":\"#9d9d97\"}"
-execute if score #cv editor matches 4 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"黑\",\"color\":\"black\"}"
-execute if score #cv editor matches 5 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"棕\",\"color\":\"#835432\"}"
-execute if score #cv editor matches 6 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"红\",\"color\":\"red\"}"
-execute if score #cv editor matches 7 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"橙\",\"color\":\"#f9801d\"}"
-execute if score #cv editor matches 8 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"黄\",\"color\":\"yellow\"}"
-execute if score #cv editor matches 9 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"黄绿\",\"color\":\"#80c71f\"}"
-execute if score #cv editor matches 10 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"绿\",\"color\":\"green\"}"
-execute if score #cv editor matches 11 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"青\",\"color\":\"#169c9c\"}"
-execute if score #cv editor matches 12 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"淡蓝\",\"color\":\"#3ab3da\"}"
-execute if score #cv editor matches 13 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"蓝\",\"color\":\"blue\"}"
-execute if score #cv editor matches 14 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"紫\",\"color\":\"#8932b8\"}"
-execute if score #cv editor matches 15 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"品红\",\"color\":\"#c74ebd\"}"
-execute if score #cv editor matches 16 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"粉\",\"color\":\"#ff00ea\"}"
-# ★ 批量模式且颜色未被改过 → 显示 -（与 击打音效/动画类型 等一致；确认时也不会写入）。
-#   放在 16 条颜色名之后覆盖：这样不用给每条都加 #clr_set 守卫（后写覆盖更不易漏）。
-execute if score #clr_set editor matches 0 run data modify storage rhythm_axe:prop cname set value "{\"text\":\"-\",\"color\":\"gold\"}"
-# 渲染颜色行（仅 3/4 型且有颜色）
-execute if score #temp editor matches 3..4 if score #cv editor matches 1.. run function rhythm_axe:editor/menu/note/panel/note_color_row with storage rhythm_axe:prop
-# 清理
-data remove storage rhythm_axe:prop xcomp
-data remove storage rhythm_axe:prop cname
+# （颜色行已抽到 note_color_block，挪到「音符类型」下面渲染）
 # 密度（仅 3 型混凝土；行首[x]= 已修改红可点重置(892)/未修改灰；批量未修改显示 -）
 execute if score #temp editor matches 3 if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.density run tellraw @s [{"text":""},\
 {"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14003"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
@@ -659,35 +614,7 @@ execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe
 {"text":"击打事件：","color":"white"},\
 {"text":"【二级菜单】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13006"},"hover_event":{"action":"show_text","value":"编辑该音符的击打事件指令列表"}}\
 ]
-# 音符标签（行首[x]= 已修改红可点重置(907)/未修改灰；批量未修改显示 -）
-execute if score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.batch_set.custom_tag run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14014"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为未修改，显示 -）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符标签：","color":"white"},\
-{"nbt":"editing.temp.custom_tag","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" 【设置标签】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13106"},"hover_event":{"action":"show_text","value":"设置音符标签"}}\
-]
-execute if score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.batch_set.custom_tag run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符标签：","color":"white"},\
-{"text":"-","color":"gold"},\
-{"text":" 【设置标签】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13106"},"hover_event":{"action":"show_text","value":"设置音符标签"}}\
-]
-execute unless score #batch_mode editor matches 1 if data storage rhythm_axe:maps.editor editing.changed.custom_tag run tellraw @s [{"text":""},\
-{"text":"[x]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 14014"},"hover_event":{"action":"show_text","value":"取消本项修改（重置为打开时的值）"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符标签：","color":"white"},\
-{"nbt":"editing.temp.custom_tag","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" 【设置标签】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13106"},"hover_event":{"action":"show_text","value":"设置音符标签"}}\
-]
-execute unless score #batch_mode editor matches 1 unless data storage rhythm_axe:maps.editor editing.changed.custom_tag run tellraw @s [\
-{"text":"[x]","color":"gray","hover_event":{"action":"show_text","value":"未修改：此项暂未更改"}},\
-{"text":"      ","color":"white"},\
-{"text":"音符标签：","color":"white"},\
-{"nbt":"editing.temp.custom_tag","storage":"rhythm_axe:maps.editor","color":"gold"},\
-{"text":" 【设置标签】","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 13106"},"hover_event":{"action":"show_text","value":"设置音符标签"}}\
-]
+# （「音符标签」custom_tag 字段已于 2026-10-06 从数据包移除）
 # 批量模式底部：无删除
 execute if score #batch_mode editor matches 1 run tellraw @s [\
 {"text":"【取消】","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 13702"},"hover_event":{"action":"show_text","value":"丢弃批量修改并返回列表"}},\

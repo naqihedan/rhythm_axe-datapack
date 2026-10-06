@@ -11,6 +11,11 @@
 #   精确 Pos 随即由 utilization/guide_anchor_set 读回（tick 写 translation 时减掉）；
 #   初始 scale.z=0（不可见）：真正的几何由 guide_tick 每刻写入（编辑器每 tick 都调它）
 $summon item_display $(pos_x) $(pos_y) $(pos_z) {item:{id:"minecraft:cyan_stained_glass",count:1},Tags:["editor_guide","editor_guide_$(nid)"],brightness:{block:15,sky:15},view_range:10000f,interpolation_duration:1,transformation:{translation:[0f,0f,0f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[0.15f,0.15f,0f]}}
+# ★ 2026-10-07：引导线颜色 = 起点音符 A 的 color（此刻 prop.color 就是 A 的值，见 build_ 拆字段）
+#   0 / 缺字段 = 未设置 → 保持默认青色（观感与旧版一致）；染色表见 utilization/guide_color_set
+$execute as @e[tag=editor_guide_$(nid),type=item_display,limit=1] run scoreboard players set @s note_guide_color 0
+$execute if data storage rhythm_axe:prop color as @e[tag=editor_guide_$(nid),type=item_display,limit=1] run execute store result score @s note_guide_color run data get storage rhythm_axe:prop color
+$execute as @e[tag=editor_guide_$(nid),type=item_display,limit=1] run function rhythm_axe:utilization/guide_color_set
 $execute as @e[tag=editor_guide_$(nid),type=item_display,limit=1] run scoreboard players set @s note_guide_a $(nid)
 $execute as @e[tag=editor_guide_$(nid),type=item_display,limit=1] run scoreboard players set @s note_guide_b $(guide_prev)
 $execute as @e[tag=editor_guide_$(nid),type=item_display,limit=1] run scoreboard players set @s note_guide_x $(guide_ax)

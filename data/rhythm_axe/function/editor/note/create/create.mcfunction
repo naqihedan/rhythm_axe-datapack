@@ -1,6 +1,6 @@
 # 创建音符：前置 prop.time（判定时间刻）、prop.type（0-4）
 # 可选 prop：position_x/y/z（缺省取执行者位置）、start_x/y/z（缺省 0）、size、duration、color、density、
-#           note_base_life、anim_easing、anim_power、hitsound、hit_particles、following_point、custom_tag
+#           note_base_life、anim_easing、anim_power、hitsound、hit_particles、following_point
 
 # 音符按 time 升序插入 notes，id 从 next_note_id 分配；操作快照由 begin/commit 管理
 execute unless data storage rhythm_axe:prop time run tellraw @s [{"text":"[编辑器] 缺少时间（prop.time）","color":"red"}]
@@ -37,13 +37,14 @@ execute unless data storage rhythm_axe:prop anim_power run data modify storage r
 execute unless data storage rhythm_axe:prop hitsound run data modify storage rhythm_axe:prop hitsound set value 0
 execute unless data storage rhythm_axe:prop hit_particles run data modify storage rhythm_axe:prop hit_particles set value 0
 execute unless data storage rhythm_axe:prop following_point run data modify storage rhythm_axe:prop following_point set value 0b
-execute unless data storage rhythm_axe:prop custom_tag run data modify storage rhythm_axe:prop custom_tag set value ""
 
 execute if score #note_type editor matches 3 unless data storage rhythm_axe:prop duration run data modify storage rhythm_axe:prop duration set value 8
 execute if score #note_type editor matches 4 unless data storage rhythm_axe:prop duration run data modify storage rhythm_axe:prop duration set value 8
 execute if score #note_type editor matches 0..2 unless data storage rhythm_axe:prop duration run data modify storage rhythm_axe:prop duration set value 0
 execute if score #note_type editor matches 3 unless data storage rhythm_axe:prop color run data modify storage rhythm_axe:prop color set value 9b
 execute if score #note_type editor matches 4 unless data storage rhythm_axe:prop color run data modify storage rhythm_axe:prop color set value 6b
+# 0/1/2 的颜色默认仍是 0 =「未设置」（★ 2026-10-07 用户定）：**不在这里自动写青** —— 没选颜色就不写颜色，
+#   面板会把「未设置」显示成【青】（仅显示层，见 note_color_block），继承也照旧拿到上一个音符的原值
 execute if score #note_type editor matches 0..2 unless data storage rhythm_axe:prop color run data modify storage rhythm_axe:prop color set value 0b
 execute if score #note_type editor matches 3 unless data storage rhythm_axe:prop density run data modify storage rhythm_axe:prop density set value 8
 execute if score #note_type editor matches 4 unless data storage rhythm_axe:prop density run data modify storage rhythm_axe:prop density set value 0
@@ -112,7 +113,6 @@ data remove storage rhythm_axe:prop anim_power
 data remove storage rhythm_axe:prop hitsound
 data remove storage rhythm_axe:prop hit_particles
 data remove storage rhythm_axe:prop following_point
-data remove storage rhythm_axe:prop custom_tag
 data remove storage rhythm_axe:prop new_id
 data remove storage rhythm_axe:prop list_name
 data remove storage rhythm_axe:prop new_time

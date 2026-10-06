@@ -1,5 +1,9 @@
 # 暂停：停音乐、tick rate 回 20、播放头冻结（bossbar 保持显示，仅停止推进）
 data modify storage rhythm_axe:maps.editor playing set value 0b
+# ★ 2026-10-07：回填 Axiom 用「应在的位置」（editor_should_*）
+#   place 只在播放中运行，而 place_inter_apply 在播放中跳过了这个写入 ⇒ 暂停时必须补一次，
+#   否则 shift+左击读不到偏移（报「音符未定位」）。值取展示实体缓存，见 visual/should_fill。
+execute as @e[type=item_display,tag=editor_note] run function rhythm_axe:editor/visual/should_fill
 # ★ 试玩结束：视线/交互距离恢复原版 3.0（试玩期间的 4.5 由 visual/tick 每刻维持，见那里的说明）
 execute as @a[tag=editor_active] run attribute @s entity_interaction_range base set 3.0
 pausemusic @a[tag=editor_active]

@@ -11,7 +11,9 @@
 execute store result entity @s Pos[0] double 0.001 run scoreboard players get #ix editor
 execute store result entity @s Pos[1] double 0.001 run scoreboard players get #iy editor
 execute store result entity @s Pos[2] double 0.001 run scoreboard players get #iz editor
-execute unless score #pl editor matches 1 run function rhythm_axe:editor/visual/place_inter_should
-# 快照"应该在的位置"到交互实体（Axiom 偏移检测用；每次 place 覆写）
-#   ★ 2026-10-03：拆入 place_inter_should，并**仅在编辑期（非播放）执行**（播放中 4 次实体写纯浪费）
+# 快照"应该在的位置"到交互实体（Axiom 偏移检测用）
+#   ★ 2026-10-03 性能：播放中跳过（4 次实体写/音符/刻纯浪费）。
+#   ★ 2026-10-07 修：place 本身只在播放中运行（visual/tick = 播放中每刻）⇒ 上面的守卫
+#     等于“永不写”，Axiom 偏移检测全坏了。改为在 playback/pause 里用 visual/should_fill 回填一次
+#     （值取展示实体 editor_n_vx/vy/vz 缓存，播放中每刻更新，暂停后音符冻结 ⇒ 快照有效）。
 execute unless score #pl editor matches 1 run function rhythm_axe:editor/visual/place_inter_should

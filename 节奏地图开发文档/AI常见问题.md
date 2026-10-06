@@ -101,6 +101,37 @@
   - ★ 2026-09-29 起，`load` 开头先算 `#keep_run`（`is_running == 1` 且有 `runtime.notes`）⇒ **正有一局在跑时跳过上面所有「清游玩状态」的动作**（连 `play/feedback/init` 的反馈表重建也跳），`/reload` 因此不再打断游玩；配套 `play/main_loop` 顶部加了「本刻已跑过 → `return fail`」的同刻去重（防止载入兜底补挂的第二条链把 `time` 每刻 +2）。
   - ⚠️ **没有局在跑时，反馈表仍会被 `play/feedback/init` 整表重建**：游戏内（面板 12/13）改的全局击打音效/视效**不持久**，`/reload` 会冲回默认——内容以 `play/feedback/init.mcfunction` 为准。
 
+# 临时分数（共享 `#temp`）方面
+
+- **★ 本刻用完的判断值，别存在共享的 `#temp` 里**（2026-10-07 真实事故）：`#temp` 是全数据包通用临时分数，
+  **被调函数会覆写它** ⇒ 「先存判断值 → 调函数 → 再读判断值」的写法必然出错。
+  - 事故：`menu/playback_toggle` 先 `store result score #temp … playing`（=1，准备走暂停），
+    暂停分支里 `return_mark → editor/visual/refresh` 第 73 行又 `store result score #temp … playing`（暂停后 = 0）
+    ⇒ 回到 `playback_toggle` 的 `unless #temp matches 1 → play` 被误判 ⇒ **按暂停后立刻又自己播放**（「暂停不了播放」）。
+  - 规矩：**判断值用专用分数**（`#temp_playing` / `#temp_cursor` / `#temp_playhead` 这类），
+    或在**调用任何函数之前**把所有分支判断做完（如 `cycle_speed` 那样：`data get` 紧接 `if … run play`，中间不跨函数）。
+  - 自查手法：`grep "#temp editor"` 看这个分数被多少文件写；只要某条判断链中间有 `function …`，就必须换名字。
+  - 现场定位手法（无需改代码）：A/B 对照——直接调 `playback/pause` 能停住，调外层 `playback_toggle` 停不住 ⇒ 问题在外层「调用后重读判断值」的写法。
+
+# 性能优化的守卫时机方面
+
+- **★ 加「只在某状态下才做」的守卫前，先确认那段代码本来就在哪种状态下运行**（2026-10-07 真实事故）：
+  `visual/place_inter_apply` 里把「Axiom 用的 `editor_should_*`」写入加了 `unless #pl matches 1`（非播放才写），
+  理由是「播放中 4 次实体写纯浪费」——但 `place` 这条链**本身只在播放中运行**（`visual/tick` = 播放中每刻）
+  ⇒ 两条合起来 = **永不写** ⇒ 暂停后 shift+左击报「无法读取偏移（音符未定位/缺少应该在的位置）」。
+  - 规矩：写守卫前先查调用链的时机（谁调用、外层有没有 `if playing` / `if active` 之类的门）。
+  - 修法（已采用）：保持播放中不写，改在 `playback/pause` 里用 `visual/should_fill` 从展示实体缓存
+    `editor_n_vx/vy/vz`（播放中每刻更新的「应在位置」）**回填一次**；只调 `place_inter_should`，
+    **绝不能用 `place_inter_apply`**（那会连 `Pos` 一起覆写，把用户用 Axiom 拖出来的偏移抹掉）。
+  - 验证法：`execute as @e[type=interaction,tag=editor_note] if data entity @s data.editor_should_x`
+    计数 / 总数，播放中应为 0、**暂停后应 = 总数**。
+- **★ 展示实体的 `editor_n_vx/vy/vz` 缓存，Y 是「视觉中心」不是交互实体的 Y**（2026-10-07 紧跟着踩到）：
+  `place.mcfunction` 末尾先写 `editor_n_vy = #iy`，紧接着又 `+= editor_n_size/2` ⇒ 缓存的是**展示中心**（引导线等要中心）；
+  而 `editor_should_y` 要的是**交互实体（底部中心）**的 Y。
+  ⇒ 从缓存回填时必须 `#iy = editor_n_vy − editor_n_size/2`，否则 should_y 大 size/2、偏移 Y 小 size/2，
+  **应用后音符整体低 size/2**（X/Z 不用改：缓存的 x/z 与交互实体一致）。
+  · 自查：暂停后（未手动拖动时）`data.editor_should_y×1000` 应 **= `Pos[1]×1000`**；不等就差一个 size/2 量级。
+
 # 判定区域（选择器体积参数）方面
 
 - **`@e[x=,y=,z=,dx=,dy=,dz=]` 里 `d=N` 覆盖的是 N+1 格，不是 N 格**（2026-09-16 用零尺寸 marker 逐点实测）：

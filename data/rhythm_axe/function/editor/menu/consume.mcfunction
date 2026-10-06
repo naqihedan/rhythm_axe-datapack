@@ -92,5 +92,6 @@ execute if score #panel_id editor matches 16 run return run function rhythm_axe:
 execute if score #panel_id editor matches 17 run return run function rhythm_axe:editor/menu/panel/panel17
 execute if score #panel_id editor matches 18 run return run function rhythm_axe:editor/menu/panel/panel18
 execute if score #panel_id editor matches 20 run return run function rhythm_axe:editor/menu/panel/panel20
+execute if score #panel_id editor matches 23 run return run function rhythm_axe:editor/menu/panel/panel23
 # 兜底（面板号异常未命中时；正常到不了）
 function rhythm_axe:editor/menu/wrong_panel

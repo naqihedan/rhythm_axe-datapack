@@ -11,7 +11,7 @@ execute unless score #click_value editor matches 12001..14019 unless score #clic
 execute if score #click_value editor matches 12001..12002 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12101..12105 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12201..12202 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
-execute if score #click_value editor matches 12301..12302 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
+execute if score #click_value editor matches 12301..12316 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12401..12404 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12501..12502 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
 execute if score #click_value editor matches 12601..12604 run function rhythm_axe:editor/menu/note/panel/note_panel_adjust
@@ -136,12 +136,6 @@ execute if score #click_value editor matches 14013 if data storage rhythm_axe:ma
 execute if score #click_value editor matches 14013 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.hit_events set from storage rhythm_axe:maps.editor editing.orig.hit_events
 execute if score #click_value editor matches 14013 run data remove storage rhythm_axe:maps.editor editing.changed.hit_events
 execute if score #click_value editor matches 14013 run function rhythm_axe:editor/menu/note/panel/note_panel
-# 907 标签
-execute if score #click_value editor matches 14014 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.custom_tag
-execute if score #click_value editor matches 14014 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.custom_tag set value ""
-execute if score #click_value editor matches 14014 unless data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.custom_tag set from storage rhythm_axe:maps.editor editing.orig.custom_tag
-execute if score #click_value editor matches 14014 run data remove storage rhythm_axe:maps.editor editing.changed.custom_tag
-execute if score #click_value editor matches 14014 run function rhythm_axe:editor/menu/note/panel/note_panel
 # 908 颜色
 execute if score #click_value editor matches 14015 if data storage rhythm_axe:maps.editor editing.batch run data remove storage rhythm_axe:maps.editor editing.batch_set.color
 execute if score #click_value editor matches 14015 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.temp.color set value 1b
@@ -230,8 +224,6 @@ execute if score #click_value editor matches 13601..13602 run function rhythm_ax
 # 使用当前/吸附中心
 execute if score #click_value editor matches 13601 run function rhythm_axe:editor/menu/note/pos/note_pos_use_player
 execute if score #click_value editor matches 13602 run function rhythm_axe:editor/menu/note/pos/note_pos_snap_center
-# 标签字段对话框
-execute if score #click_value editor matches 13106 run function rhythm_axe:editor/menu/note/dialog/dialog_open_note_tag
 
 # —— 进入全局音效(12)/全局视效(13)/击打事件(14)子面板（进入时备份）——
 execute if score #click_value editor matches 12806 run data modify storage rhythm_axe:prop sound_backup set from storage rhythm_axe:feedback sounds

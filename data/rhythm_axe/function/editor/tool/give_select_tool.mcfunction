@@ -31,7 +31,7 @@ item replace entity @s container.9 with minecraft:stick[\
             {type:"minecraft:entity_interaction_range",amount:-4.0,operation:"add_value",id:"00000000-0000-0000-0000-000000000a01",slot:"mainhand"},\
             {type:"minecraft:block_interaction_range",amount:-2.5,operation:"add_value",id:"00000000-0000-0000-0000-000000000b02",slot:"mainhand"}\
             ],\
-    item_name={"text":"【选择工具】","color":"green","bold":true,"extra":[{"text":"  蹲下为时间段选择","color":"gray","italic":true}]},\
+    item_name={"text":"                  【选择工具】","color":"green","bold":true,"extra":[{"text":"  蹲下为时间段选择","color":"gray","italic":true}]},\
     custom_data={editor_tool:true,editor_tool_select:true,editor_tool_model:"minecraft:golden_axe",editor_tool_state:0}\
 ] 1
 

@@ -11,7 +11,7 @@ item replace entity @s container.9 with minecraft:stick[\
     item_model="minecraft:name_tag",\
     consumable={animation:none,consume_seconds:0.05f,has_consume_particles:false,sound:"minecraft:intentionally_empty"},\
     enchantment_glint_override=true,\
-    item_name={"text":"【协作·邀请】","color":"green","bold":true,"extra":[{"text":"  右键玩家加入（蹲下为踢出）","color":"gray","italic":true}]},\
+    item_name={"text":"                            【协作·邀请】","color":"green","bold":true,"extra":[{"text":"  右键玩家加入（蹲下为踢出）","color":"gray","italic":true}]},\
     custom_data={editor_tool:true,editor_tool_coop:true,editor_tool_model:"minecraft:name_tag",editor_tool_state:0}\
 ] 1
 tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"协作工具已放入背包第 1 格：","color":"green"},{"text":"右键玩家=邀请，蹲下右键=踢出","color":"aqua"}]

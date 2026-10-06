@@ -41,13 +41,10 @@ execute if score #click_value editor matches 12001..12002 if data storage rhythm
 execute if score #click_value editor matches 12501..12502 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.size set value 1b
 execute if score #click_value editor matches 12501..12502 run data modify storage rhythm_axe:maps.editor editing.changed.size set value 1b
 execute if score #click_value editor matches 12003..12004 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.time set value 1b
-# 颜色 color（770/771，循环 0-16；0=无 1-16=16 色）
-execute if score #click_value editor matches 12301..12302 run execute store result score #temp editor run data get storage rhythm_axe:maps.editor editing.temp.color
-execute if score #click_value editor matches 12301 run scoreboard players remove #temp editor 1
-execute if score #click_value editor matches 12302 run scoreboard players add #temp editor 1
-execute if score #click_value editor matches 12301..12302 if score #temp editor matches ..0 run scoreboard players set #temp editor 16
-execute if score #click_value editor matches 12301..12302 if score #temp editor matches 17.. run scoreboard players set #temp editor 1
-execute if score #click_value editor matches 12301..12302 run execute store result storage rhythm_axe:maps.editor editing.temp.color byte 1 run scoreboard players get #temp editor
+# 颜色 color（★ 2026-10-06：16 个互斥颜色按钮，值 12301..12316 = 12300 + 颜色号 ⇒ 直接取颜色号）
+execute if score #click_value editor matches 12301..12316 run scoreboard players operation #temp editor = #click_value editor
+execute if score #click_value editor matches 12301..12316 run scoreboard players remove #temp editor 12300
+execute if score #click_value editor matches 12301..12316 run execute store result storage rhythm_axe:maps.editor editing.temp.color byte 1 run scoreboard players get #temp editor
 # 密度 density（12401/12402 单步 ±1；12403/12404 双步 ±tpb；下界 1；混凝土用）
 scoreboard players set #time_step editor 1
 execute if score #click_value editor matches 12403..12404 run function rhythm_axe:editor/menu/note/panel/note_time_tpb
@@ -124,7 +121,7 @@ execute if score #click_value editor matches 12201..12202 if data storage rhythm
 execute if score #click_value editor matches 12203..12204 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.duration set value 1b
 execute if score #click_value editor matches 12201..12202 run data modify storage rhythm_axe:maps.editor editing.changed.duration set value 1b
 execute if score #click_value editor matches 12203..12204 run data modify storage rhythm_axe:maps.editor editing.changed.duration set value 1b
-execute if score #click_value editor matches 12301..12302 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.color set value 1b
+execute if score #click_value editor matches 12301..12316 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.color set value 1b
 execute if score #click_value editor matches 12401..12404 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.density set value 1b
 execute if score #click_value editor matches 12401..12404 run data modify storage rhythm_axe:maps.editor editing.changed.density set value 1b
 execute if score #click_value editor matches 12601..12602 if data storage rhythm_axe:maps.editor editing.batch run data modify storage rhythm_axe:maps.editor editing.batch_set.base_life set value 1b

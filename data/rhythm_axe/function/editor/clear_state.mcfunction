@@ -25,6 +25,9 @@ data remove storage rhythm_axe:maps.editor delete_confirm
 data remove storage rhythm_axe:maps.editor input
 data remove storage rhythm_axe:maps.editor panel_temp
 data remove storage rhythm_axe:maps.editor current_panel
+# 面板 23 工具选项栏的面板栈状态（换手打开）
+data remove storage rhythm_axe:maps.editor tool_panel_gid
+data remove storage rhythm_axe:maps.editor tool_panel_prev
 data remove storage rhythm_axe:maps.editor feedback
 data remove storage rhythm_axe:maps.editor history_labels
 data remove storage rhythm_axe:maps.editor op_label

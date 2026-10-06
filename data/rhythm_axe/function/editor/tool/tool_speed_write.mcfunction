@@ -4,7 +4,7 @@ $item replace entity @s $(slot) with minecraft:stick[\
     item_model="minecraft:amethyst_shard",\
     consumable={animation:none,consume_seconds:0.05f,has_consume_particles:false,sound:"minecraft:intentionally_empty"},\
     enchantment_glint_override=true,\
-    item_name={"text":"【$(shown)】","color":"light_purple","extra":[{"text":"  $(hint)","color":"gray","italic":true}]},\
+    item_name={"text":"                      【$(shown)】","color":"light_purple","extra":[{"text":"  $(hint)","color":"gray","italic":true}]},\
     custom_data={editor_tool:true,editor_tool_timeline:true,editor_tool_timeline_speed:true,editor_tool_state:$(state)}\
 ] 1
 

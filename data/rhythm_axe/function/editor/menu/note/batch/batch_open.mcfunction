@@ -25,7 +25,7 @@ execute if score #batch_n editor matches ..0 run tellraw @s [{"text":"[编辑器
 execute if score #batch_n editor matches ..0 run data remove storage rhythm_axe:maps.editor editing.batch
 execute if score #batch_n editor matches ..0 run return fail
 # 同值字段暂存 editing.temp（=将应用到所有音符的值，默认从常见缺省起；batch_set 标记哪些同值字段被改动）
-data modify storage rhythm_axe:maps.editor editing.temp set value {size:1.0f,note_base_life:24,anim_easing:1,anim_power:1,type:0,following_point:0b,ignore_note_speed:0b,custom_tag:"",position:[0.0d,0.0d,0.0d],start_pos:[0.0d,0.0d,24.0d],time:0,hitsound:0,hit_particles:0,duration:8,color:0b,density:8}
+data modify storage rhythm_axe:maps.editor editing.temp set value {size:1.0f,note_base_life:24,anim_easing:1,anim_power:1,type:0,following_point:0b,ignore_note_speed:0b,position:[0.0d,0.0d,0.0d],start_pos:[0.0d,0.0d,24.0d],time:0,hitsound:0,hit_particles:0,duration:8,color:0b,density:8}
 data modify storage rhythm_axe:maps.editor editing.batch_set set value {}
 # 相对增量字段：默认相对，增量置 0（相对模式显示并应用增量；切换绝对则用 editing.temp 同值）
 # ★ 六个字段都要给默认值（含 base_life）——缺哪个，那行的 [~] 就会读到 0 而显示成「绝对」，

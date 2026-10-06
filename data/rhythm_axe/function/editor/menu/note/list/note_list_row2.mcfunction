@@ -4,13 +4,7 @@
 #   重跑剩余代码（产生 idx=29-33 幽灵行）。现在所有递归由普通函数 note_list_row_advance 驱动，
 #   本函数只判定并输出当前音符；跳过与否用 #show_row 标志（不用不可靠的宏 return）。
 scoreboard players set #show_row editor 1
-# 计算列表长度（供驱动器判断越界）
-# ★ 2026-09-14 性能：整表长度只在**遍历起点（下标 0）**读一次。
-#   原来每轮循环都 `data get ... notes`（取长度却把整个列表序列化成反馈文本，上千音符 ≈ 260KB/轮）。
-#   （长度在一次遍历中不会变，读一次即可）
-$scoreboard players set #len_i editor $(index)
-execute if score #len_i editor matches 0 run scoreboard players set #note_total editor 0
-$execute if score #len_i editor matches 0 run execute store result score #note_total editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes
+# ★ 2026-10-06 性能：不再逐趟读数组长度（遍历上界改由 note_list_window 的 #note_hi 给出）
 # 无效音符（缺 id：data remove 遗留的半坏元素）→ 不显示
 $execute unless data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].id run scoreboard players set #show_row editor 0
 # 存活窗口：出生刻 = time - note_base_life×16/note_speed（ignore_note_speed→time-base_life），线性再提前4刻；playhead < 出生刻 → 未出生
@@ -52,6 +46,10 @@ execute if score #temp_playhead editor > #temp editor run scoreboard players set
 $execute if score #show_row editor matches 1 run execute store result score #ncid editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].id
 scoreboard players set #sel_on editor 0
 execute if score #show_row editor matches 1 run execute as @e[type=interaction,tag=editor_note_selected] if score @s note_id = #ncid editor run scoreboard players set #sel_on editor 1
+# ★ 2026-10-06：数组存活序 = 遍历内计数器「只对存活音符 +1」（与选中/分页无关）——
+#   取代旧的 alive_seq[]（需额外一整趟全表遍历写数组），取值时 -1 即 0-based 存活序，数值完全一致。
+#   本行放在「选中置底」过滤**之前**，因此两趟遍历（未选中/选中）得到同一个数组存活序。
+execute if score #show_row editor matches 1 run scoreboard players add #alive_prefix editor 1
 # 排序：选中音符置底（#list_pass 0=只显示未选中；1=只显示选中）
 execute if score #list_pass editor matches 0 if score #sel_on editor matches 1 run scoreboard players set #show_row editor 0
 execute if score #list_pass editor matches 1 if score #sel_on editor matches 0 run scoreboard players set #show_row editor 0
@@ -63,10 +61,12 @@ execute if score #show_row editor matches 1 run scoreboard players operation #te
 execute if score #show_row editor matches 1 if score #temp editor matches ..0 run scoreboard players set #show_row editor 0
 execute if score #show_row editor matches 1 if score #temp editor matches 41.. run scoreboard players set #show_row editor 0
 # 按钮值（页内相对，规范 v2：值 = 100000 + 页内序×100 + 列码；编辑3/复制5/粘贴6/删除7）
-# ★ 2026-09-07 修复：用 alive_seq[$(index)]（数组存活序）而非 #note_alive（显示序），
+# ★ 2026-09-07 修复：用「数组存活序」而非 #note_alive（显示序），
 #   否则"选中置底"后显示序与数组存活序错位，点击按钮会定位到错误音符。
-$execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run execute store result score #temp editor run data get storage rhythm_axe:prop alive_seq[$(index)]
-$execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run scoreboard players operation #temp editor -= #page_start editor
+# ★ 2026-10-06：数组存活序改由计数器 #alive_prefix（1-based）直接得出，不再查 alive_seq 数组
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor = #alive_prefix editor
+execute if score #show_row editor matches 1 run scoreboard players remove #temp editor 1
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor -= #page_start editor
 execute if score #show_row editor matches 1 run scoreboard players set #temp_cursor editor 100
 execute if score #show_row editor matches 1 run scoreboard players operation #temp editor *= #temp_cursor editor
 execute if score #show_row editor matches 1 run scoreboard players add #temp editor 100003
@@ -78,8 +78,9 @@ execute if score #show_row editor matches 1 run execute store result storage rhy
 execute if score #show_row editor matches 1 run scoreboard players add #temp editor 1
 execute if score #show_row editor matches 1 run execute store result storage rhythm_axe:prop delete_val int 1 run scoreboard players get #temp editor
 # 复选框 toggle 点击值（列码 0 => 100000 + 页内序×100）
-$execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run execute store result score #temp editor run data get storage rhythm_axe:prop alive_seq[$(index)]
-$execute if score #show_row editor matches 1 if data storage rhythm_axe:prop alive_seq[$(index)] run scoreboard players operation #temp editor -= #page_start editor
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor = #alive_prefix editor
+execute if score #show_row editor matches 1 run scoreboard players remove #temp editor 1
+execute if score #show_row editor matches 1 run scoreboard players operation #temp editor -= #page_start editor
 execute if score #show_row editor matches 1 run scoreboard players set #temp_cursor editor 100
 execute if score #show_row editor matches 1 run scoreboard players operation #temp editor *= #temp_cursor editor
 execute if score #show_row editor matches 1 run scoreboard players add #temp editor 100000

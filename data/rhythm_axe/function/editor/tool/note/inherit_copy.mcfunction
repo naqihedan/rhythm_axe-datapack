@@ -1,7 +1,7 @@
 #arg:cursor,inherit_idx
 # 继承复制宏叶子（只复制一次属性；绝不递归 / 不 return）
-# 复制同类最近音符属性：除 time/id/hit_events/position/custom_tag 外全部
-# （position 由工具放置位置覆盖；custom_tag 不继承——放置始终用默认空）
+# 复制同类最近音符属性：除 time/id/hit_events/position 外全部
+# （position 由工具放置位置覆盖）
 # 起始位置存于 start_pos 列表（create 期待标量 start_x/y/z）
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(inherit_idx)].start_pos run data modify storage rhythm_axe:prop start_x set from storage rhythm_axe:maps.editor history[$(cursor)].notes[$(inherit_idx)].start_pos[0]
 $execute if data storage rhythm_axe:maps.editor history[$(cursor)].notes[$(inherit_idx)].start_pos run data modify storage rhythm_axe:prop start_y set from storage rhythm_axe:maps.editor history[$(cursor)].notes[$(inherit_idx)].start_pos[1]

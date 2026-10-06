@@ -1,3 +1,7 @@
-#arg:xcomp,cname
-# 颜色行：行首 [x]（红=已修改/灰=未修改）+ 标签 + [-] + 颜色名 + [+]
-$tellraw @s [{"text":""},$(xcomp),{"text":"      ","color":"white"},{"text":"颜色：","color":"white"},{"text":"[-] ","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12301"},"hover_event":{"action":"show_text","value":"上一个颜色（0 无 / 1-16 色）"}},$(cname),{"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12302"},"hover_event":{"action":"show_text","value":"下一个颜色"}}]
+#arg:xcomp,col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,col12,col13,col14,col15,col16
+# 颜色行（面板 11）：行首 [x] 重置(14015) + **16 个互斥颜色按钮**，每个按钮的**字色 = 它代表的颜色**
+#   ★ 2026-10-07：**所有音符类型都渲染本行**（颜色也决定 0/1/2 生成的引导线颜色，见 note_color_block）；
+#   ★ 2026-10-06 用户定：**未选中 = [红]（方括号）+ 降饱和（S×0.3），选中 = 【红】（书名号）+ 原色 + 加粗**；
+#     不再用「[-] 值 [+]」循环切换；降饱和版由 note_panel 用 hex 直接写好（白/灰/淡灰/黑 无彩 ⇒ 几乎不变）
+#   值 = 12300 + 颜色号（列码 1..16）：12301 白 … 12316 粉
+$tellraw @s [{"text":""},$(xcomp),$(col1),$(col2),$(col3),$(col4),$(col5),$(col6),$(col7),$(col8),$(col9),$(col10),$(col11),$(col12),$(col13),$(col14),$(col15),$(col16)]

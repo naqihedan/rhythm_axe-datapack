@@ -21,5 +21,7 @@ $execute if items entity @s $(slot) *[custom_data~{editor_tool_timeline_speed:tr
 $execute if items entity @s $(slot) *[custom_data~{editor_tool_select:true}] run function rhythm_axe:editor/tool/tool_select_update {slot:"$(slot)"}
 # 7) 协作工具（【协作·邀请】命名牌 ↔【协作·踢出】屏障）
 $execute if items entity @s $(slot) *[custom_data~{editor_tool_coop:true}] run function rhythm_axe:editor/tool/tool_coop_update {slot:"$(slot)"}
+# 8) 播放/暂停工具（两态同名【播放/暂停】，只换提示：站立=蹲下以添加记录点 / 蹲下=再次蹲下删除记录点）
+$execute if items entity @s $(slot) *[custom_data~{editor_tool_timeline_playpause:true}] run function rhythm_axe:editor/tool/tool_pp_update {slot:"$(slot)"}
 # 6) 配对音符工具（音符盒 ↔ 木板、染色玻璃 ↔ 混凝土）
 $execute if items entity @s $(slot) *[custom_data~{editor_tool_note_pair:true}] run function rhythm_axe:editor/tool/tool_note_update {slot:"$(slot)"}

@@ -18,9 +18,10 @@ scoreboard players operation #page_start editor = #note_page editor
 scoreboard players set #temp_playhead editor 40
 scoreboard players operation #page_start editor *= #temp_playhead editor
 # 渲染当前页（两次遍历：先未选中，再选中置底）
-# ★ 2026-09-07 修复：先预计算"数组存活序"（alive_seq[index]），供 row2 用数组存活序做按钮值，
-#   修复"选中置底后显示序≠数组存活序、点按钮定位错音符"的 bug。
-function rhythm_axe:editor/menu/note/list/note_list_alive_seq
+# ★ 2026-10-06 性能：先算「可能存活的下标窗口」[#note_lo, #note_hi)，只遍历窗口；
+#   按钮值用的「数组存活序」改由 row2 遍历内计数器 #alive_prefix 得出（不再需要 alive_seq 全表预计算，
+#   数值与旧实现完全一致）。原实现对全谱跑 3 趟 O(N) 宏遍历 —— 1243 音符实测单次 ≈450ms。
+function rhythm_axe:editor/menu/note/list/note_list_window
 function rhythm_axe:editor/menu/note/list/note_list_render
 # 总页数 = ceil(存活数/40)
 scoreboard players operation #note_pages editor = #note_alive editor
