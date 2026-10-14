@@ -8,6 +8,10 @@
 # 先设瞬切，防止之前残留的 interpolation_duration 导致 NBT 修改被插值
 data merge entity @s {interpolation_duration:0}
 
+# ⚠️ 先无条件重建 translation 键（2026-10-14）：step 现在只写「有变化」的属性组，
+#   storage 里的 translation 键可能不存在或是上一个实体残留 ⇒ 下面的 store result 会失败/读脏。
+#   重建后紧接着用本实体当前值逐轴覆盖 ⇒ 安全。
+data modify storage display_animation:transform translation set value [0.0,0.0,0.0]
 # 读取当前 translation 到 storage（保留未变化轴的原始值）
 execute store result storage display_animation:transform translation[0] float 0.01 run data get entity @s transformation.translation[0] 100
 execute store result storage display_animation:transform translation[1] float 0.01 run data get entity @s transformation.translation[1] 100

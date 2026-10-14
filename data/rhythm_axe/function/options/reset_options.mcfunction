@@ -8,8 +8,9 @@ scoreboard players set note_speed options 16
 # 判定反馈
 scoreboard players set feedback_actionbar options 1
 scoreboard players set feedback_chat options 1
-# 挥砍动画（击打音符时播放；0=关 1=开）
-scoreboard players set swing_anim options 1
+# 实验性挥砍动画（击打音符时播放自定义 item_model 挥砍动画；0=关 1=开）
+#   ★ 2026-10-14：默认值 1 → 0。自定义动画改称「实验性」，默认关（走原版 /swing 挥手臂），需手动开。
+scoreboard players set swing_anim options 0
 scoreboard players set detailed_judgements options 1
 scoreboard players set note_hitsound options 1
 scoreboard players set note_particle options 1

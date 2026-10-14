@@ -51,3 +51,5 @@ scoreboard players reset @s anim_c_sx
 scoreboard players reset @s anim_c_sy
 scoreboard players reset @s anim_c_sz
 scoreboard players reset @s anim_c_rot
+scoreboard players reset @s anim_c_pos
+scoreboard players reset @s anim_c_scl

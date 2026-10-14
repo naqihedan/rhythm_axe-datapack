@@ -1,6 +1,6 @@
 # 生成一对标题展示实体，并把它们的计时归零（title1904 开关与连发都用本函数；调一次 = 一对新实例）
 # 位置：background (0.0 2.5 0.53) / title (0.0 2.49 0.49)；t1904_new 是瞬时标记，只归零本次新实体
-summon minecraft:text_display 0.0 2.5 0.53 {\
+summon minecraft:text_display 0.0 2.01 0.53 {\
     alignment: "left", background: -1,\
     default_background: 0b, line_width: 200, see_through: 0b, shadow: 0b, \
     text: "#流石神働け", text_opacity: 0b,\
@@ -11,7 +11,7 @@ summon minecraft:text_display 0.0 2.5 0.53 {\
     Tags: ["background","unanimated","t1904","t1904_new"]\
     }
 
-summon minecraft:text_display 0.0 2.49 0.49 {\
+summon minecraft:text_display 0.0 2.00 0.49 {\
     alignment: "left", background: 1073741824,\
     default_background: 0b, line_width: 200, see_through: 0b, shadow: 0b, \
     text: "#流石神働け", text_opacity: 255,\

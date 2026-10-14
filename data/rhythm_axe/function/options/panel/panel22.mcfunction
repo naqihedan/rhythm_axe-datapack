@@ -3,7 +3,7 @@
 #         1 = 模组（行 170~179）★ 2026-09-30 新增
 #         2 = 编辑器（行 132~141；134/135/136/138/139 废弃或挪走）
 #         3 = 高级（行 142~153；152 = 伤害扣血冷却 / 153 = 音乐自动对齐游戏）
-#   行 160 = 页脚（16001 上一页 / 16002 下一页 / 16003 收起 / 16004 恢复默认→待确认 / 16005 确认恢复 /
+#   行 160 = 页脚（16001 上一页 / 16002 下一页 / 16003 回到主菜单 / 16004 恢复默认→待确认 / 16005 确认恢复 /
 #             16006 取消 / 16007 关闭所有模组（仅模组页渲染））。
 #   每项列码：1 = −（布尔项＝切换） / 2 = ＋
 # 入口：options/main（设 rhythm_axe:options.open = 1b、panel = 22）。
@@ -17,8 +17,8 @@ execute if score #menu_value menu matches 16001 run scoreboard players remove @s
 execute if score #menu_value menu matches 16001 if score @s options_page matches ..-1 run scoreboard players set @s options_page 3
 execute if score #menu_value menu matches 16002 run scoreboard players add @s options_page 1
 execute if score #menu_value menu matches 16002 if score @s options_page matches 4.. run scoreboard players set @s options_page 0
-# 收起：提前返回（不重绘）
-execute if score #menu_value menu matches 16003 run return run function rhythm_axe:options/close
+# 【回到主菜单】：清设置面板状态后真正打开大厅谱面总表（2026-10-14 由原【收起】改名并改语义）
+execute if score #menu_value menu matches 16003 run return run function rhythm_axe:options/back_to_main
 # 恢复默认：**两步确认**（学编辑器「删除谱面」）—— 16004 只进入待确认状态，
 #   确认态下页脚换成【确认恢复】16005 / 【取消】16006；确认后才真正重置
 execute if score #menu_value menu matches 16004 run return run function rhythm_axe:options/reset_confirm
@@ -35,7 +35,7 @@ execute if score #menu_value menu matches 12202 run function rhythm_axe:options/
 execute if score #menu_value menu matches 12301 run function rhythm_axe:options/toggle {key:"feedback_actionbar",obj:"options"}
 # 124 音符聊天反馈
 execute if score #menu_value menu matches 12401 run function rhythm_axe:options/toggle {key:"feedback_chat",obj:"options"}
-# 125 击打挥砍动画
+# 125 实验性挥砍动画
 execute if score #menu_value menu matches 12501 run function rhythm_axe:options/toggle {key:"swing_anim",obj:"options"}
 # 126 歌曲进度条
 execute if score #menu_value menu matches 12601 run function rhythm_axe:options/toggle {key:"song_progress_display",obj:"options"}

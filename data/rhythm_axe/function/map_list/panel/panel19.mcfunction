@@ -1,14 +1,14 @@
 # 面板 19：谱面总表（大厅）+ 排行榜页。规范 v2：
 #   动态行值 = (1000+页内序)×100 + 列码（页内序 0..9；列码 0 = 行首 ▶️/⏸️ 选中+预览）⇒ 100000..100900
-#   固定：11701 = 上一页 / 11702 = 下一页 / 11703 = 打开设置面板 / 11704 = 从排行榜回总表
-#         11705 = 排行榜的【编辑成绩】开关
+#   固定：11701 = 上一页 / 11702 = 下一页 / 11703 = 打开设置面板（历史值，与 11905 同功能）
+#         11704 = 从排行榜回总表 / 11705 = 排行榜的【编辑成绩】开关
 #         11801..11810 = 排行榜名次行的 [x] 删除（值 = 11800 + 名次）
 #         11901/11902/11903 = 【🎮 游玩】【✏️ 编辑】【🏆 排行榜】（对「选中的谱面」生效）
-#         11904 = 【＋新建谱面】（弹输入框；**不**依赖选中）
+#         11904 = 【＋新建谱面】/ 11905 = 【⚙️设置】（都不依赖选中；均 2026-10-01/10-14 新增）
 # 入口：map_list/maps/list_open 设 map_list.panel = 19（打开 / 翻页 / 重绘都会重设）。
 # 入口白名单守卫（两行：先提示再 return fail）
-execute unless score #menu_value menu matches 11701 unless score #menu_value menu matches 11702 unless score #menu_value menu matches 11703 unless score #menu_value menu matches 11704 unless score #menu_value menu matches 11705 unless score #menu_value menu matches 11801..11810 unless score #menu_value menu matches 11901..11904 unless score #menu_value menu matches 100000..100909 run function rhythm_axe:map_list/wrong_panel
-execute unless score #menu_value menu matches 11701 unless score #menu_value menu matches 11702 unless score #menu_value menu matches 11703 unless score #menu_value menu matches 11704 unless score #menu_value menu matches 11705 unless score #menu_value menu matches 11801..11810 unless score #menu_value menu matches 11901..11904 unless score #menu_value menu matches 100000..100909 run return fail
+execute unless score #menu_value menu matches 11701 unless score #menu_value menu matches 11702 unless score #menu_value menu matches 11703 unless score #menu_value menu matches 11704 unless score #menu_value menu matches 11705 unless score #menu_value menu matches 11801..11810 unless score #menu_value menu matches 11901..11905 unless score #menu_value menu matches 100000..100909 run function rhythm_axe:map_list/wrong_panel
+execute unless score #menu_value menu matches 11701 unless score #menu_value menu matches 11702 unless score #menu_value menu matches 11703 unless score #menu_value menu matches 11704 unless score #menu_value menu matches 11705 unless score #menu_value menu matches 11801..11810 unless score #menu_value menu matches 11901..11905 unless score #menu_value menu matches 100000..100909 run return fail
 
 # —— 排行榜的【编辑成绩】/【完成编辑】（切换全局 map_list.lb_edit，然后重绘排行榜）——
 execute if score #menu_value menu matches 11705 run function rhythm_axe:map_list/lb/toggle_edit
@@ -24,6 +24,9 @@ execute if score #menu_value menu matches 11901..11903 run return 0
 # —— 11904【＋新建谱面】：弹输入框（不需要先选中谱面）——
 execute if score #menu_value menu matches 11904 run return run function rhythm_axe:map_list/maps/new_ask
 
+# —— 11905【⚙️设置】：打开全局设置面板（与 11703 同一个功能，只是按钮挪到操作行；2026-10-14）——
+execute if score #menu_value menu matches 11905 run return run function rhythm_axe:options/main
+
 # —— 排行榜名次行 [x]：删除该名次的成绩（值 = 11800 + 名次 ⇒ 下标 = 值 - 11801）——
 # 实际是谁由渲染快照 rhythm_axe:lb.rows 决定（不重算排名）
 execute if score #menu_value menu matches 11801..11810 run scoreboard players operation #lb_slot menu = #menu_value menu
@@ -37,9 +40,9 @@ execute if score #menu_value menu matches 11801..11810 run return 0
 # 固定控件
 execute if score #menu_value menu matches 11701 run function rhythm_axe:map_list/maps/page_prev
 execute if score #menu_value menu matches 11702 run function rhythm_axe:map_list/maps/page_next
-# 11703：【设置】—— 直接打开设置面板（options/main 自己会设 map_list.panel = 22，总表随之被替换掉）
+# 11703：【设置】（历史值，与 11905 同功能）—— 打开设置面板（options/main 自己会设 map_list.panel = 22）
 execute if score #menu_value menu matches 11703 run return run function rhythm_axe:options/main
-# 11704：【返回总表】—— 从排行榜页面回到总表（列码 5 的排行榜是聊天栏就地输出，不占页面号）
+# 11704：【返回总表】—— 从排行榜页面回总表（列码 5 的排行榜是聊天栏就地输出，不占页面号）
 execute if score #menu_value menu matches 11704 run function rhythm_axe:map_list/maps/list_open
 
 # —— 动态行（值 = 100000 + 页内序×100 + 列码，页内序 0..9）——

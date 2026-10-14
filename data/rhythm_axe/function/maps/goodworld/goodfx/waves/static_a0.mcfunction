@@ -1,0 +1,15 @@
+# ② 动画起手：立即压到缩放 0（duration 0），随后三段关键帧由 anim 排程
+data merge entity @e[tag=goodfx_static_e0,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.0000f,1.0000f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e1,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.0000f,1.0000f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e2,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.0000f,1.0000f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e3,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.0000f,1.0000f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e4,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.0000f,1.0000f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e5,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.8775f,0.4795f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e6,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.7071f,0.7071f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e7,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.3827f,0.9239f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e8,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[0.0000f,1.0000f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e9,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[-0.3827f,0.9239f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e10,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[-0.7071f,0.7071f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e11,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[-0.9239f,0.3827f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e12,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[-1.0000f,0.0000f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}
+data merge entity @e[tag=goodfx_static_e13,limit=1] {interpolation_duration:0,start_interpolation:0,transformation:{left_rotation:[-0.9239f,-0.3827f,0.0000f,0.0000f],translation:[0.0f,0.0f,0.0f],scale:[0.0f,0.0f,0.0f]}}

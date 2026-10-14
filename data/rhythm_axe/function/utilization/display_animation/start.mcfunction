@@ -181,11 +181,21 @@ scoreboard players operation @s anim_c_sz = @s anim_end_sz
 scoreboard players operation @s anim_c_sz -= @s anim_start_sz
 execute if score @s anim_c_sz matches 1.. run scoreboard players set @s anim_c_sz 1
 execute if score @s anim_c_sz matches ..-1 run scoreboard players set @s anim_c_sz 1
-# 旋转组标志（任一旋转轴有变化 → 1；step 据此决定是否进 euler_to_quat）
+# 旋转组标志（任一旋转轴有变化 → 1；step 据此决定是否进 euler_to_quat、是否写 left_rotation）
 scoreboard players set @s anim_c_rot 0
 execute if score @s anim_c_rx matches 1 run scoreboard players set @s anim_c_rot 1
 execute if score @s anim_c_ry matches 1 run scoreboard players set @s anim_c_rot 1
 execute if score @s anim_c_rz matches 1 run scoreboard players set @s anim_c_rot 1
+# 平移组标志（任一平移轴有变化 → 1；step 据此决定是否把 translation 写进 merge 源，2026-10-14）
+scoreboard players set @s anim_c_pos 0
+execute if score @s anim_c_px matches 1 run scoreboard players set @s anim_c_pos 1
+execute if score @s anim_c_py matches 1 run scoreboard players set @s anim_c_pos 1
+execute if score @s anim_c_pz matches 1 run scoreboard players set @s anim_c_pos 1
+# 缩放组标志（任一缩放轴有变化 → 1；step 据此决定是否把 scale 写进 merge 源）
+scoreboard players set @s anim_c_scl 0
+execute if score @s anim_c_sx matches 1 run scoreboard players set @s anim_c_scl 1
+execute if score @s anim_c_sy matches 1 run scoreboard players set @s anim_c_scl 1
+execute if score @s anim_c_sz matches 1 run scoreboard players set @s anim_c_scl 1
 
 # ===== 7. 预提交位置偏移 (apply_position=1) =====
     # 在动画开始前将实体实际位置移到终点，调整 translation 保持渲染不变

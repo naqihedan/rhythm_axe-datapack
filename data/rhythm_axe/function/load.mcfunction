@@ -307,7 +307,12 @@ scoreboard players reset editor_note_hitevents options
 execute unless score editor_play_events options matches 0..1 run scoreboard players set editor_play_events options 0
 execute unless score note_hitsound options matches 1..6 run scoreboard players set note_hitsound options 1
 execute unless score note_particle options matches 1..6 run scoreboard players set note_particle options 1
-execute unless score swing_anim options matches 0..1 run scoreboard players set swing_anim options 1
+# ★ 2026-10-14：实验性挥砍动画 swing_anim 默认值 1 → 0（自定义 item_model 挥砍动画改称「实验性」，
+#   默认关、需手动开；关 = 退回原版 /swing 挥手臂）。老存档 options_initialized 已置 1 ⇒
+#   options/reset_options 不会再跑，故这里做**一次性迁移**（swing_default_v1 哨兵）：
+#   强制归 0 一次，之后保留玩家手动改的值（否则每次 /reload 都会把玩家刚打开的实验动画打回关）。
+execute unless score swing_default_v1 const matches 1 run scoreboard players set swing_anim options 0
+scoreboard players set swing_default_v1 const 1
 # ★ 2026-09-29：options.song_progress_color（全局进度条颜色）已废弃 → 颜色改用谱面字段 progress_color
 #   （见 play/init_game）；老存档残留的这个计分项在这里清掉，免得以后误以为它还在生效
 scoreboard players reset song_progress_color options

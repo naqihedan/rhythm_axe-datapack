@@ -80,31 +80,36 @@ execute if score #rot_mode display_calc matches 3 run scoreboard players set #ax
 execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 0 run function rhythm_axe:utilization/display_animation/rot_calc
 
 # ===== 5. 在 storage 中组装 transformation 并批量写入实体 =====
-# （替代 10 次 execute store result entity，减少实体 NBT 写入开销）
-# 初始化 translation 数组
-data modify storage display_animation:transform translation set value [0.0,0.0,0.0]
-execute store result storage display_animation:transform translation[0] float 0.01 run scoreboard players get #cur_px display_calc
-execute store result storage display_animation:transform translation[1] float 0.01 run scoreboard players get #cur_py display_calc
-execute store result storage display_animation:transform translation[2] float 0.01 run scoreboard players get #cur_pz display_calc
-# 初始化 left_rotation（★ 分叉，2026-08-09：单轴轴角 / 四元数两种写入）
-# 轴角模式（#rot_mode=1/2/3）：写 {angle, axis} 复合标签 → 游戏底层转单位四元数
-data modify storage display_animation:transform left_rotation set value {angle:0.0f, axis:[0.0f,0.0f,0.0f]}
-execute if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.angle float 0.0001 run scoreboard players get #ax_angle display_calc
-execute if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.axis[0] float 1 run scoreboard players get #ax_x display_calc
-execute if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.axis[1] float 1 run scoreboard players get #ax_y display_calc
-execute if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.axis[2] float 1 run scoreboard players get #ax_z display_calc
-# 四元数模式（#rot_mode=0）：写 [x,y,z,w]（单位四元数 / rot_calc 计算结果）
-execute if score #rot_mode display_calc matches 0 run data modify storage display_animation:transform left_rotation set value [0.0,0.0,0.0,1.0]
-execute if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[0] float 0.0001 run scoreboard players get #qx display_calc
-execute if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[1] float 0.0001 run scoreboard players get #qy display_calc
-execute if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[2] float 0.0001 run scoreboard players get #qz display_calc
-execute if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[3] float 0.0001 run scoreboard players get #qw display_calc
-# 初始化 scale 数组
-data modify storage display_animation:transform scale set value [0.0,0.0,0.0]
-execute store result storage display_animation:transform scale[0] float 0.01 run scoreboard players get #cur_sx display_calc
-execute store result storage display_animation:transform scale[1] float 0.01 run scoreboard players get #cur_sy display_calc
-execute store result storage display_animation:transform scale[2] float 0.01 run scoreboard players get #cur_sz display_calc
-# 单次写入实体（替代 10 次单独的 entity 写入）
+# ★ 只写「有变化」的属性组（2026-10-14）：平移组 anim_c_pos / 旋转组 anim_c_rot / 缩放组 anim_c_scl，
+#   哪个组为 1 才把该组写进 storage；未写的组不出现在 merge 源里 ⇒ data merge 不碰它 ⇒ 实体原值保持不变。
+#   这修掉了旧版「旋转无变化时被强制写成单位四元数 [0,0,0,1]、抹掉固定朝向」的 bug，同时省掉无变化组的写入。
+# ⚠️ display_animation:transform 是跨实体共享的 storage：必须先无条件 remove 三个键，
+#   否则上一个实体写过的值会残留、被本实体的 merge 带进去（串味）。
+data remove storage display_animation:transform translation
+data remove storage display_animation:transform left_rotation
+data remove storage display_animation:transform scale
+# 平移组（anim_c_pos=1 才写；三轴一起写，无变化的轴值=其 start，等价原值）
+execute if score @s anim_c_pos matches 1 run data modify storage display_animation:transform translation set value [0.0,0.0,0.0]
+execute if score @s anim_c_pos matches 1 run execute store result storage display_animation:transform translation[0] float 0.01 run scoreboard players get #cur_px display_calc
+execute if score @s anim_c_pos matches 1 run execute store result storage display_animation:transform translation[1] float 0.01 run scoreboard players get #cur_py display_calc
+execute if score @s anim_c_pos matches 1 run execute store result storage display_animation:transform translation[2] float 0.01 run scoreboard players get #cur_pz display_calc
+# 旋转组（anim_c_rot=1 才写）：轴角 #rot_mode=1/2/3 或 四元数 #rot_mode=0 两种
+execute if score @s anim_c_rot matches 1 run data modify storage display_animation:transform left_rotation set value {angle:0.0f, axis:[0.0f,0.0f,0.0f]}
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.angle float 0.0001 run scoreboard players get #ax_angle display_calc
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.axis[0] float 1 run scoreboard players get #ax_x display_calc
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.axis[1] float 1 run scoreboard players get #ax_y display_calc
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 1..3 run execute store result storage display_animation:transform left_rotation.axis[2] float 1 run scoreboard players get #ax_z display_calc
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 0 run data modify storage display_animation:transform left_rotation set value [0.0,0.0,0.0,1.0]
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[0] float 0.0001 run scoreboard players get #qx display_calc
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[1] float 0.0001 run scoreboard players get #qy display_calc
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[2] float 0.0001 run scoreboard players get #qz display_calc
+execute if score @s anim_c_rot matches 1 if score #rot_mode display_calc matches 0 run execute store result storage display_animation:transform left_rotation[3] float 0.0001 run scoreboard players get #qw display_calc
+# 缩放组（anim_c_scl=1 才写）
+execute if score @s anim_c_scl matches 1 run data modify storage display_animation:transform scale set value [0.0,0.0,0.0]
+execute if score @s anim_c_scl matches 1 run execute store result storage display_animation:transform scale[0] float 0.01 run scoreboard players get #cur_sx display_calc
+execute if score @s anim_c_scl matches 1 run execute store result storage display_animation:transform scale[1] float 0.01 run scoreboard players get #cur_sy display_calc
+execute if score @s anim_c_scl matches 1 run execute store result storage display_animation:transform scale[2] float 0.01 run scoreboard players get #cur_sz display_calc
+# 单次写入实体：storage 里没有的组 = merge 不碰 = 实体原值保留
 data modify entity @s transformation merge from storage display_animation:transform
 # ★ 阶段A（性能轮）：当前局部平移 z 存计分板（move 读它替代 data get entity transformation.translation[2]）
 scoreboard players operation @s note_cur_tz = #cur_pz display_calc

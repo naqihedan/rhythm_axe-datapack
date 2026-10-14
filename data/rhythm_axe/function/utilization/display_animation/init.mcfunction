@@ -67,3 +67,6 @@ scoreboard objectives add anim_c_sy dummy
 scoreboard objectives add anim_c_sz dummy
 # 旋转组变化标志（任一旋转轴有变化 → 1；step 据此跳过 euler_to_quat，直接写单位四元数）
 scoreboard objectives add anim_c_rot dummy
+# 平移组 / 缩放组变化标志（任一对应轴有变化 → 1；step 据此决定是否把该组写进 merge 源，2026-10-14）
+scoreboard objectives add anim_c_pos dummy
+scoreboard objectives add anim_c_scl dummy

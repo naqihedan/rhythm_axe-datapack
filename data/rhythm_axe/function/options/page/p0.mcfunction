@@ -29,8 +29,8 @@ data modify storage rhythm_axe:op_ui obj set value "options"
 data modify storage rhythm_axe:op_ui blo set value 12401
 function rhythm_axe:options/bool_row with storage rhythm_axe:op_ui
 
-# 行 125 击打挥砍动画（布尔）
-data modify storage rhythm_axe:op_ui label set value "击打挥砍动画"
+# 行 125 实验性挥砍动画（布尔；默认关。开 = 播自定义 item_model 挥砍动画，关 = 原版 /swing 挥手臂）
+data modify storage rhythm_axe:op_ui label set value "实验性挥砍动画"
 data modify storage rhythm_axe:op_ui key set value "swing_anim"
 data modify storage rhythm_axe:op_ui obj set value "options"
 data modify storage rhythm_axe:op_ui blo set value 12501

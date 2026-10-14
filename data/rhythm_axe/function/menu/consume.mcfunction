@@ -19,12 +19,12 @@ execute if score #menu_value menu matches 100000..100909 run return run function
 execute if score #menu_value menu matches 11701..11705 run return run function rhythm_axe:map_list/panel/panel19
 # 11801..11810 = 排行榜名次行的 [x] 删除（值 = 11800 + 名次）；也是页面 19
 execute if score #menu_value menu matches 11801..11810 run return run function rhythm_axe:map_list/panel/panel19
-# 11901..11904 = 总表操作行【🎮 游玩】【✏️ 编辑】【🏆 排行榜】【＋新建谱面】
+# 11901..11905 = 总表操作行【🎮 游玩】【✏️ 编辑】【🏆 排行榜】【＋新建谱面】【⚙️设置】
 #   · 11901..11903 对「选中的谱面」生效；
-#   · 11904【＋新建谱面】不依赖选中（新建时本来就没歌可选）
+#   · 11904【＋新建谱面】/ 11905【⚙️设置】不依赖选中
 # ⚠️ 菜单层是按**值段路由**：新增固定值必须同时扩这里 + panel19 守卫 + panel19 分支 + 按钮发射点，
 #    漏了本行会直接落到 wrong_panel（「该按钮不属于当前面板」），而 check_all_panel_coverage.py 查不出来。
-execute if score #menu_value menu matches 11901..11904 run return run function rhythm_axe:map_list/panel/panel19
+execute if score #menu_value menu matches 11901..11905 run return run function rhythm_axe:map_list/panel/panel19
 execute if score #menu_value menu matches 12101..12104 run return run function rhythm_axe:room/panel/panel21
 execute if score #menu_value menu matches 12201..15302 run return run function rhythm_axe:options/panel/panel22
 execute if score #menu_value menu matches 16001..16007 run return run function rhythm_axe:options/panel/panel22

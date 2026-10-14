@@ -1,0 +1,1 @@
+kill @e[tag=full_charged_2276]
