@@ -17,7 +17,7 @@ scoreboard players operation #n_birth editor = #n_time editor
 execute if score #ig_on editor matches 1 run scoreboard players operation #n_birth editor -= #n_lt editor
 scoreboard players operation #tmp_vis editor = #n_lt editor
 scoreboard players operation #tmp_vis editor *= 16 const
-scoreboard players operation #tmp_vis editor /= note_speed options
+scoreboard players operation #tmp_vis editor /= editor_note_speed options
 execute if score #ig_on editor matches 0 run scoreboard players operation #n_birth editor -= #tmp_vis editor
 # 结束虚拟时刻（判定发光那一刻的下一刻出窗）：普通 = time；玻璃 = time+dur×16/流速+1（静默，随流速缩放）；混凝土 = time+dur（但音符只活跃到 time+dur-1，长度=dur）
 scoreboard players operation #n_end editor = #n_time editor
@@ -26,7 +26,7 @@ execute if score #n_type editor matches 3 run scoreboard players remove #n_end e
 # 玻璃穿过后段时长随流速缩放（ignore 除外；与游玩 note_glass_dur 一致）
 scoreboard players operation #glass_end editor = #n_dur editor
 execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor *= 16 const
-execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor /= note_speed options
+execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor /= editor_note_speed options
 execute if score #n_type editor matches 4 run scoreboard players operation #n_end editor += #glass_end editor
 execute if score #n_type editor matches 4 run scoreboard players add #n_end editor 1
 # ★ 真实判定模式：普通音符（0..2）窗口延长到 miss 时刻（time+2x+1）——判定期间音符要留在世界里

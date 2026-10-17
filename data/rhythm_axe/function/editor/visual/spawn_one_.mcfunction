@@ -29,7 +29,7 @@ scoreboard players operation #n_birth editor = #n_time editor
 execute if score #ig_on editor matches 1 run scoreboard players operation #n_birth editor -= #n_lt editor
 scoreboard players operation #tmp_vis editor = #n_lt editor
 scoreboard players operation #tmp_vis editor *= 16 const
-scoreboard players operation #tmp_vis editor /= note_speed options
+scoreboard players operation #tmp_vis editor /= editor_note_speed options
 execute if score #ig_on editor matches 0 run scoreboard players operation #n_birth editor -= #tmp_vis editor
 # ★ 2026-09-21：统计最大前导 #n_lead = time − birth（refresh 遍历时取 max → 落盘 editor.runtime vis_lead_max）
 #   用途：播放中补扫（visual/scan_due）的扫描窗口上界 —— birth 不单调正是「音符后半程才出现」的根因
@@ -55,7 +55,7 @@ execute if score #n_type editor matches 3 run scoreboard players remove #n_end e
 # 玻璃穿过后段时长随流速缩放（ignore 除外；与游玩 note_glass_dur 一致）
 scoreboard players operation #glass_end editor = #n_dur editor
 execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor *= 16 const
-execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor /= note_speed options
+execute if score #n_type editor matches 4 if score #ig_on editor matches 0 run scoreboard players operation #glass_end editor /= editor_note_speed options
 execute if score #n_type editor matches 4 run scoreboard players operation #n_end editor += #glass_end editor
 execute if score #n_type editor matches 4 run scoreboard players add #n_end editor 1
 # ★ 真实判定模式：普通音符（0..2）窗口延长到 miss 时刻（time+2x+1）——判定期间音符要留在世界里

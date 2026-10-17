@@ -1,15 +1,8 @@
-#arg:value,spawn,tick,bad,good_early,perfect_early,perfect,perfect_late,good_late,miss,damage
-# 对话框提交（第一步）：把目标索引与输入值写入 prop，再调第二步写回
-data modify storage rhythm_axe:prop he_cur set from storage rhythm_axe:maps.editor editing.he_cur
-$data modify storage rhythm_axe:prop he_cmd set value '$(value)'
-$data modify storage rhythm_axe:prop he_spawn set value $(spawn)
-$data modify storage rhythm_axe:prop he_tick set value $(tick)
-$data modify storage rhythm_axe:prop he_bad set value $(bad)
-$data modify storage rhythm_axe:prop he_good_early set value $(good_early)
-$data modify storage rhythm_axe:prop he_perfect_early set value $(perfect_early)
-$data modify storage rhythm_axe:prop he_perfect set value $(perfect)
-$data modify storage rhythm_axe:prop he_perfect_late set value $(perfect_late)
-$data modify storage rhythm_axe:prop he_good_late set value $(good_late)
-$data modify storage rhythm_axe:prop he_miss set value $(miss)
-$data modify storage rhythm_axe:prop he_damage set value $(damage)
-function rhythm_axe:editor/menu/note/dialog/dialog_submit_note_he_cmd_ with storage rhythm_axe:prop
+#arg: value,spawn,tick,bad,good_early,perfect_early,perfect,perfect_late,good_late,miss,damage
+# ★ 外层「安全转发」（2026-10-17 拆层，与数值类同款）：json 提交的软输入可能是
+#   空 / 非法 SNBT（如 `12a`）/ 含未转义引号 —— 内层若因此**实例化失败**，整个内层不执行、
+#   点【确认】毫无反应。⚠ 实测：**被调函数实例化失败不会中断调用者** ⇒ 用哨兵 #dlg_ok=9 兜底：
+#   内层开头置 0；外层调用后仍为 9 ⇒ 内层没跑 ⇒ 补一句提示。故【确认】总有反馈（含未转义引号时除外）。
+scoreboard players set #dlg_ok editor 9
+$function rhythm_axe:editor/menu/note/dialog/dialog_submit_note_he_cmd {"value":"$(value)","spawn":$(spawn),"tick":$(tick),"bad":$(bad),"good_early":$(good_early),"perfect_early":$(perfect_early),"perfect":$(perfect),"perfect_late":$(perfect_late),"good_late":$(good_late),"miss":$(miss),"damage":$(damage)}
+execute if score #dlg_ok editor matches 9 run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"输入无效或含不支持的字符，请检查后重试","color":"red"}]

@@ -4,8 +4,8 @@ $execute store result score #d_notes editor run data get storage rhythm_axe:maps
 execute if score debug_output options matches 1.. run tellraw @a[tag=editor_active] ["",{"text":"[调试.lv1][diag]","color":"gray"},{"text":" 音符数: ","color":"gold"},{"score":{"name":"#d_notes","objective":"editor"}}]
 execute store result score #d_ph editor run scoreboard players get #playhead editor
 execute if score debug_output options matches 1.. run tellraw @a[tag=editor_active] ["",{"text":"[调试.lv1][diag]","color":"gray"},{"text":" playhead: ","color":"gold"},{"score":{"name":"#d_ph","objective":"editor"}}]
-execute store result score #d_ns editor run scoreboard players get note_speed options
-execute if score debug_output options matches 1.. run tellraw @a[tag=editor_active] ["",{"text":"[调试.lv1][diag]","color":"gray"},{"text":" note_speed: ","color":"gold"},{"score":{"name":"#d_ns","objective":"editor"}}]
+execute store result score #d_ns editor run scoreboard players get editor_note_speed options
+execute if score debug_output options matches 1.. run tellraw @a[tag=editor_active] ["",{"text":"[调试.lv1][diag]","color":"gray"},{"text":" editor_note_speed: ","color":"gold"},{"score":{"name":"#d_ns","objective":"editor"}}]
 $execute store result score #d0_time editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[0].time
 $execute store result score #d0_type editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[0].type
 execute if score debug_output options matches 1.. run tellraw @a[tag=editor_active] ["",{"text":"[调试.lv1][diag]","color":"gray"},{"text":" notes[0] time: ","color":"gold"},{"score":{"name":"#d0_time","objective":"editor"}},{"text":"  type: ","color":"gold"},{"score":{"name":"#d0_type","objective":"editor"}}]

@@ -307,6 +307,8 @@ scoreboard players reset editor_note_hitevents options
 execute unless score editor_play_events options matches 0..1 run scoreboard players set editor_play_events options 0
 execute unless score note_hitsound options matches 1..6 run scoreboard players set note_hitsound options 1
 execute unless score note_particle options matches 1..6 run scoreboard players set note_particle options 1
+# ★ 2026-10-17 新增：options.hitsound_on（全局音符击打音效开关）默认开；老存档无此项 → 兜底 1
+execute unless score hitsound_on options matches 0..1 run scoreboard players set hitsound_on options 1
 # ★ 2026-10-14：实验性挥砍动画 swing_anim 默认值 1 → 0（自定义 item_model 挥砍动画改称「实验性」，
 #   默认关、需手动开；关 = 退回原版 /swing 挥手臂）。老存档 options_initialized 已置 1 ⇒
 #   options/reset_options 不会再跑，故这里做**一次性迁移**（swing_default_v1 哨兵）：
@@ -329,6 +331,11 @@ execute if score play_audio_align options matches 1 run scoreboard players set a
 scoreboard players reset editor_audio_align options
 scoreboard players reset play_audio_align options
 execute unless score audio_align options matches 0..1 run scoreboard players set audio_align options 1
+# ★ 2026-10-14 新增设置：options.music_offset（全局音乐偏移，毫秒，正=音乐延后、负=音乐提前）默认 0。
+#   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故在此兜底（仅未定义/越界时写 0）
+execute unless score music_offset options matches -500..500 run scoreboard players set music_offset options 0
+# ★ 2026-10-17：编辑器流速从 note_speed 拆出（options.editor_note_speed）。老存档无此项 ⇒ 兜底 16（=原默认值）
+execute unless score editor_note_speed options matches 1.. run scoreboard players set editor_note_speed options 16
 # ★ 2026-09-26 设置：options.judge_lag_comp（多人判定延迟补偿）—— ⏸ **该功能已搁置**，见 todo.md
 #   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故必须在此兜底
 #   （0 = 关闭：判定箱不回退，回到补偿前的行为，单人/排查用）

@@ -22,7 +22,7 @@ $execute store result score #temp_ig editor run data get storage rhythm_axe:maps
 $execute store result score #temp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time
 execute if score #temp_ig editor matches 1 run scoreboard players operation #temp editor -= #temp_cursor editor
 execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor *= 16 const
-execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor /= note_speed options
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor /= editor_note_speed options
 execute if score #temp_ig editor matches 0 run scoreboard players operation #temp editor -= #temp_cursor editor
 # 出生刻判定（与 spawn_one_ 一致，无线性提前）：playhead < 出生刻 → 未出生
 execute if score #temp_playhead editor < #temp editor run scoreboard players set #is_alive editor 0
@@ -38,7 +38,7 @@ execute if score #temp_type editor matches 3 run scoreboard players remove #temp
 # 玻璃（4）穿过后段时长随流速缩放（ignore_note_speed=1 不缩放；同 spawn_one_）
 execute if score #temp_type editor matches 4 run scoreboard players operation #temp_glass editor = #temp_cursor editor
 execute if score #temp_type editor matches 4 if score #temp_ig editor matches 0 run scoreboard players operation #temp_glass editor *= 16 const
-execute if score #temp_type editor matches 4 if score #temp_ig editor matches 0 run scoreboard players operation #temp_glass editor /= note_speed options
+execute if score #temp_type editor matches 4 if score #temp_ig editor matches 0 run scoreboard players operation #temp_glass editor /= editor_note_speed options
 execute if score #temp_type editor matches 4 run scoreboard players operation #temp editor += #temp_glass editor
 execute if score #temp_type editor matches 4 run scoreboard players add #temp editor 1
 execute if score #temp_playhead editor > #temp editor run scoreboard players set #is_alive editor 0

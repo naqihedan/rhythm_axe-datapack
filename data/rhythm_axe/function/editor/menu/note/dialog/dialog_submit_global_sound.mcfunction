@@ -1,14 +1,8 @@
-#arg:spawn,tick,bad,good_early,perfect_early,perfect,perfect_late,good_late,miss,damage
-# 写入 feedback.sounds[组]（组号读 prop.sound_group，7 分支 merge）
-execute store result score #group editor run data get storage rhythm_axe:prop sound_group
-$execute if score #group editor matches 0 run data modify storage rhythm_axe:feedback sounds[0] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
-$execute if score #group editor matches 1 run data modify storage rhythm_axe:feedback sounds[1] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
-$execute if score #group editor matches 2 run data modify storage rhythm_axe:feedback sounds[2] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
-$execute if score #group editor matches 3 run data modify storage rhythm_axe:feedback sounds[3] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
-$execute if score #group editor matches 4 run data modify storage rhythm_axe:feedback sounds[4] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
-$execute if score #group editor matches 5 run data modify storage rhythm_axe:feedback sounds[5] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
-$execute if score #group editor matches 6 run data modify storage rhythm_axe:feedback sounds[6] merge value {spawn:"$(spawn)",tick:"$(tick)",bad:"$(bad)",good_early:"$(good_early)",perfect_early:"$(perfect_early)",perfect:"$(perfect)",perfect_late:"$(perfect_late)",good_late:"$(good_late)",miss:"$(miss)",damage:"$(damage)"}
-data remove storage rhythm_axe:prop sound_group
-data modify storage rhythm_axe:maps.editor feedback set value "已更新全局击打音效"
-data modify storage rhythm_axe:maps.editor no_undo set value 1b
-function rhythm_axe:editor/menu/note/global/global_sound_panel
+#arg: spawn,tick,bad,good_early,perfect_early,perfect,perfect_late,good_late,miss,damage
+# ★ 外层「安全转发」（2026-10-17 拆层，与数值类同款）：json 提交的软输入可能是
+#   空 / 非法 SNBT（如 `12a`）/ 含未转义引号 —— 内层若因此**实例化失败**，整个内层不执行、
+#   点【确认】毫无反应。⚠ 实测：**被调函数实例化失败不会中断调用者** ⇒ 用哨兵 #dlg_ok=9 兜底：
+#   内层开头置 0；外层调用后仍为 9 ⇒ 内层没跑 ⇒ 补一句提示。故【确认】总有反馈（含未转义引号时除外）。
+scoreboard players set #dlg_ok editor 9
+$function rhythm_axe:editor/menu/note/dialog/dialog_submit_global_sound {"spawn":"$(spawn)","tick":"$(tick)","bad":"$(bad)","good_early":"$(good_early)","perfect_early":"$(perfect_early)","perfect":"$(perfect)","perfect_late":"$(perfect_late)","good_late":"$(good_late)","miss":"$(miss)","damage":"$(damage)"}
+execute if score #dlg_ok editor matches 9 run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"输入无效或含不支持的字符，请检查后重试","color":"red"}]

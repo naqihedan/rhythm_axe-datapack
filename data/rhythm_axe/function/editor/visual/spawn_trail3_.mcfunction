@@ -13,6 +13,6 @@ execute store result score #n_ig_t editor run data get storage rhythm_axe:prop n
 # 玻璃：尾长 = dur×16/流速 + 1（ignore_note_speed 时 = dur + 1）；混凝土：dur − 1（取 dur 更保守）
 scoreboard players operation #n_trail editor = #n_dur_t editor
 execute if score #n_type editor matches 4 if score #n_ig_t editor matches 0 run scoreboard players operation #n_trail editor *= 16 const
-execute if score #n_type editor matches 4 if score #n_ig_t editor matches 0 run scoreboard players operation #n_trail editor /= note_speed options
+execute if score #n_type editor matches 4 if score #n_ig_t editor matches 0 run scoreboard players operation #n_trail editor /= editor_note_speed options
 execute if score #n_type editor matches 4 run scoreboard players add #n_trail editor 1
 execute if score #n_trail editor > #vis_trail_max editor run scoreboard players operation #vis_trail_max editor = #n_trail editor

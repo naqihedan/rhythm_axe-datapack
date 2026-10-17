@@ -5,6 +5,7 @@
 #         3 = 高级（行 142~153；152 = 伤害扣血冷却 / 153 = 音乐自动对齐游戏）
 #   行 160 = 页脚（16001 上一页 / 16002 下一页 / 16003 回到主菜单 / 16004 恢复默认→待确认 / 16005 确认恢复 /
 #             16006 取消 / 16007 关闭所有模组（仅模组页渲染））。
+#   ★ 2026-10-17：行 127 增加 12706 = [🎶] 音符击打音效开关（仍在 12201..15302 白名单内，无需改守卫）
 #   每项列码：1 = −（布尔项＝切换） / 2 = ＋
 # 入口：options/main（设 rhythm_axe:options.open = 1b、panel = 22）。
 # 入口白名单守卫（两行：先提示再 return fail）
@@ -39,8 +40,16 @@ execute if score #menu_value menu matches 12401 run function rhythm_axe:options/
 execute if score #menu_value menu matches 12501 run function rhythm_axe:options/toggle {key:"swing_anim",obj:"options"}
 # 126 歌曲进度条
 execute if score #menu_value menu matches 12601 run function rhythm_axe:options/toggle {key:"song_progress_display",obj:"options"}
-# 127 【已废弃 2026-09-29】进度条颜色：改为谱面级 progress_color（编辑器「谱面设置」面板 11201/11202），
-#   全局不再提供该选项 ⇒ 12701/12702 无分支（留空不重排，守卫范围仍涵盖 127xx 无影响）
+# 127 全局音乐偏移 music_offset（-500..500 ms，正=音乐延后、负=音乐提前；2026-10-14 启用，复用原进度条颜色的空行）
+#   12701=−5 / 12702=−1 / 12703=+1 / 12704=+5 / 12705=【输入数值】对话框
+execute if score #menu_value menu matches 12701 run function rhythm_axe:options/step {key:"music_offset",delta:-5,min:-500,max:500}
+execute if score #menu_value menu matches 12702 run function rhythm_axe:options/step {key:"music_offset",delta:-1,min:-500,max:500}
+execute if score #menu_value menu matches 12703 run function rhythm_axe:options/step {key:"music_offset",delta:1,min:-500,max:500}
+execute if score #menu_value menu matches 12704 run function rhythm_axe:options/step {key:"music_offset",delta:5,min:-500,max:500}
+execute if score #menu_value menu matches 12705 run function rhythm_axe:options/dialog_open_offset
+#   12706 = [🎶] 音符击打音效开关（hitsound_on 翻转；2026-10-17）
+execute if score #menu_value menu matches 12706 run function rhythm_axe:options/toggle {key:"hitsound_on",obj:"options"}
+#   ★ 12705 打开对话框后**不要 return**：落到文件末尾统一重绘（dialog show 与重绘不冲突）
 #
 # 128 结算详细判定
 execute if score #menu_value menu matches 12801 run function rhythm_axe:options/toggle {key:"detailed_judgements",obj:"options"}
@@ -50,7 +59,8 @@ execute if score #menu_value menu matches 12902 run function rhythm_axe:options/
 # 130 全局击打粒子组（1..6）
 execute if score #menu_value menu matches 13001 run function rhythm_axe:options/step {key:"note_particle",delta:-1,min:1,max:6}
 execute if score #menu_value menu matches 13002 run function rhythm_axe:options/step {key:"note_particle",delta:1,min:1,max:6}
-# 131 【已挪走 2026-09-29】伤害扣血冷却 → 页 3 行 152（13101/13102 无分支，留空不重排）
+# 131 音符击打音效开关 hitsound_on（布尔；2026-10-17 启用，复用原伤害扣血冷却的空行）
+execute if score #menu_value menu matches 13101 run function rhythm_axe:options/toggle {key:"hitsound_on",obj:"options"}
 
 # ==================== 页 1 模组（行 170~179）★ 2026-09-30 新增 ====================
 # 170 自动模式（auto）—— 模组开关存在 mods 计分板（不是 options）

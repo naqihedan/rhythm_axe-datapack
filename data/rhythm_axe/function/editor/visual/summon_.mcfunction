@@ -96,7 +96,7 @@ $execute as @e[tag=editor_n_$(nid),type=interaction,limit=1] run function rhythm
 # 玻璃（4）穿过后段时长随流速缩放（×16/note_speed，ignore 除外）→ 与游玩 note_glass_dur 一致
 scoreboard players operation #glass_dur editor = #n_dur editor
 execute if score #note_type play_state matches 4 unless data storage rhythm_axe:prop ignore_speed run scoreboard players operation #glass_dur editor *= 16 const
-execute if score #note_type play_state matches 4 unless data storage rhythm_axe:prop ignore_speed run scoreboard players operation #glass_dur editor /= note_speed options
+execute if score #note_type play_state matches 4 unless data storage rhythm_axe:prop ignore_speed run scoreboard players operation #glass_dur editor /= editor_note_speed options
 # 混凝土段判定游标（对齐游玩：段 k 结束 rel=min(k×density, dur)，k=1..seg_count）
 # 播放生成（playhead<time 出生中）→ seg=1（首段结束 time+density）逐段+1；seek 生成（playhead≥time）→ seg=ceil((playhead-time)/density) 至少 1
 scoreboard players operation #seg_calc editor = #playhead editor
@@ -115,7 +115,7 @@ scoreboard players operation #seg_cnt editor /= #n_density editor
 #   s2 终点 dist×dur/lt 因 dur、lt 同缩而抵消不变
 scoreboard players operation #glass_lt editor = #n_lt editor
 execute if score #note_type play_state matches 4 unless data storage rhythm_axe:prop ignore_speed run scoreboard players operation #glass_lt editor *= 16 const
-execute if score #note_type play_state matches 4 unless data storage rhythm_axe:prop ignore_speed run scoreboard players operation #glass_lt editor /= note_speed options
+execute if score #note_type play_state matches 4 unless data storage rhythm_axe:prop ignore_speed run scoreboard players operation #glass_lt editor /= editor_note_speed options
 # ===== 一次性填充展示实体全部字段（1 次选择器）→ 再按当前 playhead 定位（统一 place）=====
 $execute as @e[tag=editor_n_$(nid),type=item_display,limit=1] run function rhythm_axe:editor/visual/fill_disp
 $execute as @e[tag=editor_n_$(nid),type=item_display,limit=1] run function rhythm_axe:editor/visual/place

@@ -1,12 +1,8 @@
 #arg: mapid
-# 【＋新建谱面】输入框的【新建】：拿玩家填的 id 走既有编辑器入口。
-#   已存在同名谱面 → 不覆盖，直接打开它（在聊天栏说明一声）；
-#   不存在 → editor/open 会调 editor/create_new 写一份默认模板进工作副本。
-#   （模板内容见 editor/create_new：bpm 150 / bpb 4 / tpb 8 / preview 0~200 等）
-$execute if data storage rhythm_axe:maps.$(mapid) id run tellraw @s [{"text":"[谱面总表] 已存在同名谱面（","color":"yellow"},{"text":"$(mapid)","color":"aqua"},{"text":"），直接打开它","color":"yellow"}]
-
-# 收尾照搬 map_list/maps/edit：先停预览、收起总表，再进编辑器
-#（编辑器入口自带单人锁 / "已在编辑同一张"提示 / 切换谱面确认，这里不重复）
-function rhythm_axe:map_list/preview/stop
-function rhythm_axe:map_list/close
-$function rhythm_axe:editor/editor {mapid:"$(mapid)"}
+# ★ 外层「安全转发」（2026-10-17 拆层，与数值类同款）：json 提交的软输入可能是
+#   空 / 非法 SNBT（如 `12a`）/ 含未转义引号 —— 内层若因此**实例化失败**，整个内层不执行、
+#   点【确认】毫无反应。⚠ 实测：**被调函数实例化失败不会中断调用者** ⇒ 用哨兵 #dlg_ok=9 兜底：
+#   内层开头置 0；外层调用后仍为 9 ⇒ 内层没跑 ⇒ 补一句提示。故【确认】总有反馈（含未转义引号时除外）。
+scoreboard players set #dlg_ok editor 9
+$function rhythm_axe:map_list/maps/new_submit {"mapid":"$(mapid)"}
+execute if score #dlg_ok editor matches 9 run tellraw @s [{"text":"[谱面总表] ","color":"gold"},{"text":"输入无效或含不支持的字符，请检查后重试","color":"red"}]

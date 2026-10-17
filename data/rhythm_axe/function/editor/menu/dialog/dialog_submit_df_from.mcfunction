@@ -1,15 +1,9 @@
-#arg: x, y, z
-# 对话框提交：「从」坐标（X Y Z）→ 写 editing.df.s_a_fp（百分之一格）
-# ★ 宏参数直接拼进 SNBT：填 1.5 会变成 double 1.5；填非数字则整条 set 失败 → in 不存在 → 提示
-data remove storage rhythm_axe:prop in
-$data modify storage rhythm_axe:prop in set value [$(x),$(y),$(z)]
-tellraw @s [{"text":"[编辑器] "},{"text":"输入无效，请填数字（如 1.5 / -2 / 0）","color":"red"}]
-execute if data storage rhythm_axe:prop in[0] run tellraw @s ""
-execute if data storage rhythm_axe:prop in[0] run execute store result score #v editor run data get storage rhythm_axe:prop in[0] 100
-execute if data storage rhythm_axe:prop in[0] run execute store result storage rhythm_axe:maps.editor editing.df.s_a_fp[0] int 1 run scoreboard players get #v editor
-execute if data storage rhythm_axe:prop in[1] run execute store result score #v editor run data get storage rhythm_axe:prop in[1] 100
-execute if data storage rhythm_axe:prop in[1] run execute store result storage rhythm_axe:maps.editor editing.df.s_a_fp[1] int 1 run scoreboard players get #v editor
-execute if data storage rhythm_axe:prop in[2] run execute store result score #v editor run data get storage rhythm_axe:prop in[2] 100
-execute if data storage rhythm_axe:prop in[2] run execute store result storage rhythm_axe:maps.editor editing.df.s_a_fp[2] int 1 run scoreboard players get #v editor
-execute if data storage rhythm_axe:prop in[0] run function rhythm_axe:editor/menu/note/df/df_render
-data remove storage rhythm_axe:prop in
+#arg: x,y,z
+# ★ 外层「安全转发」（2026-10-17 拆层）：json 提交的软输入可能是 `12a` 这种**非法 SNBT** ——
+#   若内层直接在宏行里写 `set value [$(value)]`，内层会**实例化失败**（整个内层不执行，点确认毫无反应）。
+#   ⚠ 实测事实：**被调函数实例化失败不会中断调用者** ⇒ 本层用哨兵 #dlg_ok=9 判断「内层压根没跑」：
+#     内层开头会把它置 0；外层调用后仍是 9 ⇒ 内层没跑 ⇒ 补一句提示。故【确认】总会有反馈。
+#   本层唯一的宏行把参数嵌进 **JSON 字符串**（`{value:"..."}`）—— 任何内容都合法（除非含未转义引号）⇒ 本层永不失败。
+scoreboard players set #dlg_ok editor 9
+$function rhythm_axe:editor/menu/dialog/dialog_submit_df_from_core {"x":"$(x)","y":"$(y)","z":"$(z)"}
+execute if score #dlg_ok editor matches 9 run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"输入无效，请填数字（如 1.5 / -2 / 0）","color":"red"}]

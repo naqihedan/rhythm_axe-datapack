@@ -3,6 +3,9 @@
 # schedule 不支持 with，宏参数只能先快照进 storage，由中转函数到点用 with storage 取用。
 # 压入任务：delay = 距「上一条」发射的间隔刻数（第一条 = 距现在）；delay 0 = 与上一条【同刻】齐发。
 
+# ← 先清空上一轮遗留队列，保证本批是全新一批（否则新条目会接在旧队列尾部）
+data remove storage rhythm_axe:laser queue
+
 data modify storage rhythm_axe:laser queue append value {delay:0, x:-1.5f, angle:90.0f}
 # 2 tick delay
 # 2 tick delay

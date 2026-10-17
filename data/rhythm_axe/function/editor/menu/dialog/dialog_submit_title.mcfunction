@@ -1,7 +1,8 @@
-#arg:value
-# 对话框提交：标题原样存字符串（可纯文本、可 JSON 文本组件）
-# 显示处由 utilization/title_comp 生成标题组件：JSON 组件字符串宏传解析，裸纯文本走 nbt 引用渲染（都不会消失）
-$data modify storage rhythm_axe:maps.editor panel_temp.title set value '$(value)'
-data modify storage rhythm_axe:maps.editor feedback set value "已修改谱面标题（保存设置后生效）"
-data modify storage rhythm_axe:maps.editor no_undo set value 1b
-function rhythm_axe:editor/menu/map/panel/map_panel_refresh
+#arg: value
+# ★ 外层「安全转发」（2026-10-17 拆层，与数值类同款）：json 提交的软输入可能是
+#   空 / 非法 SNBT（如 `12a`）/ 含未转义引号 —— 内层若因此**实例化失败**，整个内层不执行、
+#   点【确认】毫无反应。⚠ 实测：**被调函数实例化失败不会中断调用者** ⇒ 用哨兵 #dlg_ok=9 兜底：
+#   内层开头置 0；外层调用后仍为 9 ⇒ 内层没跑 ⇒ 补一句提示。故【确认】总有反馈（含未转义引号时除外）。
+scoreboard players set #dlg_ok editor 9
+$function rhythm_axe:editor/menu/dialog/dialog_submit_title {"value":"$(value)"}
+execute if score #dlg_ok editor matches 9 run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"输入无效或含不支持的字符，请检查后重试","color":"red"}]

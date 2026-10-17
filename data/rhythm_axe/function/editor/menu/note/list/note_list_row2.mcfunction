@@ -18,7 +18,7 @@ $execute store result score #temp_ig editor run data get storage rhythm_axe:maps
 $execute store result score #temp editor run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(index)].time
 execute if score #temp_ig editor matches 1 run scoreboard players operation #temp editor -= #temp_cursor editor
 execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor *= 16 const
-execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor /= note_speed options
+execute if score #temp_ig editor matches 0 run scoreboard players operation #temp_cursor editor /= editor_note_speed options
 execute if score #temp_ig editor matches 0 run scoreboard players operation #temp editor -= #temp_cursor editor
 # 线性提前4刻：普通0/1/2 power=1；玻璃4 power=1 dur>=1（与 scan_birth_one 一致）
 scoreboard players set #temp_type editor 0

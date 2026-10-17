@@ -144,8 +144,9 @@ function rhythm_axe:editor/menu/event_row with storage rhythm_axe:prop
 data remove storage rhythm_axe:prop ep
 data remove storage rhythm_axe:prop fc
 data remove storage rhythm_axe:prop fh
-# 音符流速（读改全局 note_speed；调低显示更多音符、调高聚焦一小段；调整后刷新世界音符状态）
-execute store result score #temp editor run scoreboard players get note_speed options
+# 编辑器音符流速（读改 options.editor_note_speed；与游玩流速 options.note_speed 分开，2026-10-17）
+#   调低显示更多音符、调高聚焦一小段；调整后刷新世界音符状态
+execute store result score #temp editor run scoreboard players get editor_note_speed options
 tellraw @s [\
     {"text":"音符流速：","color":"gray"},\
     {"text":"[-]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10601"},"hover_event":{"action":"show_text","value":"降低流速（显示更多音符）"}},\
@@ -157,3 +158,31 @@ tellraw @s [\
     {"text":"  【16】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10606"},"hover_event":{"action":"show_text","value":"流速设为 16"}}\
 ]
 tellraw @s [{"text":"（修改经面板暂存，【保存谱面】才写入谱面）","color":"gray","italic":true}]
+# 行110：全局音乐偏移（2026-10-17 新增；与设置面板页 0 行 127 是**同一个** options.music_offset）
+#   外观照搬设置面板：[-5][-1] 值 [+1][+5] 【输入数值】；按钮 11001..11005 由 panel1 处理
+#   含义：附加在每次音乐播放上的设备延迟补偿（ms，正=音乐延后、负=音乐提前）；编辑器试听与正式游玩都生效
+data modify storage rhythm_axe:prop off_label set value "全局音乐偏移"
+data modify storage rhythm_axe:prop off_lo set value -500
+data modify storage rhythm_axe:prop off_hi set value 500
+data modify storage rhythm_axe:prop off_b1 set value 11001
+data modify storage rhythm_axe:prop off_b2 set value 11002
+data modify storage rhythm_axe:prop off_b3 set value 11003
+data modify storage rhythm_axe:prop off_b4 set value 11004
+data modify storage rhythm_axe:prop off_b5 set value 11005
+data modify storage rhythm_axe:prop off_b6 set value 11006
+function rhythm_axe:editor/menu/offset_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop off_label
+data remove storage rhythm_axe:prop off_lo
+data remove storage rhythm_axe:prop off_hi
+data remove storage rhythm_axe:prop off_b1
+data remove storage rhythm_axe:prop off_b2
+data remove storage rhythm_axe:prop off_b3
+data remove storage rhythm_axe:prop off_b4
+data remove storage rhythm_axe:prop off_b5
+data remove storage rhythm_axe:prop off_b6
+data remove storage rhythm_axe:prop off_m5
+data remove storage rhythm_axe:prop off_m1
+data remove storage rhythm_axe:prop off_p1
+data remove storage rhythm_axe:prop off_p5
+data remove storage rhythm_axe:prop off_inp
+data remove storage rhythm_axe:prop off_hs

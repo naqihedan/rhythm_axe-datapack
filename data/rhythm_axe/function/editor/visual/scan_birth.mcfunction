@@ -11,7 +11,7 @@ scoreboard players operation #birth editor = #n_time editor
 execute if score #ig_on editor matches 1 run scoreboard players operation #birth editor -= #n_lt editor
 scoreboard players operation #tmp editor = #n_lt editor
 scoreboard players operation #tmp editor *= 16 const
-scoreboard players operation #tmp editor /= note_speed options
+scoreboard players operation #tmp editor /= editor_note_speed options
 execute if score #ig_on editor matches 0 run scoreboard players operation #birth editor -= #tmp editor
 execute if score #birth editor < #earliest_birth editor run scoreboard players operation #earliest_birth editor = #birth editor
 # 继续遍历

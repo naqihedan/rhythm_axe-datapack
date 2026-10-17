@@ -71,6 +71,38 @@
   - 结论：**写宏行时两头都核一遍**——`$` 开头就必须有 `$(...)`；行里有 `$(...)` 就必须 `$` 开头。`check_all_macros.ps1` 两个方向都查（它现在会报「有 $ 无宏参数」）。
   - 隔离实验做法（值得复用）：在 `data/rhythm_axe/function/test/` 放两个只差一个 `$` 的临时函数 → `/reload` → 看哪个进 `Failed to load function`，查完删掉。
 
+- **对话框（软输入）的数字必须自己验；`$… set value $(value)` 遇到空输入 = 整个函数不加载**（2026-10-17 实测排查，一次修了 8 个文件）：
+  - 文本框是**软输入**（可留空、可乱敲），而 `$(value)` 是**加载/实例化期**的字面替换 ⇒ 三类坏输入直接炸：
+
+    | 玩家输入 | `$… set value $(value)` 或 `$scoreboard players set #x obj $(value)` 的后果 |
+    | --- | --- |
+    | 空（什么都没填） | 展开成 `… set value ` ⇒ **整条命令非法 ⇒ 宏函数实例化失败 ⇒ 点【确认】毫无反应**（连提示都没有） |
+    | 非数字 `abc` | 同上（命令非法）；若侥幸走了字符串分支，`data get`（不带 scale）会把**字符串长度**当数字写进去 |
+    | 复合/列表 `{a:1}` `[]` | `scoreboard players set … $(value)` 会**注入额外命令参数**（把 token 拆成命令+参数），行为不可预测 |
+
+  - **标准四步**（参考实现 `options/dialog_submit_offset`，规范详见《编辑器.md》的《数字输入框的校验规范》）：
+    ① 裸 token 装进**列表** `$data modify storage rhythm_axe:prop dlg_in set value [$(value)]`（列表包裹永远合法，空→`[]`）
+    ② `execute store success score #ok editor run data get storage rhythm_axe:prop dlg_in[0] 1` —— **`scale` 必须带**（不带会拿字符串长度骗过校验）
+    ③ `#ok matches 0` → 红字提示（**别**用「先无条件打印无效 + 空 tellraw 遮丑」，那会让无效行永远留在聊天栏）
+    ④ `#ok matches 1` 才写值/重绘；收尾 `data remove … dlg_in`
+  - 多坐标（如 df 的 X Y Z）逐轴验 + 短路（`matches 1 run execute store success …`），一个失败即整体拒绝。
+  - 2026-10-17 按此规范修好的 8 个：`dialog_submit_df_count` / `df_step` / `df_from` / `df_to` / `end_time` / `bpm` / `find_time` / `find_note`；`options/dialog_submit_offset` 本就是参考实现（本轮又补了「空输入」这条）。
+
+- **★ 非数字的「半合法」输入（`12a`）连列表包裹也救不了 ⇒ 必须再加一层「安全转发」**（2026-10-17 **实测**发现，一次给 22 个提交函数拆层）：
+  - 上面那套「列表包裹」能兜住 空 / `abc` / `{a:1}` / `[]`，但 **`12a` 这类"数字后粘字母"** 会让 `set value [12a]` 里的 `[12a]` **不是合法 SNBT** ⇒ **内层实例化失败** ⇒ 又回到「点确认毫无反应」。
+  - **实测确认的关键机制**：**被调函数实例化失败不会中断调用者**（用探针实测：内层没跑、`leaf_ran=0`，但调用者的下一行照常执行 `after=7`）。据此拆「外层安全转发 + 内层执行」：
+    ```text
+    dialog_submit_X.mcfunction          ← 外层
+      scoreboard players set #dlg_ok editor 9
+      $function rhythm_axe:…/dialog_submit_X_core {"value":"$(value)"}   ← 唯一宏行，参数嵌在 JSON 字符串里 ⇒ 永不失败
+      execute if score #dlg_ok editor matches 9 run tellraw @s [ … "输入无效" … ]
+    dialog_submit_X_core.mcfunction     ← 内层
+      scoreboard players set #dlg_ok editor 0     ← 第一行证明「跑了」
+      …（真正的列表包裹校验 + 写入）
+    ```
+  - 哨兵约定 `9/0/1` = 内层未运行 / 拒绝 / 接受。**唯一剩余裂缝**：输入里含**未转义双引号 `"`**（会让外层也失败）——对话框本来就要求引号写 `\"`（见《编辑器.md》）。
+  - 清单见《编辑器.md》的《外层安全转发》。⚠️ `dialog_submit_mapid` / `new_submit` 是**真改名/真建谱**，实测一律跳过（改完 `function <id>` 返回「缺少传入参数」即为已加载，用它代替实跑）。
+
 - **新增的 `data/<ns>/dialog/*.json` 不会被 `/reload` 加载**（2026-10-01 实测）：
   - 症状：`dialog show @s rhythm_axe:xxx` 报 `无法在注册表"minecraft:dialog"中找到元素"rhythm_axe:xxx"`；**对话框 JSON 本身不会报「解析失败」**（易误判成「我写的 JSON 有问题」）。
   - ⚠️ **引用它的 mcfunction 会直接加载失败**（2026-10-01 补测）：`dialog show @s <id>` 里的 ID 是**加载期**解析的 ⇒ 日志里有

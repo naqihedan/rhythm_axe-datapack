@@ -1,0 +1,54 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "全局音乐偏移"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": { "text": "" }
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": { "text": "附加在每次音乐播放上的偏移（毫秒，整数）。" }
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": { "text": "正 = 音乐延后；负 = 音乐提前（蓝牙耳机/外置声卡等声音晚到的设备填负值）。范围 -500 ~ 500。" }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "value",
+      "width": 100,
+      "label": { "text": "偏移（ms）" },
+      "max_length": 8
+    },
+    {
+      "type": "minecraft:boolean",
+      "key": "mute_hs",
+      "label": { "text": "同时禁用音符击打音效（建议佩戴蓝牙耳机等音画延迟过大情况时禁用音符打击音）" },
+      "on_true": "1",
+      "on_false": "0"
+    }
+  ],
+  "can_close_with_escape": true,
+  "pause": false,
+  "exit_action": {
+    "label": { "text": "取消" },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:options/dialog_cancel"
+    }
+  },
+  "actions": [
+    {
+      "label": { "text": "确认" },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "function rhythm_axe:options/dialog_submit_offset {\"value\":\"$(value)\",\"mute_hs\":\"$(mute_hs)\"}"
+      }
+    }
+  ]
+}

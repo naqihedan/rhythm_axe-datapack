@@ -3,8 +3,10 @@
 scoreboard objectives add options dummy
 scoreboard objectives add score_calculate dummy
 
-# 流速：音符的运动时间 = 基础寿命×16/流速
+# 流速：音符的运动时间 = 基础寿命×16/流速（★ 2026-10-17 起 = **游玩流速**；编辑器流速另存 editor_note_speed）
 scoreboard players set note_speed options 16
+# 编辑器流速（主菜单行106 调；默认 16，与游玩流速独立）
+scoreboard players set editor_note_speed options 16
 # 判定反馈
 scoreboard players set feedback_actionbar options 1
 scoreboard players set feedback_chat options 1
@@ -14,6 +16,8 @@ scoreboard players set swing_anim options 0
 scoreboard players set detailed_judgements options 1
 scoreboard players set note_hitsound options 1
 scoreboard players set note_particle options 1
+# 音符击打音效总开关（2026-10-17）：1=开（默认） 0=关（音符判定/生成不播音效；粒子与事件不受影响）
+scoreboard players set hitsound_on options 1
 # 伤害扣血冷却（刻）
 scoreboard players set damage_cooldown options 10
 # 歌曲进度条（显示开关；颜色改用**谱面字段** progress_color，不再有全局项）
@@ -37,6 +41,9 @@ scoreboard players set judge_lag_comp options 0
 # 音乐变速播放（OLA 时域拉伸）的固有相位补偿：语义 = 0.25x 下所需的补偿（音乐毫秒，负=让音频更晚），
 # 代码按 (1−speed)/0.75 缩放（0.25x→原值、0.5x→2/3、0.75x→1/3、1x→0）；0 = 关掉补偿；标定只调这一个数
 scoreboard players set audio_sync_offset options -50
+# 全局音乐偏移（毫秒，正=音乐延后、负=音乐提前，声音晚到的设备填负值；音游标配的 offset 设置）：
+#   常数、不随速度缩放，与 audio_sync_offset 叠加生效；mod 在 /playmusic 时读它随包下发给客户端
+scoreboard players set music_offset options 0
 
 # 判定的三级权重
 scoreboard players set 1th_weight score_calculate 2
