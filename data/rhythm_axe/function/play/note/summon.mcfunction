@@ -420,6 +420,10 @@ $execute if score #note_type play_state matches 4 run data merge entity @e[tag=$
 # 混凝土接入（★ 2026-08-10 分流）：线性（幂次 1）→ 客户端插值三段（seg1_client → seg2_client → seg3_client）；
 #   非线性 → display_animation 三段（concrete/init → seg2 → seg3）
 #   ★ 所有混凝土参数（note_c_*）已存储、translation 已设局部起点 → 线性走 seg1_client（方案3 预置插值参数），非线性走 init（预置段① display_animation）
+# ★ 2026-10-20 线性混凝土出生隐藏（对齐普通线性音符惯例）：出生提前 2 刻的等待期 item=air 不可见，
+#   seg1_merge（= 编辑器出生刻）恢复 item → 长条薄片恰在编辑器出生刻出现，与编辑器视觉一致
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score @s note_c_power matches 1 run data modify entity @s data.note_show set from entity @s item
+$execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score @s note_c_power matches 1 run data modify entity @s item set value {id:"minecraft:air",Count:1b}
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] if score @s note_c_power matches 1 run function rhythm_axe:play/note/concrete/seg1_client
 $execute if score #note_type play_state matches 3 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] unless score @s note_c_power matches 1 run function rhythm_axe:play/note/concrete/init
 # 玻璃接入 display_animation：非线性（幂次 ≠1）或 dur=0（无后段）→ 启动段①（到位；tick 推进段②穿过后段）
@@ -480,6 +484,10 @@ scoreboard players set #ANIM_APPLY_POSITION display_calc 0
 #   使 note_life 仍在判定时刻 =0（节拍不变）；可见移动占满 note_base_life → 速度 = dist/note_base_life
 $execute unless score #note_type play_state matches 3 unless score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players add @s note_life 4
 $execute if score #note_type play_state matches 4 if score #ANIM_POWER display_calc matches 1 if score #dur display_calc matches 1.. run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players add @s note_life 4
+# ★ 2026-10-20 线性混凝土寿命 +2（配合 scan_birth_one 出生提前 2）：life=0 仍落在判定时刻，节拍不变；
+#   展示实体同步 +2 → concrete/tick 的 #ct = lt - life + 2 全程与旧值一致（段推进阈值/判定/出窗全部不动）
+$execute if score #note_type play_state matches 3 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players add @s note_life 2
+$execute if score #note_type play_state matches 3 if score #ANIM_POWER display_calc matches 1 run execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players add @s note_life 2
 # ---- 统一线性参数 #m_dur（D）/ #m_end（end×100）----
 # 普通（0/1/2）：D=lt×16/note_speed（★ 2026-09-04 修正流速：出生 _birth 已×16/note_speed，D 须同步，
 #   否则低流速下音符提前到达判定位置 -> 到判定时刻才到位；end=0）、速度=dist/(lt×16/speed)

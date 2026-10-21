@@ -5,6 +5,10 @@
 # ★ 只 merge 一次（随后移除 pending tag）；客户端在 interpolation_duration 内从出生位置插值到段①终点
 # ★ 记录插值起点 tick（note_c_seg1_s = 当前 #ct）→ concrete/tick 算交互实体段①进度用
 
+# ★ 2026-10-20 恢复 item（线性混凝土出生隐藏期 item=air；merge 刻 = 编辑器出生刻 → 长条薄片恰在此刻出现）
+execute if data entity @s data.note_show run data modify entity @s item set from entity @s data.note_show
+execute if data entity @s data.note_show run data remove entity @s data.note_show
+
 # ---- 段①终点（★ 2026-09-15 一条曲线模型）----
 # 短 hold（m≤lt）：u_h = m/lt → len = Δ·m/lt ；长 hold（m>lt）：u_h 已到顶 → len = Δ（满长）
 # Δ = dist + size（×100，头端/尾端行程）；center = P0 + len/2 = len/2 - dist - size/2（P0 = -dist-size/2）

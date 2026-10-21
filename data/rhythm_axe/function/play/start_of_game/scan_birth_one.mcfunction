@@ -24,6 +24,10 @@ execute if score #tmp_type play_state matches 0..2 if score #tmp_pow play_state 
 $execute if score #tmp_type play_state matches 4 if score #tmp_pow play_state matches 1 unless data storage rhythm_axe:runtime notes[$(scan_idx)].duration run scoreboard players set #tmp_dur play_state 3
 $execute if score #tmp_type play_state matches 4 if score #tmp_pow play_state matches 1 if data storage rhythm_axe:runtime notes[$(scan_idx)].duration run execute store result score #tmp_dur play_state run data get storage rhythm_axe:runtime notes[$(scan_idx)].duration
 execute if score #tmp_type play_state matches 4 if score #tmp_pow play_state matches 1 if score #tmp_dur play_state matches 1.. run scoreboard players remove #tmp_birth play_state 4
+# ★ 2026-10-20 线性混凝土出生提前 2 刻：段① merge 延迟链（出生→计数 2→merge）恰好落在编辑器出生刻，
+#   段①插值时长不再需要 -2 补偿（旧补偿在持续时长 1/2 时撞 min 1 下限 → 短混凝土全程晚 2 刻，goodworld 实测错位根因）；
+#   寿命由 summon +2 保持判定节拍（life=0 仍在判定时刻）。非线性混凝土不提前（每刻直写无延迟链）
+execute if score #tmp_type play_state matches 3 if score #tmp_pow play_state matches 1 run scoreboard players remove #tmp_birth play_state 2
 execute if score #tmp_birth play_state < #earliest_birth play_state run scoreboard players operation #earliest_birth play_state = #tmp_birth play_state
 # 把该音符的出生时刻存入 _birth（供排序与生成直接读取，运行期字段）
 $execute store result storage rhythm_axe:runtime notes[$(scan_idx)]._birth int 1 run scoreboard players get #tmp_birth play_state
