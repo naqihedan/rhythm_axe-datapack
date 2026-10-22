@@ -62,9 +62,6 @@ scoreboard players add @e[type=item_display,tag=note_linear_pending] note_active
 #   使 move_self 可用"note_lin_t-1"复现"上一刻视觉位置"（与 move 写 #pvx 的解耦延迟一致）。
 scoreboard players add @e[type=item_display,tag=note_linear] note_lin_t 1
 scoreboard players add @e[type=interaction,tag=note_linear] note_lin_t 1
-# ★ 性能优化（2026-09-04，O(N²) 消除）：玻璃中心 marker（仅线性，start 已打 note_linear）也同步递增 note_lin_t，
-#   供 marker_self 自算扫掠段。非线性玻璃 marker 无 note_lin_t，走 move 的旧扫描（见 move），故排除。
-scoreboard players add @e[type=marker,tag=note_glass_center,tag=note_linear] note_lin_t 1
 # 展示实体统一处理（★ 合并遍历 2026-08-09）：混凝土段推进 + 玻璃段推进 + move 一次遍历完成
 #   内部顺序：先驱动（写 NBT 视觉位置）再 move（读 NBT 存 note_prev_*），与原一致
 execute as @e[type=item_display,tag=note_display] at @s run function rhythm_axe:play/active_note/display_tick
@@ -87,6 +84,15 @@ scoreboard players add #proto_high play_state 1
 #   （judgement/st_lag_apply 用完立刻归 0）；这里再兜底清一次，保证常规移动恒走"上一刻视觉位置"。
 scoreboard players set #lag_extra play_state 0
 execute as @e[type=interaction,tag=note_linear] run function rhythm_axe:play/active_note/move_self
+# M2-G：染色玻璃碰撞判定（“玩家判定箱包含玻璃中心” → 扣血 + 进入冷却；damage 内部处理冷却检查）
+# ★ 扫掠采样（CCD）：玻璃每刻位移可能 > 玩家判定箱宽 0.6 格 ⇒ 沿「上一刻中心 → 当前中心」线段按 1.0 格步长采样。
+# ★ 2026-10-22 重写：锚 = 玻璃【交互实体】（Pos=中心−size/2、Rotation=运动方向、note_prev_tz 系列=局部 z 历史）。
+#   ★ 为什么不用展示实体：往展示实体写 NBT 会把它标脏→向客户端同步，而游玩侧线性玻璃的视觉完全依赖
+#     motion/start 一次性下发的客户端插值 ⇒ 每刻同步会打断插值（玻璃视觉变慢 + 提前出窗）。详见 glass_sweep 头注释。
+#   ★ 必须在 move_self / move（move_write_pair）之后：此刻 note_prev_tz=tz(T-1)、note_prev2_tz=tz(T-2)，即 [P(T-2),P(T-1)] 段。
+#   ★ 原「玩家 4 格距离门」已移除（动态位置进不了 distance 选择器）；auto 短路保留。
+# ★ 自动模式（2026-08-09）：auto=1 玩家不判定玻璃（不会产生 damage），直接短路不扫掠（省全部 CCD）
+execute if score auto play_state matches 0 as @e[type=interaction,tag=note_stained_glass] run function rhythm_axe:play/active_note/glass_sweep
 # ★ 《同一刻判定限制》（2026-09-21）：每刻先算「每位玩家本刻只放行哪一批」，
 #   并顺带打 looked_at（判定 / 保护记录共用）。必须【单次】调用（内部自己遍历玩家与音符）、
 #   且在 interact_judge 之前（命中检测与配额要来自同一份快照；位置已由 move_self 更新到当前刻）。
@@ -100,23 +106,6 @@ execute as @e[type=interaction,tag=note_interaction] at @s run function rhythm_a
 scoreboard players remove @e[type=interaction,tag=note_interaction,scores={note_spawn_delay=1..}] note_spawn_delay 1
 execute as @e[type=interaction,tag=note_interaction,scores={note_spawn_delay=0}] if score @s note_moving matches 0 at @s run function rhythm_axe:play/feedback/spawn_delayed
 execute as @e[type=interaction,tag=note_interaction,scores={note_moving=1}] at @s run function rhythm_axe:play/feedback/tick_event
-
-# M2-G：染色玻璃碰撞判定（“玩家判定箱包含玻璃中心” → 扣血 + 进入冷却；damage 内部处理冷却检查）
-# ★ 扫掠采样（CCD，2026-08-07）：玻璃移动是离散的，若每刻位移 > 玩家判定箱宽 0.6 格会“隧穿”
-#   （两个采样时刻都在玩家箱外，但中间路径穿过玩家箱 → 视觉撞上却无判定）。
-#   解决：沿“上一刻中心 → 当前中心”线段按 0.5 格步长采样多个点，每点做对角区域点检测。
-#   玻璃 marker 位置 = 上一刻中心，note_prev_* = 当前中心（move 记录）
-#   Java 1.19.70+ dx/dy/dz = 判定箱相交
-# ★ 距离过滤（2026-08-09）：仅玩家 6 格内才扫掠——远离玩家的玻璃中心不可能与玩家判定箱相交，
-#   直接跳过整段扫掠（省每 tick 对远处 marker 的 CCD 采样）
-#   ★ 性能优化（2026-09-04）：6 格 → 4 格。玩家判定箱仅 0.6 格宽，玻璃中心距玩家 >4 格且每刻位移 <=4 格
-#   时，其扫掠段不可能触及玩家判定箱；收紧门控减少每刻判定的玻璃 marker 数（玻璃为主谱面的大头）。
-# ★ 性能优化（2026-09-04，O(N²) 消除）：玻璃中心 marker（仅线性）在此自算扫掠段（起点=上上一刻中心
-#   P(T-2)、终点=上一刻中心 P(T-1)），替代原 move 的"每展示实体全量扫描 marker"O(N²)；必须在 glass_sweep
-#   之前（sweep 读 marker 的 Pos/note_prev_*）。非线性玻璃 marker 走 move 的旧扫描，故排除。
-execute as @e[type=marker,tag=note_glass_center,tag=note_linear] run function rhythm_axe:play/active_note/marker_self
-# ★ 自动模式（2026-08-09）：auto=1 玩家不判定玻璃（不会产生 damage），直接短路不扫掠（省全部 CCD）
-execute if score auto play_state matches 0 as @e[type=marker,tag=note_glass_center] at @s if entity @a[team=player,distance=..4] run function rhythm_axe:play/active_note/glass_sweep
 
 # M2-C/D：全局出窗检测——所有音符寿命越过 goodL 末刻（< -2x）且未判定
 # 音符盒等 → miss；木板/染色玻璃 → 静默清除（无 miss）；混凝土 → 跳过（尾未到判定位置，另有出窗）

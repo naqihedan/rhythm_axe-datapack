@@ -25,6 +25,11 @@ execute if score #click_value editor matches 903 run return fail
 # 仅在编辑中响应：未在编辑 → 静默忽略（菜单系统走自己的 menu_click，完全不从这里过）
 execute unless data storage rhythm_axe:maps.editor {active:1b} run return fail
 
+# ★ 查找分刻扫描进行中（2026-10-22）：锁编辑器点击（防扫描中途被翻转/删除打断造成选区错乱）。
+#   扫描由 find_note_start 置 find_scan.active、find_note_finish 清；大谱面约 1~2 秒。
+execute if data storage rhythm_axe:maps.editor find_scan.active run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"正在查找音符，请稍候…","color":"yellow"}]
+execute if data storage rhythm_axe:maps.editor find_scan.active run return fail
+
 # ★ 会话自检（2026-09-10）：editor.mapid 缺失/为空 ⇒ 从工作副本 id 修回。
 #   否则随后 with storage rhythm_axe:prop 的宏调用会因宏参数缺失而静默实例化失败（点了没反应）。
 function rhythm_axe:editor/util/session_mapid_fix

@@ -1,6 +1,7 @@
-# 玻璃撞墙扣血的判定反馈（@s = 玻璃中心 marker；由 judgement_feedback/damage 在扣血成功时调用）
+# 玻璃撞墙扣血的判定反馈（@s = 玻璃展示实体；由 judgement_feedback/damage 在扣血成功时调用）
 # 从配对的音符交互实体读取组号，以交互实体为执行者触发 feedback（case_name="damage"）
 # 执行者 = 音符交互实体，位置 = 交互实体位置
+# ★ 2026-10-21 去 marker：调用方 @s 从玻璃中心 marker 换成展示实体（note_id 两者同值，配对逻辑不变）
 scoreboard players operation #nid play_state = @s note_id
 data modify storage rhythm_axe:runtime fb_nid set value 0
 execute store result storage rhythm_axe:runtime fb_nid int 1 run scoreboard players get #nid play_state

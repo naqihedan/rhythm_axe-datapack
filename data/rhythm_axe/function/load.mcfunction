@@ -212,11 +212,14 @@ scoreboard objectives add note_g_seg dummy
 scoreboard objectives add note_prev_cx dummy
 scoreboard objectives add note_prev_cy dummy
 scoreboard objectives add note_prev_cz dummy
-# 玻璃扫掠段 1 刻退位：note_prev2_x/y/z = 展示实体"上上一刻"视觉中心（×100；move 每刻把旧 note_prev_* 滚过来）
-#   ★ 玻璃判定早1刻修复（2026-08-08）：marker 扫掠段起点用 note_prev2_*、终点用 note_prev_* → 扫掠段=[P(T-2),P(T-1)] 对齐视觉路径
-scoreboard objectives add note_prev2_x dummy
-scoreboard objectives add note_prev2_y dummy
-scoreboard objectives add note_prev2_z dummy
+# 玻璃扫掠段 1 刻退位（★ 2026-10-21 去 marker 重写）：note_prev_tz/note_prev2_tz = 非线性玻璃展示实体
+#   "上一刻/上上刻"局部 z（×100；move 每刻滚动）→ glass_sweep 读它构成 [T-2, T-1] 扫掠段
+#   （旧 note_prev2_x/y/z 世界坐标版已随 marker 链废除）
+scoreboard objectives add note_prev_tz dummy
+scoreboard objectives add note_prev2_tz dummy
+# 线性玻璃扫掠参数（summon 预存）：note_sweep_d = 每刻位移×100（钳 1600）、note_sweep_last = 运动窗口末刻
+scoreboard objectives add note_sweep_d dummy
+scoreboard objectives add note_sweep_last dummy
 # 混凝土朝向四元数（展示实体存储，concrete_move 每 tick 写回 left_rotation 防插值拉偏）
 scoreboard objectives add note_c_qx dummy
 scoreboard objectives add note_c_qy dummy
@@ -365,6 +368,8 @@ scoreboard objectives add editor_n_rec_life dummy
 scoreboard objectives add editor_n_hit dummy
 scoreboard objectives add editor_n_c_last dummy
 # 玻璃判定（2026-09-21）：vvx/vvy/vvz = 上一刻视觉中心×1000（CCD 扫掠起点）；命中冷却改用 editor 假玩家 #ed_g_cd
+# ★ 2026-10-21 去交互实体借用：editor_n_ptz = 上一刻局部 z（×100，扫掠段起点；glass_check 每刻回写）
+scoreboard objectives add editor_n_ptz dummy
 # 编辑器音符判定位置与起始偏移（place 算交互实体世界坐标用；×1000）
 scoreboard objectives add editor_n_px dummy
 scoreboard objectives add editor_n_py dummy

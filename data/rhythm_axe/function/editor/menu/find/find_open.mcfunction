@@ -5,6 +5,6 @@ tellraw @s [{"text":"====查找====","color":"gold","bold":true}]
 tellraw @s [\
 {"text":"【时间点】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10001"},"hover_event":{"action":"show_text","value":"按时间查找时间点"}},\
 {"text":"  【事件点】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10002"},"hover_event":{"action":"show_text","value":"按时间查找事件点"}},\
-{"text":"  【音符】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10003"},"hover_event":{"action":"show_text","value":"按 id 查找音符"}}\
+{"text":"  【音符】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10003"},"hover_event":{"action":"show_text","value":"按类型/颜色/时间范围筛选音符并选中（含选中同刻）"}}\
 ]
 tellraw @s [{"text":"【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}]

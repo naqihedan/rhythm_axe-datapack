@@ -1,10 +1,10 @@
 # 面板 18：已选定音符列表（规范v2：11401 返回 / 11402 清空返回 / 11403 批量编辑 / 11404 批量复制 / 11408 批量剪切 / 11405 批量粘贴 / 11406 粘贴并选中 / 11407 批量删除；
-#            100000..103999 动态行；11601/11602 翻页；11501/11502/11503-11506 翻转组 / 11507-11509 旋转组 / 11510 锚点重置 / 11511 应用锚点变换）。
+#            100000..103999 动态行；11601/11602 翻页；11501/11502/11503-11506 翻转组 / 11507-11509+11514 旋转预设(-15°/-5°/5°/15°) / 11515 自定义角度 / 11510 锚点重置 / 11511 应用锚点变换 / 11512 分布与填充）。
 #   动态行：值 = 100000 + 页内序×100 + 列码（复选框 0 / 编辑 3 / 复制 5 / 粘贴 6 / 删除 7；页内序 0..39）
 # sel_note_list_open 设 current_panel=18。返回用 1560/1561，本面板不含值 1。
 # 入口白名单守卫
-execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11513 run function rhythm_axe:editor/menu/wrong_panel
-execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11513 run return fail
+execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11515 run function rhythm_axe:editor/menu/wrong_panel
+execute unless score #click_value editor matches 11401..11408 unless score #click_value editor matches 100000..103999 unless score #click_value editor matches 11601..11602 unless score #click_value editor matches 11501 unless score #click_value editor matches 11502 unless score #click_value editor matches 11503..11506 unless score #click_value editor matches 11507..11515 run return fail
 
 # 【返回】1560：仅返回主菜单（不清空 selection）
 execute if score #click_value editor matches 11401 run function rhythm_axe:editor/menu/main
@@ -95,15 +95,24 @@ execute if score #click_value editor matches 11505 run return 0
 # 执行翻转（11506）
 execute if score #click_value editor matches 11506 run function rhythm_axe:editor/menu/note/panel/note_panel_flip_mirror
 execute if score #click_value editor matches 11506 run return 0
-# 旋转（11507=15° / 11508=45° / 11509=90°）：写角度 cos/sin（×10000）后按 [X][Y][Z] 开关绕包围盒中心轴旋转
+# 旋转（11507=[-15°] / 11508=[-5°] / 11509=[5°] / 11514=[15°] / 11515=【自定义角度】）：
+#   预设写角度 cos/sin（×10000）后按 [X][Y][Z] 开关绕锚点轴旋转；自定义由 dialog_submit_rotate_angle_core 查表后走同一套
+#   ★ 2026-10-21：原 15°/45°/90° 改为 -15°/-5°/5°/15°；sin 带符号（正=逆时针 / 负=顺时针）
 execute if score #click_value editor matches 11507 run data modify storage rhythm_axe:prop rotate_cos set value 9659
-execute if score #click_value editor matches 11507 run data modify storage rhythm_axe:prop rotate_sin set value 2588
-execute if score #click_value editor matches 11508 run data modify storage rhythm_axe:prop rotate_cos set value 7071
-execute if score #click_value editor matches 11508 run data modify storage rhythm_axe:prop rotate_sin set value 7071
-execute if score #click_value editor matches 11509 run data modify storage rhythm_axe:prop rotate_cos set value 0
-execute if score #click_value editor matches 11509 run data modify storage rhythm_axe:prop rotate_sin set value 10000
+execute if score #click_value editor matches 11507 run data modify storage rhythm_axe:prop rotate_sin set value -2588
+execute if score #click_value editor matches 11508 run data modify storage rhythm_axe:prop rotate_cos set value 9962
+execute if score #click_value editor matches 11508 run data modify storage rhythm_axe:prop rotate_sin set value -872
+execute if score #click_value editor matches 11509 run data modify storage rhythm_axe:prop rotate_cos set value 9962
+execute if score #click_value editor matches 11509 run data modify storage rhythm_axe:prop rotate_sin set value 872
+execute if score #click_value editor matches 11514 run data modify storage rhythm_axe:prop rotate_cos set value 9659
+execute if score #click_value editor matches 11514 run data modify storage rhythm_axe:prop rotate_sin set value 2588
 execute if score #click_value editor matches 11507..11509 run function rhythm_axe:editor/menu/note/panel/note_panel_rotate
+execute if score #click_value editor matches 11514 run function rhythm_axe:editor/menu/note/panel/note_panel_rotate
 execute if score #click_value editor matches 11507..11509 run return 0
+execute if score #click_value editor matches 11514 run return 0
+# 自定义角度（11515）：打开角度输入对话框（提交后由 dialog_submit_rotate_angle_core 走同一套旋转）
+execute if score #click_value editor matches 11515 run function rhythm_axe:editor/menu/note/dialog/dialog_open_rotate_angle
+execute if score #click_value editor matches 11515 run return 0
 # 锚点重置（11510）【⌖】：清掉锚点（含「被改过」标记）→ 按选中包围盒中心重建（回到自动跟随）→ 重绘本面板
 execute if score #click_value editor matches 11510 run function rhythm_axe:editor/menu/note/anchor/anchor_reset
 execute if score #click_value editor matches 11510 run return 0

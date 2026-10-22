@@ -1,10 +1,10 @@
 scoreboard objectives add laser_time dummy "激光特效寿命"
 scoreboard objectives setdisplay sidebar laser_time
 
-# ── 硬重置：清掉上一轮遗留，否则 i 计数 / 旧实体 / running 标记都会污染本轮 ──
-# ① 旧激光实体：上一轮收尾删了计分板，没死透的实体永远不会被 kill ⇒ 会混进这一批
+# ── 硬重置：清掉上一轮遗留，否则旧实体 / 计数值 / running 标记都会污染本轮 ──
+# ① 旧激光实体：上一轮若被中途打断，没死透的实体不会自己消失 ⇒ 会混进这一批
 kill @e[tag=laser]
-# ② 循环计数 i：laser_main 靠 i 累加到 64 收尾，不归零会导致本轮提前收尾（把没发完的队列删掉）
+# ② 兜底计时 i：归零，否则上一轮遗留的刻数会让兜底上限提前触发
 scoreboard players set i laser_time 0
 # ③ running 标记：保证本轮一定重新排程 tick
 #    （schedule 同名函数是 replace 语义，重复排程也只会留一个，不会双倍触发）

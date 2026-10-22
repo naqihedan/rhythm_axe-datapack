@@ -56,3 +56,8 @@ execute store result entity @s Pos[2] double 0.01 run scoreboard players get #vz
 # ★ 2026-09-26 判定延迟补偿：带补偿挪过位置的音符打标记，same_tick 末尾统一还原
 # （还原 = 把 #lag_extra 归 0 后再调本函数，位置回到"上一刻视觉位置"）
 execute if score #lag_extra play_state matches 1.. run tag @s add st_lag_moved
+# ★ 2026-10-22 玻璃扫掠段历史（@s = 交互实体）：note_prev2_tz = T-2 局部 z、note_prev_tz = T-1 局部 z。
+#   扫掠锚在交互实体上（写它的 data 不打断客户端插值）。本函数在 glass_sweep 之前跑 →
+#   跑完时 note_prev_tz = tz(T-1)、note_prev2_tz = tz(T-2)，正好是扫掠段 [P(T-2), P(T-1)]。
+execute if entity @s[tag=note_stained_glass] run scoreboard players operation @s note_prev2_tz = @s note_prev_tz
+execute if entity @s[tag=note_stained_glass] run scoreboard players operation @s note_prev_tz = #tz play_state

@@ -283,22 +283,6 @@ execute store result score #tmp_vy play_state run data get storage rhythm_axe:ru
 execute store result score #tmp_sy play_state run data get storage rhythm_axe:runtime cur_note.start_y 100
 scoreboard players operation #tmp_vy play_state += #tmp_sy play_state
 $execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_prev_y = #tmp_vy play_state
-# note_prev2_*（上上一刻）初始同 note_prev_*（玻璃扫掠段起点用；初始视觉中心）
-$execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_prev2_x = #ipx play_state
-$execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_prev2_y = #tmp_vy play_state
-$execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players operation @s note_prev2_z = #ipz play_state
-
-# 玻璃判定中心 marker（混凝土模式：交互实体仅位置跟随，判定用 marker）
-# 位置 = 玻璃中心 = 初始视觉位置（y 不减 size/2 = #tmp_vy；x/z = #ipx/#ipz）
-$execute if score #note_type play_state matches 4 run summon marker $(pos_x) $(pos_y) $(pos_z) {Tags:["note","note_glass_center","$(mapid)_n$(id)_center","map_$(mapid)"]}
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id)_center,type=marker,limit=1] run scoreboard players set @s note_id $(id)
-# 玻璃中心 marker 也记录颜色（damage 撞墙反馈在 marker 上跑，particle_glass 需要）
-$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id)_center,type=marker,limit=1] run scoreboard players set @s note_color 0
-$execute if score #note_type play_state matches 4 if data storage rhythm_axe:runtime cur_note.color run execute as @e[tag=$(mapid)_n$(id)_center,type=marker,limit=1] run execute store result score @s note_color run data get storage rhythm_axe:runtime cur_note.color
-$execute if score #note_type play_state matches 4 run execute store result entity @e[tag=$(mapid)_n$(id)_center,type=marker,limit=1] Pos[0] double 0.01 run scoreboard players get #ipx play_state
-$execute if score #note_type play_state matches 4 run execute store result entity @e[tag=$(mapid)_n$(id)_center,type=marker,limit=1] Pos[1] double 0.01 run scoreboard players get #tmp_vy play_state
-$execute if score #note_type play_state matches 4 run execute store result entity @e[tag=$(mapid)_n$(id)_center,type=marker,limit=1] Pos[2] double 0.01 run scoreboard players get #ipz play_state
-
 # 给展示实体与交互实体记录 note_id（配对用；note_id 为独立计分板）
 $execute as @e[tag=$(mapid)_n$(id),type=item_display,limit=1] run scoreboard players set @s note_id $(id)
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_id $(id)
@@ -346,6 +330,21 @@ $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score #ig_on play_state matches 0 run scoreboard players operation @s note_life /= note_speed options
 # 记录判定反馈组号（0=使用 options.note_hitsound/note_particle）
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players operation @s note_type = #note_type play_state
+# ★ 2026-10-21：玻璃交互实体【无条件】存 note_half_size（= size/2 ×100）。
+#   写 Pos[1] 的每条路径（move_self 第44行 / move_write_pair 经 move 的 #tmp_scale）都做 `y -= note_half_size`，
+#   使交互实体「脚底」落在展示实体中心下方半格 → 碰撞箱完整包裹展示模型（音符.md《生成》的交互实体 Y 偏移）。
+#   而 note_half_size 原本只由 motion/init→init_interaction 复制，motion/init 仅【线性】分支调用 ⇒
+#   非线性/其他路径的玻璃交互实体缺这个值 → 减 0 → Y 整体高 size/2（判定箱不再包住展示实体）。
+#   这里给全类型玻璃兜底（幂等；线性分支重复写同值无害）。size×50 = size/2×100。
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run execute store result score @s note_half_size run data get storage rhythm_axe:runtime cur_note.size 50
+# ★ 2026-10-22 玻璃扫掠锚改到交互实体（写它的 NBT 不打断客户端插值，详见 play/active_note/glass_sweep）：
+#   ① Rotation = 运动方向（从展示实体复制；positioned ^ ^ ^ 需要朝向）
+#   ② note_prev_tz/note_prev2_tz = 局部 z 历史初值 = 出生位置 -dist（由 move_self / move_write_pair 每刻滚动）
+$execute if score #note_type play_state matches 4 run execute store result entity @e[tag=$(mapid)_n$(id),type=interaction,limit=1] Rotation[0] float 0.01 run data get entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Rotation[0] 100
+$execute if score #note_type play_state matches 4 run execute store result entity @e[tag=$(mapid)_n$(id),type=interaction,limit=1] Rotation[1] float 0.01 run data get entity @e[tag=$(mapid)_n$(id),type=item_display,limit=1] Rotation[1] 100
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,limit=1] run scoreboard players operation @s note_prev_tz = #note_dist display_calc
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,limit=1] run scoreboard players operation @s note_prev_tz *= -1 const
+$execute if score #note_type play_state matches 4 run execute as @e[tag=$(mapid)_n$(id),type=interaction,limit=1] run scoreboard players operation @s note_prev2_tz = @s note_prev_tz
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run scoreboard players set @s note_hitsound 0
 $execute if data storage rhythm_axe:runtime cur_note.hitsound run execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] run execute store result score @s note_hitsound run data get storage rhythm_axe:runtime cur_note.hitsound
 $execute as @e[tag=$(mapid)_n$(id),type=interaction,tag=note_interaction,limit=1] if score @s note_hitsound matches 0 run scoreboard players operation @s note_hitsound = note_hitsound options

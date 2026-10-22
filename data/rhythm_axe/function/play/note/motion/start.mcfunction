@@ -32,6 +32,4 @@ execute if data storage rhythm_axe:motion m run data remove storage rhythm_axe:m
 #   同刻递增，并由 move_self 自算位置（替代 move 每展示实体全量扫描交互实体）。
 scoreboard players operation #nid play_state = @s note_id
 execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run tag @s add note_linear
-# ★ 性能优化（2026-09-04，O(N²) 消除）：玻璃中心 marker 也同步打 note_linear → active_note 据此让
-#   marker 的 note_lin_t 与展示实体同刻递增，并由 marker_self 自算扫掠段（替代 move 全量扫描 marker）。
-execute as @e[type=marker,tag=note_glass_center] if score @s note_id = #nid play_state run tag @s add note_linear
+# ★ 2026-10-21 去 marker：玻璃中心 marker 已废除（扫掠锚 = 展示实体自身，见 active_note/glass_sweep）

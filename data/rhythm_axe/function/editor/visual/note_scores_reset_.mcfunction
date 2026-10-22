@@ -43,3 +43,4 @@ scoreboard players reset @s editor_n_sz
 scoreboard players reset @s editor_n_vvx
 scoreboard players reset @s editor_n_vvy
 scoreboard players reset @s editor_n_vvz
+scoreboard players reset @s editor_n_ptz

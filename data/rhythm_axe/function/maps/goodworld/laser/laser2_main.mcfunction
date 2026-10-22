@@ -13,4 +13,6 @@ execute if score #l2_mod laser2_time matches 1 if score #l2_shot laser2_time mat
 
 # 循环控制 + 收尾（跑到第 104 刻收工，清掉冗余计分板；末束在第 96 刻自然消亡）
 execute unless score #l2_shot laser2_time matches 104.. run schedule function rhythm_axe:maps/goodworld/laser/laser2_main 1t
+# 保险：删计分板前先把可能残留的实体清掉（否则它们的寿命积分会被清空 ⇒ 永远不会被 kill）
+execute if score #l2_shot laser2_time matches 104 run kill @e[tag=laser2]
 execute if score #l2_shot laser2_time matches 104 run scoreboard objectives remove laser2_time

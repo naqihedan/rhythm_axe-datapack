@@ -7,19 +7,289 @@
     {
       "type": "minecraft:plain_message",
       "contents": {
-        "text": "输入要查找的音符 id，结果输出到聊天栏"
+        "text": "按条件筛选音符并设为选中。所有条件之间为「且」。"
+      }
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "下拉选「全部/不限」、文本留空 = 该条件忽略；范围可只填一端。"
+      }
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "不勾「查找选区内」：替换当前选中（命中多少选多少，列表翻页查看）；勾上：在当前选区内筛选（保留命中、移出不命中）。"
       }
     }
   ],
   "inputs": [
     {
-      "type": "minecraft:text",
-      "key": "find_value",
+      "type": "minecraft:single_option",
+      "key": "note_type",
       "width": 150,
-      "label": {
-        "text": "音符 id"
-      },
-      "max_length": 16
+      "label": { "text": "音符类型" },
+      "options": [
+        { "id": "all", "display": { "text": "全部" }, "initial": true },
+        { "id": "0", "display": { "text": "音符盒" } },
+        { "id": "1", "display": { "text": "木板" } },
+        { "id": "2", "display": { "text": "唱片机" } },
+        { "id": "3", "display": { "text": "混凝土" } },
+        { "id": "4", "display": { "text": "染色玻璃" } }
+      ]
+    },
+    {
+      "type": "minecraft:single_option",
+      "key": "note_color",
+      "width": 150,
+      "label": { "text": "颜色" },
+      "options": [
+        { "id": "all", "display": { "text": "全部" }, "initial": true },
+        { "id": "0", "display": { "text": "未设置" } },
+        { "id": "1", "display": { "text": "白" } },
+        { "id": "2", "display": { "text": "灰" } },
+        { "id": "3", "display": { "text": "淡灰" } },
+        { "id": "4", "display": { "text": "黑" } },
+        { "id": "5", "display": { "text": "棕" } },
+        { "id": "6", "display": { "text": "红" } },
+        { "id": "7", "display": { "text": "橙" } },
+        { "id": "8", "display": { "text": "黄" } },
+        { "id": "9", "display": { "text": "黄绿" } },
+        { "id": "10", "display": { "text": "绿" } },
+        { "id": "11", "display": { "text": "青" } },
+        { "id": "12", "display": { "text": "淡蓝" } },
+        { "id": "13", "display": { "text": "蓝" } },
+        { "id": "14", "display": { "text": "紫" } },
+        { "id": "15", "display": { "text": "品红" } },
+        { "id": "16", "display": { "text": "粉" } }
+      ]
+    },
+    {
+      "type": "minecraft:text",
+      "key": "time_from",
+      "width": 90,
+      "label": { "text": "时间从（刻）" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "time_to",
+      "width": 90,
+      "label": { "text": "时间到（刻）" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:boolean",
+      "key": "in_selection",
+      "label": { "text": "查找选区内（勾上 = 在当前选区内筛选，保留命中、移出不命中；选区无数量上限）" },
+      "on_true": "1",
+      "on_false": "0"
+    },
+    {
+      "type": "minecraft:text",
+      "key": "id_from",
+      "width": 90,
+      "label": { "text": "音符 id 从" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "id_to",
+      "width": 90,
+      "label": { "text": "音符 id 到" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "size_from",
+      "width": 90,
+      "label": { "text": "大小从（格）" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "size_to",
+      "width": 90,
+      "label": { "text": "大小到（格）" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "dur_from",
+      "width": 90,
+      "label": { "text": "持续时长从（刻）" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "dur_to",
+      "width": 90,
+      "label": { "text": "持续时长到（刻）" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "density_from",
+      "width": 90,
+      "label": { "text": "判定密度从" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "density_to",
+      "width": 90,
+      "label": { "text": "判定密度到" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "life_from",
+      "width": 90,
+      "label": { "text": "基础寿命从" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "life_to",
+      "width": 90,
+      "label": { "text": "基础寿命到" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "hev_from",
+      "width": 90,
+      "label": { "text": "击打事件数从" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "hev_to",
+      "width": 90,
+      "label": { "text": "击打事件数到" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:single_option",
+      "key": "easing",
+      "width": 130,
+      "label": { "text": "缓动类型" },
+      "options": [
+        { "id": "all", "display": { "text": "不限" }, "initial": true },
+        { "id": "1", "display": { "text": "缓入" } },
+        { "id": "2", "display": { "text": "缓出" } },
+        { "id": "3", "display": { "text": "缓入缓出" } }
+      ]
+    },
+    {
+      "type": "minecraft:single_option",
+      "key": "power",
+      "width": 130,
+      "label": { "text": "缓动幂次" },
+      "options": [
+        { "id": "all", "display": { "text": "不限" }, "initial": true },
+        { "id": "1", "display": { "text": "1（线性）" } },
+        { "id": "2", "display": { "text": "2" } },
+        { "id": "3", "display": { "text": "3" } },
+        { "id": "4", "display": { "text": "4" } },
+        { "id": "5", "display": { "text": "5" } }
+      ]
+    },
+    {
+      "type": "minecraft:single_option",
+      "key": "hitsound",
+      "width": 130,
+      "label": { "text": "击打音效组" },
+      "options": [
+        { "id": "all", "display": { "text": "不限" }, "initial": true },
+        { "id": "0", "display": { "text": "0（跟随全局）" } },
+        { "id": "1", "display": { "text": "1" } },
+        { "id": "2", "display": { "text": "2" } },
+        { "id": "3", "display": { "text": "3" } },
+        { "id": "4", "display": { "text": "4" } },
+        { "id": "5", "display": { "text": "5" } },
+        { "id": "6", "display": { "text": "6" } }
+      ]
+    },
+    {
+      "type": "minecraft:single_option",
+      "key": "particles",
+      "width": 130,
+      "label": { "text": "击打粒子组" },
+      "options": [
+        { "id": "all", "display": { "text": "不限" }, "initial": true },
+        { "id": "0", "display": { "text": "0（跟随全局）" } },
+        { "id": "1", "display": { "text": "1" } },
+        { "id": "2", "display": { "text": "2" } },
+        { "id": "3", "display": { "text": "3" } },
+        { "id": "4", "display": { "text": "4" } },
+        { "id": "5", "display": { "text": "5" } },
+        { "id": "6", "display": { "text": "6" } }
+      ]
+    },
+    {
+      "type": "minecraft:single_option",
+      "key": "ignore_speed",
+      "width": 130,
+      "label": { "text": "无视流速" },
+      "options": [
+        { "id": "all", "display": { "text": "不限" }, "initial": true },
+        { "id": "1", "display": { "text": "开" } },
+        { "id": "0", "display": { "text": "关" } }
+      ]
+    },
+    {
+      "type": "minecraft:single_option",
+      "key": "following",
+      "width": 130,
+      "label": { "text": "引导线" },
+      "options": [
+        { "id": "all", "display": { "text": "不限" }, "initial": true },
+        { "id": "1", "display": { "text": "开" } },
+        { "id": "0", "display": { "text": "关" } }
+      ]
+    },
+    {
+      "type": "minecraft:text",
+      "key": "pos_x",
+      "width": 90,
+      "label": { "text": "判定位置 X" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "pos_y",
+      "width": 90,
+      "label": { "text": "判定位置 Y" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "pos_z",
+      "width": 90,
+      "label": { "text": "判定位置 Z" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "start_x",
+      "width": 90,
+      "label": { "text": "起始位置 X" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "start_y",
+      "width": 90,
+      "label": { "text": "起始位置 Y" },
+      "max_length": 10
+    },
+    {
+      "type": "minecraft:text",
+      "key": "start_z",
+      "width": 90,
+      "label": { "text": "起始位置 Z" },
+      "max_length": 10
     }
   ],
   "can_close_with_escape": true,
@@ -36,11 +306,20 @@
   "actions": [
     {
       "label": {
-        "text": "查找"
+        "text": "查找并选中"
       },
       "action": {
         "type": "dynamic/run_command",
-        "template": "function rhythm_axe:editor/menu/find/dialog_submit_find_note {\"value\":\"$(find_value)\"}"
+        "template": "function rhythm_axe:editor/menu/find/dialog_submit_find_note {\"type\":\"$(note_type)\",\"color\":\"$(note_color)\",\"tfrom\":\"$(time_from)\",\"tto\":\"$(time_to)\",\"insel\":\"$(in_selection)\",\"idfrom\":\"$(id_from)\",\"idto\":\"$(id_to)\",\"szfrom\":\"$(size_from)\",\"szto\":\"$(size_to)\",\"dfrom\":\"$(dur_from)\",\"dto\":\"$(dur_to)\",\"dnfrom\":\"$(density_from)\",\"dnto\":\"$(density_to)\",\"lifrom\":\"$(life_from)\",\"lito\":\"$(life_to)\",\"hvfrom\":\"$(hev_from)\",\"hvto\":\"$(hev_to)\",\"easing\":\"$(easing)\",\"power\":\"$(power)\",\"hs\":\"$(hitsound)\",\"pt\":\"$(particles)\",\"igsp\":\"$(ignore_speed)\",\"fwp\":\"$(following)\",\"px\":\"$(pos_x)\",\"py\":\"$(pos_y)\",\"pz\":\"$(pos_z)\",\"sx\":\"$(start_x)\",\"sy\":\"$(start_y)\",\"sz\":\"$(start_z)\"}"
+      }
+    },
+    {
+      "label": {
+        "text": "选中同刻"
+      },
+      "action": {
+        "type": "run_command",
+        "command": "function rhythm_axe:editor/menu/find/dialog_submit_find_same_time"
       }
     }
   ]

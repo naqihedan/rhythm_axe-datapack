@@ -19,9 +19,8 @@ scoreboard players reset * note_active
 scoreboard players reset * note_prev_x
 scoreboard players reset * note_prev_y
 scoreboard players reset * note_prev_z
-scoreboard players reset * note_prev2_x
-scoreboard players reset * note_prev2_y
-scoreboard players reset * note_prev2_z
+scoreboard players reset * note_prev_tz
+scoreboard players reset * note_prev2_tz
 scoreboard players reset * note_base_x
 scoreboard players reset * note_base_y
 scoreboard players reset * note_base_z
@@ -96,6 +95,8 @@ scoreboard players reset * note_prev_cz
 # ============ 玻璃 ============
 scoreboard players reset * note_g_seg
 scoreboard players reset * note_glass_dur
+scoreboard players reset * note_sweep_d
+scoreboard players reset * note_sweep_last
 # ============ 判定反馈 ============
 scoreboard players reset * note_hitsound
 scoreboard players reset * note_hit_particles
@@ -137,3 +138,4 @@ scoreboard players reset * editor_n_sz
 scoreboard players reset * editor_n_vvx
 scoreboard players reset * editor_n_vvy
 scoreboard players reset * editor_n_vvz
+scoreboard players reset * editor_n_ptz

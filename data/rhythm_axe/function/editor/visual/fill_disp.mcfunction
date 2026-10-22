@@ -103,6 +103,10 @@ execute if score #note_type play_state matches 3 if score #c_seg editor >= @s ed
 scoreboard players set @s editor_n_vvx 0
 scoreboard players set @s editor_n_vvy 0
 scoreboard players set @s editor_n_vvz 0
+# ★ 2026-10-21 玻璃扫掠段起点（局部 z 历史，×100）：初始 = 出生位置 = -dist
+#   （glass_check 每刻把当前 tz 回写到这里 → 下刻当起点，形成 [P(T-1), P(T)] 扫掠段）
+scoreboard players operation @s editor_n_ptz = #note_dist display_calc
+scoreboard players operation @s editor_n_ptz *= -1 const
 # 玻璃段①时长也随流速缩放（×16/note_speed，ignore 除外；#glass_lt 由 summon_ 算）
 scoreboard players operation @s editor_n_lt = #glass_lt editor
 scoreboard players operation @s editor_n_easing = #n_easing editor

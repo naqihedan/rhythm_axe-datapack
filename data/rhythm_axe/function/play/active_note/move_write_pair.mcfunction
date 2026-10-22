@@ -13,3 +13,11 @@ execute if score judge_lag_comp options matches 1 if entity @s[tag=note_plank] r
 execute store result entity @s Pos[0] double 0.01 run scoreboard players get #pvx play_state
 execute store result entity @s Pos[1] double 0.01 run scoreboard players get #pvy play_state
 execute store result entity @s Pos[2] double 0.01 run scoreboard players get #pvz play_state
+# ★ 2026-10-22 玻璃扫掠段历史（非线性玻璃走本路径）：note_prev2_tz = T-2 局部 z、note_prev_tz = T-1 局部 z
+#   哨兵初始化：非线性玻璃不走 init_interaction，首次用展示实体的 note_c_dist 取负（= 出生 tz）
+execute if entity @s[tag=note_stained_glass] unless score @s note_prev_tz matches -2147483648.. run scoreboard players operation #sw_i0 play_state = @s note_c_dist
+execute if entity @s[tag=note_stained_glass] unless score @s note_prev_tz matches -2147483648.. run scoreboard players operation #sw_i0 play_state *= -1 const
+execute if entity @s[tag=note_stained_glass] unless score @s note_prev_tz matches -2147483648.. run scoreboard players operation @s note_prev_tz = #sw_i0 play_state
+execute if entity @s[tag=note_stained_glass] unless score @s note_prev2_tz matches -2147483648.. run scoreboard players operation @s note_prev2_tz = @s note_prev_tz
+execute if entity @s[tag=note_stained_glass] run scoreboard players operation @s note_prev2_tz = @s note_prev_tz
+execute if entity @s[tag=note_stained_glass] run scoreboard players operation @s note_prev_tz = #tz play_state

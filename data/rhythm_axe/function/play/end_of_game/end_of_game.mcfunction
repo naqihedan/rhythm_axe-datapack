@@ -11,7 +11,7 @@ bossbar remove rhythm_axe:song_progress
 # 收回唱片机点击 advancement
 advancement revoke @a only rhythm_axe:jukebox_right_click
 advancement revoke @a only rhythm_axe:jukebox_left_click
-# 清除本谱面所有音符实体（展示 + 交互 + 完美判定区域 marker）
+# 清除本谱面所有音符实体（展示 + 交互；★ 2026-10-21 玻璃 marker 已废除，扫掠锚 = 展示实体自身）
 # ★ auto 补判（2026-08-09）：auto 模式保证"判到所有音符"——若谱面提前结束（end_time 早于音符
 #   寿命 0）或手动 stop 时还有未判定音符，先补判大P再清除，避免漏判（auto_note 的寿命< -2x 兜底
 #   只在音符活到出窗才触发；提前结束的存活音符不经过它）。限定本谱面 map_$(mapid)，不误判他谱/残留。

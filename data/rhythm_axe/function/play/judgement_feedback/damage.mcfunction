@@ -17,7 +17,8 @@ execute if score damage_cooldown play_state matches ..0 if score health play_sta
 
 
 # 判定反馈组表（M2-H）：玻璃撞墙扣血 → damage 情况（音效/粒子 + hit_events.damage）
-# 执行者 = 配对的音符交互实体（@s 是玻璃中心 marker，先记录 note_id 再切执行者）
+# ★ 2026-10-21 去 marker：@s = 玻璃展示实体（glass_sweep_step 命中时调用；执行位置 = 采样命中点）。
+#   反馈链（damage_feedback）内部按 note_id 配对交互实体执行（音效/粒子以交互实体位置播放，语义不变）。
 execute if score damage_cooldown play_state matches ..0 if score health play_state matches 1.. run function rhythm_axe:play/feedback/damage_feedback
 
 # 主循环里每刻-1冷却时间直到0，这里不写出

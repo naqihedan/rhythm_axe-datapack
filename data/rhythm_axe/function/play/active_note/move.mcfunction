@@ -75,19 +75,7 @@ scoreboard players operation #pvy play_state -= #tmp_scale play_state
 #   （数据在 summon 时复制），这里跳过整段"每展示实体全量扫描交互实体"，仅非线性音符仍走本扫描（少数）。
 scoreboard players operation #nid play_state = @s note_id
 execute unless entity @s[tag=note_linear] as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run function rhythm_axe:play/active_note/move_write_pair
-# ★ 玻璃判定中心 marker 跟随：线性玻璃已由 active_note→marker_self 自算（O(N²) 消除，大头），
-#   这里仅对【非线性玻璃】（tag=!note_linear）保留旧"每展示实体全量扫描 marker"逻辑（非线性数量少）。
-#   ★ 扫掠段退 1 刻（2026-08-08）：起点=上上一刻 P(T-2)、终点=上一刻 P(T-1)。
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvx2 play_state = @s note_prev2_x
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvy2 play_state = @s note_prev2_y
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvz2 play_state = @s note_prev2_z
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvy_c play_state = #pvy play_state
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation #pvy_c play_state += #tmp_scale play_state
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] as @e[type=marker,tag=note_glass_center] if score @s note_id = #nid play_state run function rhythm_axe:play/active_note/move_write_marker
-# 存当前视觉位置为上一刻；旧上一刻滚为上上一刻（非线性玻璃 marker 扫掠段起点用）
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation @s note_prev2_x = @s note_prev_x
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation @s note_prev2_y = @s note_prev_y
-execute if entity @s[tag=note_stained_glass,tag=!note_linear] run scoreboard players operation @s note_prev2_z = @s note_prev_z
+# 存当前视觉位置为上一刻（交互实体配对写 Pos 用）
 scoreboard players operation @s note_prev_x = #vx play_state
 scoreboard players operation @s note_prev_y = #vy play_state
 scoreboard players operation @s note_prev_z = #vz play_state

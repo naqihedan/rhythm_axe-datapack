@@ -13,4 +13,6 @@ execute if score #cr_mod cross_time matches 1 if score #cr_shot cross_time match
 
 # 循环控制 + 收尾（跑到第 140 刻收工，清掉冗余计分板；末个在第 134 刻自然消亡）
 execute unless score #cr_shot cross_time matches 140.. run schedule function rhythm_axe:maps/goodworld/laser/cross_main 1t
+# 保险：删计分板前先把可能残留的实体清掉（否则它们的寿命积分会被清空 ⇒ 永远不会被 kill）
+execute if score #cr_shot cross_time matches 140 run kill @e[tag=cross]
 execute if score #cr_shot cross_time matches 140 run scoreboard objectives remove cross_time

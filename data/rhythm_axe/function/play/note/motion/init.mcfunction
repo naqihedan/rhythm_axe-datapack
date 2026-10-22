@@ -41,5 +41,4 @@ scoreboard players operation #d_hs play_state = @s note_half_size
 scoreboard players operation #d_dur play_state = @s note_lin_dur
 scoreboard players operation #d_end play_state = @s note_lin_end
 execute as @e[type=interaction,tag=note_interaction] if score @s note_id = #nid play_state run function rhythm_axe:play/note/motion/init_interaction
-# ★ 性能优化（2026-09-04，O(N²) 消除）：玻璃中心 marker 也复制运动数据（marker_self 自算扫掠段用）
-execute as @e[type=marker,tag=note_glass_center] if score @s note_id = #nid play_state run function rhythm_axe:play/note/motion/init_marker
+# ★ 2026-10-21 去 marker：玻璃中心 marker 已废除（扫掠锚 = 展示实体自身，见 active_note/glass_sweep）
