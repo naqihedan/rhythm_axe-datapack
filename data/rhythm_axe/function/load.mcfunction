@@ -71,6 +71,12 @@ scoreboard players set -180 const -180
 function rhythm_axe:utilization/display_animation/init
 
 
+#====================天空盒工具组件====================
+# ⏸ 2026-10-25 打回：六面光照不一致（方案已否，见 节奏地图开发文档/todo.md）
+# 取消下面这行注释即可重新启用（需先把 utilization/skybox/ 从 .gitignore 移出并一起提交）
+# function rhythm_axe:utilization/skybox/init
+
+
 # ★ 2026-09-29 /reload 不打断游玩：载入时先判「是否正有一局在跑」——is_running=1 且运行存储里还有音符。
 #   #keep_run play_state = 1 ⇒ 本文件里所有「清空游玩状态」的动作全部跳过，主循环的 schedule 链接着跑。
 #   （TimerQueue 是 SavedData，/reload 不会清它，所以链本来就活着；下面还会再补挂一次作兜底，重复链由 main_loop 自杀）

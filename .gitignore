@@ -22,3 +22,8 @@ Thumbs.db
 
 # local development docs (private design notes)
 # 节奏地图开发文档/
+
+# 天空盒（未完成，暂不推送；移除本行即可解禁）★ 解禁时还要同时：
+#   ① 恢复 load.mcfunction / tick.mcfunction 里被注释的两行挂钩
+#   ② 在资源包仓库提交对应的模型/贴图与 _tools 脚本
+data/rhythm_axe/function/utilization/skybox/

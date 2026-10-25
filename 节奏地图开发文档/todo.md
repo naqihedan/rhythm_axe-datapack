@@ -2,6 +2,57 @@
 
 > 动态清零，用于快速记录想法
 
+## ⏸ 天空盒 / skybox 工具组件（**已打回 2026-10-25，效果不达预期**）
+
+### 做了什么
+
+- **数据包** `utilization/skybox/`（12 个函数）：`init` / `start` / `here` / `here_test` / `test` /
+  `follow` / `tick` / `respawn` / `respawn_` / `stop` / `probe_face` / `probe_size`；
+  并在 `load.mcfunction`（调 `skybox/init`）与 `tick.mcfunction`（调 `skybox/tick`）各挂了一处。
+- **资源包**：`models/item/skybox_{test,r_c}.json` + `items/` + `textures/item/skybox/*.png`；
+  工具 `_tools/equirect_to_cubemap.py`（等距柱状全景图 → 六面，含水印修补 / 预翻转 / 预览）
+  与 `_tools/gen_skybox_test.py`（带方向标注的定标六面图）。
+- **dp_devtools mod**：新增 `POST /api/reloadresources`（等价 F3+T，贴图/模型唯一生效途径）
+  与新任务 `Build+Deploy DpDevTools`（构建后清旧 jar 再部署）。
+
+### 技术方案（已定标完成，结论有效）
+
+`item_display` + 自定义 `item_model`（**不碰任何原版方块**）：
+`scale:[r,-r,r]`（Y 轴负）、`Pos` = 盒中心（模型元素必须写 `0..16`）、
+`left_rotation` 必须 `[0,1,0,0]`（180°Y）、磁盘贴图六面预转 180°、`view_range` 要调大。
+详见《工具组件.md → 天空盒/skybox》。
+
+### 为什么打回（用户实测 2026-10-25）
+
+1. **六面光照不一致（主因，无法消除）**：物品渲染管线的**双方向漫反射光**，实测系数
+   `up 1.000 / north-south 0.742 / east-west 0.500 / down 0.398`（极差 **2.51×**），
+   六个面亮度差肉眼可辨。
+   已逐一实测排除**全部**资源包侧开关，均无效：`shade`（element 级 / face 级）、
+   `light_emission:15`、`gui_light:"front"`、父模型换 `item/generated`、
+   `item_display` 的 10 种 context。⇒ 属**着色器层**，资源包关不掉。
+2. **`block_display` 备选已否决**：方块光照系数略平（1.93×）但 ——
+   ① `light_emission` 字面量只存在于 `CuboidModelElement$Deserializer`（item 几何体），
+   **方块模型不解析它**；② 必须**覆盖某个原版方块**（该方块全世界外观全变）；
+   ③ `block_display` 用 `block_state`，**不支持 `custom_model_data`**（全库扫描：该字面量只在
+   item 侧 `SelectItemModelProperties` 等类中）；④ 还需 `translation = −0.5 × scale` 补偿
+   方块模型 `[0,1]³` 的几何偏移。综合代价大于收益。
+3. **源全景图天底未收敛**：原图（3840×1920）天底行内极差从 18.3 涨到 186.3，
+   而天顶只有 0.8~1.5 ⇒ 源图下半部不是真实极点，投影后 `down` 面出现放射状条纹。
+   （不是转换工具的 bug：四个侧面接缝误差 `0.00e+00`、天顶正常。）
+
+### 将来重做的两条路
+
+- **① 改 mod**（`rhythm_axe_mod`）写自定义渲染器，从根上绕过方向光 ⇒ 能真正均匀（工作量大）。
+- **② 接受亮度差 + 贴图侧逐面预补偿**：按实测系数给六张贴图逐面提亮，
+  受 255 上限限制只能把 2.51× 压到约 1.3×（治标）。
+
+### ⚠️ 代码现状（提交时务必注意）
+
+数据包 `utilization/skybox/` 与资源包的模型/贴图/工具**都是本地未提交状态**。
+**不能只提交一半**：`load.mcfunction` 里有 `function rhythm_axe:utilization/skybox/init`，
+若只推 `load.mcfunction` 而不推 `skybox/` 目录 ⇒ **数据包加载报错**。
+⇒ 推送其他更新时必须**只 `git add` 目标文件**，**严禁 `git add -A` / `git add .`**。
+
 ## ⏸ 多人判定延迟补偿（**已搁置 2026-09-26，待重新评估**）
 
 - **做了什么**：mod 每 20 刻把每人 RTT 写进计分板 `net`；数据包 `play/judgement/st_player` 换算 `#st_lag = (RTT+30)/50`（clamp 0..4），`st_probe` 按玩家把判定箱回退到「他眼睛看到的位置」再测视线（线性音符闭式回退 / 非线性取位置历史环 `note_vis*`）。工具：`test/lag_report` 体检、`lag_rtt_manual` 手动固定值、`judge_lag_comp` 总开关。

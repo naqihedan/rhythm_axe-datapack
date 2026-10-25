@@ -2,6 +2,11 @@
 # 每 tick 调用，驱动所有活跃动画
 execute as @e[scores={anim_status=1}] run function rhythm_axe:utilization/display_animation/step
 
+# ========== 天空盒：跟随模式逐刻贴合 ==========
+# ⏸ 2026-10-25 打回：六面光照不一致（方案已否，见 节奏地图开发文档/todo.md）
+# 取消下面这行注释即可重新启用
+# function rhythm_axe:utilization/skybox/tick
+
 # ========== 编辑器：聊天栏点击逐刻消费 ==========
 # 玩家点击编辑器按钮（/trigger editor_click set N）→ 本行检测后分发到编辑器 consume
 execute as @a[scores={editor_click=1..}] run function rhythm_axe:editor/menu/consume

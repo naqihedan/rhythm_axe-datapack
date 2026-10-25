@@ -1,5 +1,4 @@
 scoreboard objectives add laser_time dummy "激光特效寿命"
-scoreboard objectives setdisplay sidebar laser_time
 
 # ── 硬重置：清掉上一轮遗留，否则旧实体 / 计数值 / running 标记都会污染本轮 ──
 # ① 旧激光实体：上一轮若被中途打断，没死透的实体不会自己消失 ⇒ 会混进这一批
