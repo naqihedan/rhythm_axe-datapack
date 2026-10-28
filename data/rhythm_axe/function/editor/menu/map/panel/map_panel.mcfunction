@@ -39,6 +39,34 @@ tellraw @s [\
 {"nbt":"panel_temp.music","storage":"rhythm_axe:maps.editor","color":"white"},\
 {"text":" [编辑文本]","color":"aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 10201"},"hover_event":{"action":"show_text","value":"编辑音乐文件"}}\
 ]
+# 行108：谱面音乐偏移（★ 2026-10-28；正 = 音乐延后，只有延后没有提前 —— 见《游玩谱面.md》）
+#   [−20][−1] 值 [+1][+20] 【输入数值】；`min = 0`（负数无意义，见《设置.md》）
+#   到下限 0 时 [−20]/[−1] 变红（仍带 click，处理端会钳制，只是点了不再变）
+#   ⚠ 先清零再 store：字段缺失时 store result 会失败并保留 #temp 旧值（会显示错数）
+scoreboard players set #temp editor 0
+execute store result score #temp editor run data get storage rhythm_axe:maps.editor panel_temp.music_offset
+execute if score #temp editor matches ..0 run tellraw @s [\
+{"text":"谱面音乐偏移：","color":"gray"},\
+{"text":"[-20]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10802"},"hover_event":{"action":"show_text","value":"最少 0 ms（只有延后，不能提前）"}},\
+{"text":"[-1]","color":"red","click_event":{"action":"run_command","command":"/trigger editor_click set 10803"},"hover_event":{"action":"show_text","value":"最少 0 ms（只有延后，不能提前）"}},\
+{"score":{"name":"#temp","objective":"editor"},"color":"gold"},\
+{"text":" ms "},\
+{"text":"[+1]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10804"},"hover_event":{"action":"show_text","value":"音乐延后 +1 ms"}},\
+{"text":"[+20]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10805"},"hover_event":{"action":"show_text","value":"音乐延后 +20 ms"}},\
+{"text":"  "},\
+{"text":"【输入数值】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10806"},"hover_event":{"action":"show_text","value":"直接输入谱面音乐偏移（整数毫秒，≥0；time=0 起先静音这么多毫秒再出声）"}}\
+]
+execute unless score #temp editor matches ..0 run tellraw @s [\
+{"text":"谱面音乐偏移：","color":"gray"},\
+{"text":"[-20]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10802"},"hover_event":{"action":"show_text","value":"音乐延后 -20 ms"}},\
+{"text":"[-1]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10803"},"hover_event":{"action":"show_text","value":"音乐延后 -1 ms"}},\
+{"score":{"name":"#temp","objective":"editor"},"color":"gold"},\
+{"text":" ms "},\
+{"text":"[+1]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10804"},"hover_event":{"action":"show_text","value":"音乐延后 +1 ms"}},\
+{"text":"[+20]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10805"},"hover_event":{"action":"show_text","value":"音乐延后 +20 ms"}},\
+{"text":"  "},\
+{"text":"【输入数值】","color":"yellow","click_event":{"action":"run_command","command":"/trigger editor_click set 10806"},"hover_event":{"action":"show_text","value":"直接输入谱面音乐偏移（整数毫秒，≥0；time=0 起先静音这么多毫秒再出声）"}}\
+]
 # 预览起点 / 预览时长（刻度；大厅总表的 ▶️ 按钮用：从第几刻起播、播多少刻）
 # ★ 2026-10-01 取代原「预览音频」字符串字段（那个字段从没有消费者）
 #   值：行103 六个按钮 10301/10302 起点 ∓10 刻（0.5 秒）、10303/10304 时长 ∓1 刻（0.05 秒）、
@@ -123,6 +151,7 @@ execute if score #vzneg editor matches 1 run scoreboard players operation #vzi e
 function rhythm_axe:editor/menu/map/ops/map_spawn_row
 
 # 行108【整理音符顺序】：已于 2026-09-15 迁到主菜单（值不变仍为 10801，发射点见 main.mcfunction，分支见 panel1）
+# ★ 行108 自 2026-10-28 起另外启用为「谱面音乐偏移」（10802~10806），渲染在上面的音乐文件行之后
 #   原因：它是「数据维护」而非谱面设置，且保存谱面时已会自动执行一遍
 
 # 初始角度（偏航）：一行 标签 [-] 值 [+]（±180°，按值域钳制红绿；★ 整数显示）

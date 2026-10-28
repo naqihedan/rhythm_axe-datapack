@@ -29,6 +29,7 @@ $data remove storage rhythm_axe:maps.$(mapid) spawn_pitch
 $data remove storage rhythm_axe:maps.$(mapid) player_count
 $data remove storage rhythm_axe:maps.$(mapid) health
 $data remove storage rhythm_axe:maps.$(mapid) end_time
+$data remove storage rhythm_axe:maps.$(mapid) music_offset
 $data remove storage rhythm_axe:maps.$(mapid) highest_score
 $data remove storage rhythm_axe:maps.$(mapid) notes
 $data remove storage rhythm_axe:maps.$(mapid) timing_points

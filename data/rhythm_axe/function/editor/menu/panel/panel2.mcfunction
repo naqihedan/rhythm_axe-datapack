@@ -6,6 +6,8 @@
 #    （原 10301 是「预览音频」文本框，已废弃）
 # spawn 行107: 10701..10706 = X-/X+/Y-/Y+/Z-/Z+；角度行109: 10901..10904 = yaw-/yaw+/pitch-/pitch+
 # 行108 已空（原【整理音符顺序】10801 于 2026-09-15 迁到主菜单，处理分支见 panel1；值不变）
+# ★ 行108 自 2026-10-28 起启用为「谱面音乐偏移」：10802/−20 10803/−1 10804/+1 10805/+20 10806/【输入数值】
+#   （列码从 02 起，避开历史值 10801；`min = 0` —— 只有延后没有提前，见《游玩谱面.md》）
 # 行110 人数 11001/11002；行111 血量 11101/11102；行112 进度条色 11201/11202
 # 行113 用玩家 11301 位置 / 11302 角度 / 11303 对齐方块中心（XZ）；行114 保存11401 / 取消11402
 # map_panel_open 设 current_panel=2。
@@ -43,6 +45,22 @@ execute if score #click_value editor matches 10303..10304 run data modify storag
 execute if score #click_value editor matches 10301..10304 run function rhythm_axe:editor/menu/map/ops/map_int_adjust with storage rhythm_axe:prop
 execute if score #click_value editor matches 10401 run function rhythm_axe:editor/menu/dialog/dialog_open_mapid
 execute if score #click_value editor matches 10501 run function rhythm_axe:editor/menu/dialog/dialog_open_end_time
+# —— 行108：谱面音乐偏移（★ 2026-10-28）10802=−20 / 10803=−1 / 10804=+1 / 10805=+20 / 10806=【输入数值】——
+#   值域 min = 0（只有延后，不能提前；负数无意义）→ map_int_adjust 带钳制
+#   ⚠ 10801 是历史上【整理音符顺序】的值（已迁到主菜单，分支见 panel1），本行从列码 02 起用
+execute if score #click_value editor matches 10802 run data modify storage rhythm_axe:prop field_name set value "music_offset"
+execute if score #click_value editor matches 10803 run data modify storage rhythm_axe:prop field_name set value "music_offset"
+execute if score #click_value editor matches 10804 run data modify storage rhythm_axe:prop field_name set value "music_offset"
+execute if score #click_value editor matches 10805 run data modify storage rhythm_axe:prop field_name set value "music_offset"
+execute if score #click_value editor matches 10802 run data modify storage rhythm_axe:prop delta set value -20
+execute if score #click_value editor matches 10803 run data modify storage rhythm_axe:prop delta set value -1
+execute if score #click_value editor matches 10804 run data modify storage rhythm_axe:prop delta set value 1
+execute if score #click_value editor matches 10805 run data modify storage rhythm_axe:prop delta set value 20
+execute if score #click_value editor matches 10802..10805 run data modify storage rhythm_axe:prop min set value 0
+execute if score #click_value editor matches 10802..10805 run data modify storage rhythm_axe:prop max set value 100000
+execute if score #click_value editor matches 10802..10805 run function rhythm_axe:editor/menu/map/ops/map_int_adjust with storage rhythm_axe:prop
+# 10806 = 【输入数值】对话框
+execute if score #click_value editor matches 10806 run function rhythm_axe:editor/menu/dialog/dialog_open_music_offset
 # —— 传送行（701 不传送 / 702 设为传送 / 703 传送动作）——
 execute if score #click_value editor matches 10601 run function rhythm_axe:editor/menu/map/ops/map_set_teleport {"value":"0b"}
 execute if score #click_value editor matches 10602 run function rhythm_axe:editor/menu/map/ops/map_set_teleport {"value":"1b"}

@@ -31,3 +31,5 @@ execute unless data storage rhythm_axe:maps.editor panel_temp.player_count run d
 execute unless data storage rhythm_axe:maps.editor panel_temp.health run data modify storage rhythm_axe:maps.editor panel_temp.health set value 10
 execute unless data storage rhythm_axe:maps.editor panel_temp.end_time run data modify storage rhythm_axe:maps.editor panel_temp.end_time set value -1
 execute unless data storage rhythm_axe:maps.editor panel_temp.progress_color run data modify storage rhythm_axe:maps.editor panel_temp.progress_color set value 0
+# ★ 2026-10-28：谱面音乐偏移（毫秒，正 = 音乐延后；只有延后没有提前，见《游玩谱面.md》）
+execute unless data storage rhythm_axe:maps.editor panel_temp.music_offset run data modify storage rhythm_axe:maps.editor panel_temp.music_offset set value 0

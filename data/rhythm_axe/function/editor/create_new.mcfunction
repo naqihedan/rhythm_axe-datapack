@@ -10,6 +10,7 @@ $data modify storage rhythm_axe:maps.editor history append value {\
     music:"rhythm_axe:rhythm_axe.audio",\
     preview_start:0,\
     preview_len:200,\
+    music_offset:0,\
     health:10,\
     player_count:1,\
     teleport:1b,\

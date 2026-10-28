@@ -1,0 +1,59 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {
+    "text": "谱面音乐偏移"
+  },
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "整张谱面共用的音乐偏移（毫秒，整数，≥0）。"
+      }
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "正 = 音乐延后：time=0 起先静音这么多毫秒，之后音乐才从文件开头响起。"
+      }
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {
+        "text": "只有延后没有提前（原因见《游玩谱面.md》）。先填 0，边听边调。"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "music_offset_value",
+      "width": 120,
+      "label": {
+        "text": "偏移（ms）"
+      },
+      "max_length": 8
+    }
+  ],
+  "exit_action": {
+    "label": {
+      "text": "取消"
+    },
+    "action": {
+      "type": "run_command",
+      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+    }
+  },
+  "can_close_with_escape": true,
+  "pause": false,
+  "actions": [
+    {
+      "label": {
+        "text": "确认"
+      },
+      "action": {
+        "type": "dynamic/run_command",
+        "template": "function rhythm_axe:editor/menu/dialog/dialog_submit_music_offset {\"value\":\"$(music_offset_value)\"}"
+      }
+    }
+  ]
+}
