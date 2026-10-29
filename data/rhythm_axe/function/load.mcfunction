@@ -25,6 +25,10 @@ scoreboard players set 32 const 32
 scoreboard players set 40 const 40
 scoreboard players set 49 const 49
 scoreboard players set 50 const 50
+# ★ 2026-10-29：位置/锁定值精度 0.1 → 0.05，round_score 需要 unit=50 / half=25
+scoreboard players set 25 const 25
+# ★ 2026-10-29：网格相位 = 500 mod u（grid_setup），500 必须在 const 表里，否则会被读成 0
+scoreboard players set 500 const 500
 scoreboard players set 4096 const 4096
 
 scoreboard players set 100 const 100
@@ -298,9 +302,14 @@ scoreboard objectives add tool_opt dummy
 execute unless score note_lock_x tool_opt matches 0..1 run scoreboard players set note_lock_x tool_opt 0
 execute unless score note_lock_y tool_opt matches 0..1 run scoreboard players set note_lock_y tool_opt 0
 execute unless score note_lock_z tool_opt matches 0..1 run scoreboard players set note_lock_z tool_opt 0
+# ★ 2026-10-29：锁定值口径 ×10 → ×100（0.05 精度）。老存档残留的是 ×10 量级（很小）⇒ 无害，直接沿用。
 execute unless score note_lock_x_val tool_opt matches -30000000..30000000 run scoreboard players set note_lock_x_val tool_opt 0
 execute unless score note_lock_y_val tool_opt matches -30000000..30000000 run scoreboard players set note_lock_y_val tool_opt 0
 execute unless score note_lock_z_val tool_opt matches -30000000..30000000 run scoreboard players set note_lock_z_val tool_opt 0
+# ★ 2026-10-29：网格尺寸（面板 23 行 224）—— 0=0.1 / 1=0.25 / 2=0.5 / 3=1（默认 3 = 旧行为）
+execute unless score note_grid tool_opt matches 0..3 run scoreboard players set note_grid tool_opt 3
+# ★ 2026-10-29：选择工具的网格尺寸（面板 23 行 225，与 note_grid 独立）—— 同上四档，默认 3
+execute unless score select_grid tool_opt matches 0..3 run scoreboard players set select_grid tool_opt 3
 # 编辑器判定缩放镜像（#ed_scale：真实判定窗口用；由 visual/refresh 的 judge/scale_sync 与 playback/advance_ 维护）
 #   此处兜底为 1，避免"刚进编辑器还没 refresh"时窗口为 0 → 音符一出生就被判 miss
 scoreboard players set #ed_scale editor 1

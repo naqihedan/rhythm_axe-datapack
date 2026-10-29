@@ -1,20 +1,35 @@
 #arg:note_type
-# 音符工具放置（@s = 玩家）：位置 = 游标方块中心，time = 播放头，属性继承同类最近音符
-# ① 位置 = 游标方块中心（与 cursor_tick 同款定位：eyes + ^^^4 + align + ~0.5）
-#    临时 marker 读当前执行位置（方块中心）后即删，不依赖旧 tool_cursor_x/y/z 存储
-execute anchored eyes positioned ^ ^ ^4 align xyz positioned ~0.5 ~0.5 ~0.5 run summon marker ~ ~ ~ {Tags:["editor_tool_place_pos"]}
+# 音符工具放置（@s = 玩家）：位置 = 游标 + 网格吸附，time = 播放头，属性继承同类最近音符
+# ① 位置 = 游标原始点（★ 2026-10-29 去掉了 align xyz / positioned ~0.5 ~0.5 ~0.5：
+#    那两个会把点强制吸到方块中心，0.25/0.5 档需要的子格信息就丢了）
+#    临时 marker 读当前执行位置后即删，不依赖旧 tool_cursor_x/y/z 存储
+execute anchored eyes positioned ^ ^ ^4 run summon marker ~ ~ ~ {Tags:["editor_tool_place_pos"]}
 # ★ 26.x store result storage 会截断小数（0.5→0），必须 data modify set from 保留完整 double
-#   否则 marker 虽在方块中心（x.5），读进 prop 却变成整数（x.0）
+#   否则 marker 虽在正确位置，读进 prop 却变成整数
 data modify storage rhythm_axe:prop position_x set from entity @e[tag=editor_tool_place_pos,limit=1] Pos[0]
 data modify storage rhythm_axe:prop position_y set from entity @e[tag=editor_tool_place_pos,limit=1] Pos[1]
 data modify storage rhythm_axe:prop position_z set from entity @e[tag=editor_tool_place_pos,limit=1] Pos[2]
 kill @e[tag=editor_tool_place_pos]
+# ①.2 网格吸附（面板 23「网格尺寸」note_grid）：每轴吸附到 0.5 + k×size 的格点
+#   档3（1 格）时格点 = 0.5/1.5/2.5…，与旧「align + ~0.5」结果完全一致 ⇒ 默认档零行为变化
+#   ★ 读用 ×1000（data get 是 floor，负数的 1/1000 偏差会被「半格取整」吸收）
+function rhythm_axe:editor/tool/note/grid_setup
+execute store result score #gs_v editor run data get storage rhythm_axe:prop position_x 1000
+function rhythm_axe:editor/tool/note/grid_snap_axis
+execute store result storage rhythm_axe:prop position_x double 0.001 run scoreboard players get #gs_v editor
+execute store result score #gs_v editor run data get storage rhythm_axe:prop position_y 1000
+function rhythm_axe:editor/tool/note/grid_snap_axis
+execute store result storage rhythm_axe:prop position_y double 0.001 run scoreboard players get #gs_v editor
+execute store result score #gs_v editor run data get storage rhythm_axe:prop position_z 1000
+function rhythm_axe:editor/tool/note/grid_snap_axis
+execute store result storage rhythm_axe:prop position_z double 0.001 run scoreboard players get #gs_v editor
 # ①.5 应用坐标锁定（工具选项栏面板 23）：被锁定的轴改成设定值
+#   ★ 顺序 = 先吸附、后锁定：锁定是人显式给的值，优先级高于自动吸附
 #   ★ 故意放在「混凝土 Y+0.1」之前 —— 这样锁 Y 时**仍然 +0.1**（用户 2026-10-06 定）
-#   值存 ×10（0.1 精度），×0.1 写回 double ⇒ 精确
-execute if score note_lock_x tool_opt matches 1 run execute store result storage rhythm_axe:prop position_x double 0.1 run scoreboard players get note_lock_x_val tool_opt
-execute if score note_lock_y tool_opt matches 1 run execute store result storage rhythm_axe:prop position_y double 0.1 run scoreboard players get note_lock_y_val tool_opt
-execute if score note_lock_z tool_opt matches 1 run execute store result storage rhythm_axe:prop position_z double 0.1 run scoreboard players get note_lock_z_val tool_opt
+#   值存 ×100（0.05 精度，2026-10-29 起），×0.01 写回 double ⇒ 精确
+execute if score note_lock_x tool_opt matches 1 run execute store result storage rhythm_axe:prop position_x double 0.01 run scoreboard players get note_lock_x_val tool_opt
+execute if score note_lock_y tool_opt matches 1 run execute store result storage rhythm_axe:prop position_y double 0.01 run scoreboard players get note_lock_y_val tool_opt
+execute if score note_lock_z tool_opt matches 1 run execute store result storage rhythm_axe:prop position_z double 0.01 run scoreboard players get note_lock_z_val tool_opt
 # ② time = 播放头
 execute store result storage rhythm_axe:prop time int 1 run scoreboard players get #playhead editor
 # ③ type = 当前工具类型

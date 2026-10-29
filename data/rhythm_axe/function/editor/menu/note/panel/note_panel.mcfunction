@@ -269,31 +269,27 @@ execute if score #rel_on editor matches 0 unless score #mod_size editor matches 
 {"text":" [+]","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 12502"},"hover_event":{"action":"show_text","value":"大小 +0.1"}}\
 ]
 # ★ 修负数值颠倒/补数：/= 向下取整、%= floorMod，直接拆分负数会错位；改为绝对值拆分 + 独立符号（负零分支在 note_pos_row）。
-# 相对模式读增量（delta 为 ×100，/10 转 ×10 与绝对同尺度）
+# ★ 2026-10-29：判定位置/起始位置精度 0.1 → 0.05。内部统一用 ×100 口径（2 位小数），
+#   拆分出「整数 #v?i / 十分位 #v?f / 百分位 #v?h」，由 note_pos_row 依次渲染（如 1.05）。
+# 相对模式读增量（delta 本身已是 ×100 整数，与绝对同尺度，无需换算）
 scoreboard players set #rel_pos editor 0
 execute store result score #rel_pos editor run data get storage rhythm_axe:maps.editor editing.rel.on.position
 execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.temp.position[0] 100
-scoreboard players operation #vx editor += 5 const
-scoreboard players operation #vx editor /= 10 const
 execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.temp.position[1] 100
-scoreboard players operation #vy editor += 5 const
-scoreboard players operation #vy editor /= 10 const
 execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.temp.position[2] 100
-scoreboard players operation #vz editor += 5 const
-scoreboard players operation #vz editor /= 10 const
 execute if score #rel_pos editor matches 1 run execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[0]
 execute if score #rel_pos editor matches 1 run execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[1]
 execute if score #rel_pos editor matches 1 run execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.rel.delta.position[2]
-execute if score #rel_pos editor matches 1 run scoreboard players operation #vx editor /= 10 const
-execute if score #rel_pos editor matches 1 run scoreboard players operation #vy editor /= 10 const
-execute if score #rel_pos editor matches 1 run scoreboard players operation #vz editor /= 10 const
 scoreboard players set #vxneg editor 0
 execute if score #vx editor matches ..-1 run scoreboard players set #vxneg editor 1
 scoreboard players operation #vxi editor = #vx editor
 execute if score #vxi editor matches ..-1 run scoreboard players operation #vxi editor *= -1 const
 scoreboard players operation #vxf editor = #vxi editor
-scoreboard players operation #vxi editor /= 10 const
-scoreboard players operation #vxf editor %= 10 const
+scoreboard players operation #vxi editor /= 100 const
+scoreboard players operation #vxf editor %= 100 const
+scoreboard players operation #vxh editor = #vxf editor
+scoreboard players operation #vxf editor /= 10 const
+scoreboard players operation #vxh editor %= 10 const
 scoreboard players set #nx editor 0
 execute if score #vxneg editor matches 1 if score #vxi editor matches 0 run scoreboard players set #nx editor 1
 execute if score #vxneg editor matches 1 run scoreboard players operation #vxi editor *= -1 const
@@ -302,8 +298,11 @@ execute if score #vy editor matches ..-1 run scoreboard players set #vyneg edito
 scoreboard players operation #vyi editor = #vy editor
 execute if score #vyi editor matches ..-1 run scoreboard players operation #vyi editor *= -1 const
 scoreboard players operation #vyf editor = #vyi editor
-scoreboard players operation #vyi editor /= 10 const
-scoreboard players operation #vyf editor %= 10 const
+scoreboard players operation #vyi editor /= 100 const
+scoreboard players operation #vyf editor %= 100 const
+scoreboard players operation #vyh editor = #vyf editor
+scoreboard players operation #vyf editor /= 10 const
+scoreboard players operation #vyh editor %= 10 const
 scoreboard players set #ny editor 0
 execute if score #vyneg editor matches 1 if score #vyi editor matches 0 run scoreboard players set #ny editor 1
 execute if score #vyneg editor matches 1 run scoreboard players operation #vyi editor *= -1 const
@@ -312,8 +311,11 @@ execute if score #vz editor matches ..-1 run scoreboard players set #vzneg edito
 scoreboard players operation #vzi editor = #vz editor
 execute if score #vzi editor matches ..-1 run scoreboard players operation #vzi editor *= -1 const
 scoreboard players operation #vzf editor = #vzi editor
-scoreboard players operation #vzi editor /= 10 const
-scoreboard players operation #vzf editor %= 10 const
+scoreboard players operation #vzi editor /= 100 const
+scoreboard players operation #vzf editor %= 100 const
+scoreboard players operation #vzh editor = #vzf editor
+scoreboard players operation #vzf editor /= 10 const
+scoreboard players operation #vzh editor %= 10 const
 scoreboard players set #nz editor 0
 execute if score #vzneg editor matches 1 if score #vzi editor matches 0 run scoreboard players set #nz editor 1
 execute if score #vzneg editor matches 1 run scoreboard players operation #vzi editor *= -1 const
@@ -326,16 +328,10 @@ execute if score #rel_pos editor matches 1 if score #vy editor matches 1.. run s
 execute if score #rel_pos editor matches 1 if score #vy editor matches ..-1 run scoreboard players set #mod_pos editor 1
 execute if score #rel_pos editor matches 1 if score #vz editor matches 1.. run scoreboard players set #mod_pos editor 1
 execute if score #rel_pos editor matches 1 if score #vz editor matches ..-1 run scoreboard players set #mod_pos editor 1
-# 绝对模式：任一轴 temp != orig → 已修改
+# 绝对模式：任一轴 temp != orig → 已修改（★ ×100 口径直接比较，不再 round 到 0.1）
 execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run execute store result score #ox editor run data get storage rhythm_axe:maps.editor editing.orig.position[0] 100
-execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #ox editor += 5 const
-execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #ox editor /= 10 const
 execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run execute store result score #oy editor run data get storage rhythm_axe:maps.editor editing.orig.position[1] 100
-execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oy editor += 5 const
-execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oy editor /= 10 const
 execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run execute store result score #oz editor run data get storage rhythm_axe:maps.editor editing.orig.position[2] 100
-execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oz editor += 5 const
-execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oz editor /= 10 const
 execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 unless score #vx editor = #ox editor run scoreboard players set #mod_pos editor 1
 execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 unless score #vy editor = #oy editor run scoreboard players set #mod_pos editor 1
 execute if score #rel_pos editor matches 0 if score #batch_mode editor matches 0 unless score #vz editor = #oz editor run scoreboard players set #mod_pos editor 1
@@ -379,32 +375,26 @@ data remove storage rhythm_axe:prop xcomp
 data remove storage rhythm_axe:prop tcomp
 data remove storage rhythm_axe:prop paux
 # 起始位置（start_pos 三轴一位小数；±0.1；相对判定位置的偏移）
-# ★ 修负数值颠倒/补数：/= 向下取整、%= floorMod，直接拆分负数会错位；改为绝对值拆分 + 独立符号（负零分支在 note_pos_row）。
-# 相对模式读增量（delta 为 ×100，/10 转 ×10 与绝对同尺度）
+# ★ 2026-10-29：起始位置精度 0.1 → 0.05，内部 ×100 口径（整数 #v?i / 十分位 #v?f / 百分位 #v?h）
+# 相对模式读增量（delta 本身已是 ×100 整数，与绝对同尺度，无需换算）
 scoreboard players set #rel_sp editor 0
 execute store result score #rel_sp editor run data get storage rhythm_axe:maps.editor editing.rel.on.start_pos
 execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[0] 100
-scoreboard players operation #vx editor += 5 const
-scoreboard players operation #vx editor /= 10 const
 execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[1] 100
-scoreboard players operation #vy editor += 5 const
-scoreboard players operation #vy editor /= 10 const
 execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.temp.start_pos[2] 100
-scoreboard players operation #vz editor += 5 const
-scoreboard players operation #vz editor /= 10 const
 execute if score #rel_sp editor matches 1 run execute store result score #vx editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[0]
 execute if score #rel_sp editor matches 1 run execute store result score #vy editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[1]
 execute if score #rel_sp editor matches 1 run execute store result score #vz editor run data get storage rhythm_axe:maps.editor editing.rel.delta.start_pos[2]
-execute if score #rel_sp editor matches 1 run scoreboard players operation #vx editor /= 10 const
-execute if score #rel_sp editor matches 1 run scoreboard players operation #vy editor /= 10 const
-execute if score #rel_sp editor matches 1 run scoreboard players operation #vz editor /= 10 const
 scoreboard players set #vxneg editor 0
 execute if score #vx editor matches ..-1 run scoreboard players set #vxneg editor 1
 scoreboard players operation #vxi editor = #vx editor
 execute if score #vxi editor matches ..-1 run scoreboard players operation #vxi editor *= -1 const
 scoreboard players operation #vxf editor = #vxi editor
-scoreboard players operation #vxi editor /= 10 const
-scoreboard players operation #vxf editor %= 10 const
+scoreboard players operation #vxi editor /= 100 const
+scoreboard players operation #vxf editor %= 100 const
+scoreboard players operation #vxh editor = #vxf editor
+scoreboard players operation #vxf editor /= 10 const
+scoreboard players operation #vxh editor %= 10 const
 scoreboard players set #nx editor 0
 execute if score #vxneg editor matches 1 if score #vxi editor matches 0 run scoreboard players set #nx editor 1
 execute if score #vxneg editor matches 1 run scoreboard players operation #vxi editor *= -1 const
@@ -413,8 +403,11 @@ execute if score #vy editor matches ..-1 run scoreboard players set #vyneg edito
 scoreboard players operation #vyi editor = #vy editor
 execute if score #vyi editor matches ..-1 run scoreboard players operation #vyi editor *= -1 const
 scoreboard players operation #vyf editor = #vyi editor
-scoreboard players operation #vyi editor /= 10 const
-scoreboard players operation #vyf editor %= 10 const
+scoreboard players operation #vyi editor /= 100 const
+scoreboard players operation #vyf editor %= 100 const
+scoreboard players operation #vyh editor = #vyf editor
+scoreboard players operation #vyf editor /= 10 const
+scoreboard players operation #vyh editor %= 10 const
 scoreboard players set #ny editor 0
 execute if score #vyneg editor matches 1 if score #vyi editor matches 0 run scoreboard players set #ny editor 1
 execute if score #vyneg editor matches 1 run scoreboard players operation #vyi editor *= -1 const
@@ -423,8 +416,11 @@ execute if score #vz editor matches ..-1 run scoreboard players set #vzneg edito
 scoreboard players operation #vzi editor = #vz editor
 execute if score #vzi editor matches ..-1 run scoreboard players operation #vzi editor *= -1 const
 scoreboard players operation #vzf editor = #vzi editor
-scoreboard players operation #vzi editor /= 10 const
-scoreboard players operation #vzf editor %= 10 const
+scoreboard players operation #vzi editor /= 100 const
+scoreboard players operation #vzf editor %= 100 const
+scoreboard players operation #vzh editor = #vzf editor
+scoreboard players operation #vzf editor /= 10 const
+scoreboard players operation #vzh editor %= 10 const
 scoreboard players set #nz editor 0
 execute if score #vzneg editor matches 1 if score #vzi editor matches 0 run scoreboard players set #nz editor 1
 execute if score #vzneg editor matches 1 run scoreboard players operation #vzi editor *= -1 const
@@ -437,16 +433,10 @@ execute if score #rel_sp editor matches 1 if score #vy editor matches 1.. run sc
 execute if score #rel_sp editor matches 1 if score #vy editor matches ..-1 run scoreboard players set #mod_sp editor 1
 execute if score #rel_sp editor matches 1 if score #vz editor matches 1.. run scoreboard players set #mod_sp editor 1
 execute if score #rel_sp editor matches 1 if score #vz editor matches ..-1 run scoreboard players set #mod_sp editor 1
-# 绝对模式：任一轴 temp != orig → 已修改
+# 绝对模式：任一轴 temp != orig → 已修改（★ ×100 口径直接比较，不再 round 到 0.1）
 execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run execute store result score #ox editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[0] 100
-execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #ox editor += 5 const
-execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #ox editor /= 10 const
 execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run execute store result score #oy editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[1] 100
-execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oy editor += 5 const
-execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oy editor /= 10 const
 execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run execute store result score #oz editor run data get storage rhythm_axe:maps.editor editing.orig.start_pos[2] 100
-execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oz editor += 5 const
-execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 run scoreboard players operation #oz editor /= 10 const
 execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 unless score #vx editor = #ox editor run scoreboard players set #mod_sp editor 1
 execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 unless score #vy editor = #oy editor run scoreboard players set #mod_sp editor 1
 execute if score #rel_sp editor matches 0 if score #batch_mode editor matches 0 unless score #vz editor = #oz editor run scoreboard players set #mod_sp editor 1

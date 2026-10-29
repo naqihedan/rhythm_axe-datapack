@@ -55,10 +55,29 @@ data modify storage rhythm_axe:prop look set value 22306
 data modify storage rhythm_axe:prop center set value 22307
 function rhythm_axe:editor/menu/tool/panel/axis_row with storage rhythm_axe:prop
 
+# ==================== 网格尺寸（行 224）====================
+# 决定音符对齐世界网格的尺寸：放置新音符 / 光标玻璃会吸附到「0.5 + k×尺寸」的格点
+#   档0 = 0.1 / 档1 = 0.25 / 档2 = 0.5 / 档3 = 1（默认，= 旧行为「方块中心」）
+#   ★ 只作用于「右键放置」与光标；镜像/旋转/翻转/分布填充/粘贴都不吸附
+tellraw @s [{"text":"----网格尺寸----------","color":"gray"}]
+scoreboard players set #ng editor 3
+execute store result score #ng editor run scoreboard players get note_grid tool_opt
+data modify storage rhythm_axe:prop g0 set value "{\"text\":\"[0.1]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22401\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"网格 0.1：音符落在 0.50 / 0.60 / … / 1.00\"}}"
+data modify storage rhythm_axe:prop g1 set value "{\"text\":\"[0.25]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22402\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"网格 0.25：音符落在 0.50 / 0.75 / 1.00 / 1.25\"}}"
+data modify storage rhythm_axe:prop g2 set value "{\"text\":\"[0.5]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22403\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"网格 0.5：音符落在方块中心或方块交界处\"}}"
+data modify storage rhythm_axe:prop g3 set value "{\"text\":\"[1]\",\"color\":\"yellow\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22404\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"网格 1：音符落在方块中心（默认）\"}}"
+execute if score #ng editor matches 0 run data modify storage rhythm_axe:prop g0 set value "{\"text\":\"[0.1]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22401\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前网格：0.1（0.50 / 0.60 / … / 1.00）\"}}"
+execute if score #ng editor matches 1 run data modify storage rhythm_axe:prop g1 set value "{\"text\":\"[0.25]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22402\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前网格：0.25（0.50 / 0.75 / 1.00 / 1.25）\"}}"
+execute if score #ng editor matches 2 run data modify storage rhythm_axe:prop g2 set value "{\"text\":\"[0.5]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22403\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前网格：0.5（方块中心 / 方块交界处）\"}}"
+execute if score #ng editor matches 3 run data modify storage rhythm_axe:prop g3 set value "{\"text\":\"[1]\",\"color\":\"green\",\"bold\":true,\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 22404\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"当前网格：1（方块中心）\"}}"
+function rhythm_axe:editor/menu/tool/panel/grid_row with storage rhythm_axe:prop
+data remove storage rhythm_axe:prop g0
+data remove storage rhythm_axe:prop g1
+data remove storage rhythm_axe:prop g2
+data remove storage rhythm_axe:prop g3
+
 # ==================== 返回 ====================
 tellraw @s [{"text":""},{"text":"【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回上一个打开的面板"}}]
-
-# 清理（axis_row 用过的 prop 键）
 data remove storage rhythm_axe:prop a_tgl
 data remove storage rhythm_axe:prop label
 data remove storage rhythm_axe:prop color

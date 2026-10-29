@@ -32,5 +32,9 @@ execute if score #panel_id editor matches 18 run function rhythm_axe:editor/menu
 execute if score #panel_id editor matches 20 run function rhythm_axe:editor/menu/note/df/df_render
 # 面板 23（工具选项栏）：按 maps.editor.tool_panel_gid 重绘（换手打开的对话框）
 execute if score #panel_id editor matches 23 run function rhythm_axe:editor/menu/tool/panel/tool_panel
-# 兜底：current_panel 缺失或异常 → 主菜单
-execute unless data storage rhythm_axe:maps.editor current_panel run function rhythm_axe:editor/menu/main
+# 兜底：current_panel **缺失或野值**（0 / 负数 / >23）→ 主菜单
+# ★ 2026-10-29：原来只判「键不存在」（unless data … current_panel），但 `current_panel` 完全可能是 0
+#   （例：撤销时 `current_panel set from undo_panel`，而 undo_panel 在旧存档里曾落成 0）⇒
+#   上面 23 个 matches 全不命中、兜底也不触发 ⇒ 点【返回编辑器】**完全无反应不起任何面板**。
+#   改成按「分数值」判，缺失时 store result 同样得 0，一并被兜住。
+execute unless score #panel_id editor matches 1..23 run function rhythm_axe:editor/menu/main

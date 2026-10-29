@@ -181,15 +181,17 @@ execute if score #click_value editor matches 13509 run data modify storage rhyth
 execute if score #click_value editor matches 13510 run data modify storage rhythm_axe:prop field_name set value "start_pos[1]"
 execute if score #click_value editor matches 13511 run data modify storage rhythm_axe:prop field_name set value "start_pos[2]"
 execute if score #click_value editor matches 13512 run data modify storage rhythm_axe:prop field_name set value "start_pos[2]"
-execute if score #click_value editor matches 13401..13406 run scoreboard players set #pos_delta const 10
-execute if score #click_value editor matches 13501..13506 run scoreboard players set #pos_delta const 10
-execute if score #click_value editor matches 13601..13602 run scoreboard players set #pos_delta const 10
-execute if score #click_value editor matches 13401 run scoreboard players set #pos_delta const -10
-execute if score #click_value editor matches 13403 run scoreboard players set #pos_delta const -10
-execute if score #click_value editor matches 13405 run scoreboard players set #pos_delta const -10
-execute if score #click_value editor matches 13501 run scoreboard players set #pos_delta const -10
-execute if score #click_value editor matches 13503 run scoreboard players set #pos_delta const -10
-execute if score #click_value editor matches 13505 run scoreboard players set #pos_delta const -10
+# ★ 2026-10-29：判定位置/起始位置精度 0.1 → 0.05。内部口径 ×100（0.01 分辨率），
+#   故精细步进 = ±5（= 0.05），粗调仍为 ±1 格 = ±100。
+execute if score #click_value editor matches 13401..13406 run scoreboard players set #pos_delta const 5
+execute if score #click_value editor matches 13501..13506 run scoreboard players set #pos_delta const 5
+execute if score #click_value editor matches 13601..13602 run scoreboard players set #pos_delta const 5
+execute if score #click_value editor matches 13401 run scoreboard players set #pos_delta const -5
+execute if score #click_value editor matches 13403 run scoreboard players set #pos_delta const -5
+execute if score #click_value editor matches 13405 run scoreboard players set #pos_delta const -5
+execute if score #click_value editor matches 13501 run scoreboard players set #pos_delta const -5
+execute if score #click_value editor matches 13503 run scoreboard players set #pos_delta const -5
+execute if score #click_value editor matches 13505 run scoreboard players set #pos_delta const -5
 execute if score #click_value editor matches 13407..13412 run scoreboard players set #pos_delta const 100
 execute if score #click_value editor matches 13507..13512 run scoreboard players set #pos_delta const 100
 execute if score #click_value editor matches 13407 run scoreboard players set #pos_delta const -100

@@ -9,15 +9,16 @@ scoreboard players set #tp_gid editor 0
 execute store result score #tp_gid editor run data get storage rhythm_axe:maps.editor tool_panel_gid
 # 分组 1（音符工具）：有设置项
 execute if score #tp_gid editor matches 1 run function rhythm_axe:editor/menu/tool/panel/note
-# 分组 2..7：暂无设置项（显示"该工具没有设置项。"）
+# 分组 5（选择工具）：有设置项（网格尺寸）
+# 分组 2..4、6..7：暂无设置项（显示"该工具没有设置项。"）
 execute if score #tp_gid editor matches 2 run data modify storage rhythm_axe:prop tool_label set value "时间轴工具"
 execute if score #tp_gid editor matches 2 run function rhythm_axe:editor/menu/tool/panel/empty with storage rhythm_axe:prop
 execute if score #tp_gid editor matches 3 run data modify storage rhythm_axe:prop tool_label set value "回到开头/跳到结尾工具"
 execute if score #tp_gid editor matches 3 run function rhythm_axe:editor/menu/tool/panel/empty with storage rhythm_axe:prop
 execute if score #tp_gid editor matches 4 run data modify storage rhythm_axe:prop tool_label set value "播放速度工具"
 execute if score #tp_gid editor matches 4 run function rhythm_axe:editor/menu/tool/panel/empty with storage rhythm_axe:prop
-execute if score #tp_gid editor matches 5 run data modify storage rhythm_axe:prop tool_label set value "选择工具"
-execute if score #tp_gid editor matches 5 run function rhythm_axe:editor/menu/tool/panel/empty with storage rhythm_axe:prop
+# 分组 5（选择工具）：网格尺寸（2026-10-29 新增）
+execute if score #tp_gid editor matches 5 run function rhythm_axe:editor/menu/tool/panel/select
 execute if score #tp_gid editor matches 6 run data modify storage rhythm_axe:prop tool_label set value "事件点/时间点工具"
 execute if score #tp_gid editor matches 6 run function rhythm_axe:editor/menu/tool/panel/empty with storage rhythm_axe:prop
 execute if score #tp_gid editor matches 7 run data modify storage rhythm_axe:prop tool_label set value "协作工具"

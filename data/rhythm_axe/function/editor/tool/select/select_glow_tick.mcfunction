@@ -10,10 +10,12 @@ execute unless data storage rhythm_axe:maps.editor select_tool run scoreboard pl
 execute if score #sel_state editor matches 2.. run scoreboard players set #sel_state editor 0
 # 蹲下（时间段选择模式）：不显示玻璃预览（该模式只用 mod 时间轴上的入点/出点与范围色带）
 execute if entity @s[predicate=rhythm_axe:sneaking] run return 0
-$execute unless entity @e[tag=glow_sel_$(gid)] run summon item_display ~ ~ ~ {item:{id:"minecraft:lime_stained_glass",count:1},Tags:["editor_tool_select_glow","glow_sel_$(gid)"],Glowing:1b,glow_color_override:65280,brightness:{block:15,sky:15},transformation:{translation:[0f,0f,0f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
+$execute unless entity @e[tag=glow_sel_$(gid)] run summon item_display ~ ~-1 ~ {item:{id:"minecraft:lime_stained_glass",count:1},Tags:["editor_tool_select_glow","glow_sel_$(gid)"],Glowing:1b,glow_color_override:65280,brightness:{block:15,sky:15},transformation:{translation:[0f,1f,0f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f]}}
 $tag @e[tag=glow_sel_$(gid)] add glow_alive
-# state=0：小方块跟随注视位置
-$execute if score #sel_state editor matches 0 anchored eyes positioned ^ ^ ^4 align xyz positioned ~0.5 ~0.5 ~0.5 run tp @e[tag=glow_sel_$(gid)] ~ ~ ~
+# state=0：小方块跟随注视位置（★ 2026-10-29 起按 select_grid 吸附，与角点落位一致）
+# ★ 实体 Pos 比视觉位置低 1 格（translation:[0,1,0] 补偿）—— 防止点到 Axiom 的展示实体小工具
+$execute if score #sel_state editor matches 0 anchored eyes positioned ^ ^ ^4 run tp @e[tag=glow_sel_$(gid)] ~ ~-1 ~
+execute if score #sel_state editor matches 0 run function rhythm_axe:editor/tool/select/select_glow_snap with storage rhythm_axe:prop
 $execute if score #sel_state editor matches 0 run data modify entity @e[tag=glow_sel_$(gid),limit=1] transformation.scale set value [1.02f,1.02f,1.02f]
 # state=1：从第一角拉伸到当前注视（select_stretch 宏按 $(glow_sel) 认玻璃）
 $execute if score #sel_state editor matches 1 run function rhythm_axe:editor/tool/select/select_stretch_prep {glow_sel:"glow_sel_$(gid)"}

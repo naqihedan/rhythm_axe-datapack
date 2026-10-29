@@ -4,13 +4,14 @@ data modify storage rhythm_axe:maps.editor select_tool.corner2[0] set from stora
 data modify storage rhythm_axe:maps.editor select_tool.corner2[1] set from storage rhythm_axe:prop sy
 data modify storage rhythm_axe:maps.editor select_tool.corner2[2] set from storage rhythm_axe:prop sz
 tellraw @s [{"text":"[编辑器] 第二选取点已设为 ","color":"yellow"},{"nbt":"select_tool.corner2","storage":"rhythm_axe:maps.editor","color":"aqua"}]
-# 读取两角方块坐标（store result 截断为整数方块坐标）
-execute store result score #c1x editor run data get storage rhythm_axe:maps.editor select_tool.corner1[0]
-execute store result score #c1y editor run data get storage rhythm_axe:maps.editor select_tool.corner1[1]
-execute store result score #c1z editor run data get storage rhythm_axe:maps.editor select_tool.corner1[2]
-execute store result score #c2x editor run data get storage rhythm_axe:maps.editor select_tool.corner2[0]
-execute store result score #c2y editor run data get storage rhythm_axe:maps.editor select_tool.corner2[1]
-execute store result score #c2z editor run data get storage rhythm_axe:maps.editor select_tool.corner2[2]
+# 两角坐标读成 ×1000（★ 2026-10-29 起支持亚方块精度；原来 store result 截断成整数方块号）
+#   选中判定范围 = [min(c1x,c2x), max(c1x,c2x)]（含端点，×1000 口径）
+execute store result score #c1x editor run data get storage rhythm_axe:maps.editor select_tool.corner1[0] 1000
+execute store result score #c1y editor run data get storage rhythm_axe:maps.editor select_tool.corner1[1] 1000
+execute store result score #c1z editor run data get storage rhythm_axe:maps.editor select_tool.corner1[2] 1000
+execute store result score #c2x editor run data get storage rhythm_axe:maps.editor select_tool.corner2[0] 1000
+execute store result score #c2y editor run data get storage rhythm_axe:maps.editor select_tool.corner2[1] 1000
+execute store result score #c2z editor run data get storage rhythm_axe:maps.editor select_tool.corner2[2] 1000
 # min/max 各轴
 scoreboard players operation #minx editor = #c1x editor
 execute if score #c2x editor < #minx editor run scoreboard players operation #minx editor = #c2x editor
@@ -24,22 +25,13 @@ scoreboard players operation #minz editor = #c1z editor
 execute if score #c2z editor < #minz editor run scoreboard players operation #minz editor = #c2z editor
 scoreboard players operation #maxz editor = #c1z editor
 execute if score #c2z editor > #maxz editor run scoreboard players operation #maxz editor = #c2z editor
-# 边长 n = max - min + 1（含两端方块）
-scoreboard players operation #nx editor = #maxx editor
-scoreboard players operation #nx editor -= #minx editor
-scoreboard players add #nx editor 1
-scoreboard players operation #ny editor = #maxy editor
-scoreboard players operation #ny editor -= #miny editor
-scoreboard players add #ny editor 1
-scoreboard players operation #nz editor = #maxz editor
-scoreboard players operation #nz editor -= #minz editor
-scoreboard players add #nz editor 1
 # 清空旧选中（selected 标记 + selection + 高亮 + tag）
 function rhythm_axe:editor/menu/note/selected/sel_clear_all
 scoreboard players set #sel_count editor 0
 execute as @e[tag=editor_note,type=item_display] run data modify entity @s Glowing set value 0b
 execute as @e[type=interaction,tag=editor_note] run tag @s remove editor_note_selected
-# 存宏参 → select_highlight（判定+高亮+标记 selected）
+# 存宏参 → select_highlight（判定+高亮+标记 selected）；边界与坐标均为 ×1000
+#   ★ g_u = 网格尺寸（×1000）：select_inter 用它把 [min,max] 扩成盒子 [min−g/2, max+g/2)
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 execute store result storage rhythm_axe:prop minx int 1 run scoreboard players get #minx editor
 execute store result storage rhythm_axe:prop maxx int 1 run scoreboard players get #maxx editor
@@ -47,6 +39,7 @@ execute store result storage rhythm_axe:prop miny int 1 run scoreboard players g
 execute store result storage rhythm_axe:prop maxy int 1 run scoreboard players get #maxy editor
 execute store result storage rhythm_axe:prop minz int 1 run scoreboard players get #minz editor
 execute store result storage rhythm_axe:prop maxz int 1 run scoreboard players get #maxz editor
+execute store result storage rhythm_axe:prop g_u int 1 run scoreboard players get #g_u editor
 function rhythm_axe:editor/tool/select/select_highlight with storage rhythm_axe:prop
 # 重建 selection（按 notes 顺序收集选中标记的音符）
 function rhythm_axe:editor/menu/note/selected/sel_rebuild
@@ -58,6 +51,7 @@ data remove storage rhythm_axe:prop miny
 data remove storage rhythm_axe:prop maxy
 data remove storage rhythm_axe:prop minz
 data remove storage rhythm_axe:prop maxz
+data remove storage rhythm_axe:prop g_u
 # 确认后：黄绿色玻璃使命完成，kill；状态回 0（下次右击重新选第一角）
 # 协作：这里**不再** kill 黄绿玻璃 —— 全局 kill 会把队友的预览一起删掉（每刻复活 ⇒ 闪烁）。
 #   确认后 state 回 0，本刻玻璃会自然缩回「跟随注视的小方块」；真要清理由 tick 的存活标记负责。

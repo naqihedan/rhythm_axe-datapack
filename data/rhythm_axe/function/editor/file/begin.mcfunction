@@ -13,8 +13,15 @@ execute if score #history_size editor > #temp editor run function rhythm_axe:edi
 # 记录操作所在面板（撤销/重做后回此面板；每次操作覆盖，存的是最新操作发生时的面板）
 # ★ 2026-08-28 优先用操作发起面板 editing.panel_from（设置面板打开时记录=从哪个列表来），
 #   否则当前面板——撤销后回到按下按钮的那个面板（如时间点列表），而非操作完成时的设置面板
-execute store result storage rhythm_axe:maps.editor undo_panel int 1 run data get storage rhythm_axe:maps.editor current_panel
+# ★ 2026-10-29：先钳到合法值。`store result ... run data get` 对**不存在的路径**会写 0，
+#   而 0 被 8/9 分支 `current_panel set from undo_panel` 写回后，resume 的 23 个面板分支全不命中
+#   ⇒ 点【返回编辑器】静默无反应。（resume 已补兜底，这里从源头避免脏值。）
+scoreboard players set #undo_pn editor 1
+execute store result score #undo_pn editor run data get storage rhythm_axe:maps.editor current_panel
+execute unless score #undo_pn editor matches 1..23 run scoreboard players set #undo_pn editor 1
+execute store result storage rhythm_axe:maps.editor undo_panel int 1 run scoreboard players get #undo_pn editor
 execute if data storage rhythm_axe:maps.editor editing.panel_from run data modify storage rhythm_axe:maps.editor undo_panel set from storage rhythm_axe:maps.editor editing.panel_from
+scoreboard players reset #undo_pn editor
 data remove storage rhythm_axe:maps.editor editing.panel_from
 # ★ 2026-08-28 撤销污染修复：备份当前工作副本（history[-1]）到独立快照
 #   操作会直接改写 history[-1]（= history[history_cursor]，末尾快照），commit 时先把它 append
