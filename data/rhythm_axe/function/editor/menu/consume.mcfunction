@@ -30,6 +30,12 @@ execute unless data storage rhythm_axe:maps.editor {active:1b} run return fail
 execute if data storage rhythm_axe:maps.editor find_scan.active run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"正在查找音符，请稍候…","color":"yellow"}]
 execute if data storage rhythm_axe:maps.editor find_scan.active run return fail
 
+# ★ tpb 缩放分刻遍历进行中（2026-10-29）：同样锁点击。
+#   理由：遍历按 notes 下标推进，跨 tick 期间若有别的操作插入（增删改音符）⇒ 下标漂移 ⇒ 漏改/错改。
+#   置位在 rescale/run、清理在 rescale/finish_next。
+execute if data storage rhythm_axe:maps.editor rescale.active run tellraw @s [{"text":"[编辑器] ","color":"gold"},{"text":"正在按 tpb 同步缩放谱面，请稍候…","color":"yellow"}]
+execute if data storage rhythm_axe:maps.editor rescale.active run return fail
+
 # ★ 会话自检（2026-09-10）：editor.mapid 缺失/为空 ⇒ 从工作副本 id 修回。
 #   否则随后 with storage rhythm_axe:prop 的宏调用会因宏参数缺失而静默实例化失败（点了没反应）。
 function rhythm_axe:editor/util/session_mapid_fix

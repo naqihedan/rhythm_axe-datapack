@@ -35,7 +35,12 @@ execute if data storage rhythm_axe:prop {dup:1b} run return fail
 function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"append"} run function rhythm_axe:editor/timing/create_append with storage rhythm_axe:prop
 execute if data storage rhythm_axe:prop {insert_mode:"insert"} run function rhythm_axe:editor/timing/create_insert with storage rhythm_axe:prop
-function rhythm_axe:editor/file/commit
+# ★ 2026-10-29：新时间点的 tpb 与「它之前那一段」不同时，按 tps 比值同步缩放谱面内容
+#   （context 由调用方在 create 之前用 rescale/new_ctx 准备好；没有 prop.rescale 时本函数静默返回）
+#   ★ 必须放在 file/commit **之前**：让「新增时间点」和「缩放」共用同一个历史快照。
+#   ★ 若 rescale 接管（#rs_own=1）⇒ 遍历跨 tick，commit 必须等遍历跑完，此处跳过（由 finish_next 做）。
+function rhythm_axe:editor/timing/rescale/run
+execute unless score #rs_own editor matches 1 run function rhythm_axe:editor/file/commit
 # ★ 创建时间点【不刷新音符】（2026-10-02）：时间点不碰 notes[]，世界里的音符实体无需重建（原先调 editor/refresh 纯属浪费）。
 #   但时间点会影响播放头所在段的 judgement_scale → #ed_scale，故只同步这一项（不重建实体）。
 function rhythm_axe:editor/judge/scale_sync
@@ -52,6 +57,8 @@ data remove storage rhythm_axe:prop new_time
 data remove storage rhythm_axe:prop index
 data remove storage rhythm_axe:prop insert_mode
 data remove storage rhythm_axe:prop insert_index
-data remove storage rhythm_axe:prop cursor
+# ★ #rs_own=1 ⇒ 缩放分刻还在跑，prop.cursor 是它的运行期参数（notes_leaf 的宏参数）
+#   必须留给 rescale/finish_next 清理，此处不能删 —— 否则宏实例化失败 ⇒ 遍历不收敛。
+execute unless score #rs_own editor matches 1 run data remove storage rhythm_axe:prop cursor
 data remove storage rhythm_axe:prop dup
 data remove storage rhythm_axe:prop kind

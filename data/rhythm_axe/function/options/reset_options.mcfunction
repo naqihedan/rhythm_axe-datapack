@@ -35,6 +35,17 @@ scoreboard players set editor_play_events options 0
 # 音乐自动对齐游戏（编辑器试听 + 正式游玩**共用同一个开关**；0=关 1=开）。2026-09-29 由
 #   editor_audio_align / play_audio_align 两项合并而来（mod 侧 MusicTime 读 options.audio_align）
 scoreboard players set audio_align options 1
+# 时间点改 tpb 时的「同步缩放」开关组（★ 2026-10-29；详见 编辑器.md 面板 4 行 107）
+#   原理：改 tpb 会改变「1 刻」的现实时长（每刻 = 60000/(bpm×tpb) ms），
+#   故按 ratio = (bpm新×tpb新)/(bpm旧×tpb旧) 换算谱面刻坐标，保持音乐对齐。
+#   editor_scale_time  音乐对齐：判定时间 + 其后时间点/事件刻坐标 + end_time + 播放头（默认开）
+#   editor_scale_hold  长条时长：混凝土/玻璃 duration + 混凝土 density
+#   editor_scale_life  飞行时长：note_base_life
+#   editor_scale_event 事件时间：events[].time
+scoreboard players set editor_scale_time options 1
+scoreboard players set editor_scale_hold options 1
+scoreboard players set editor_scale_life options 1
+scoreboard players set editor_scale_event options 1
 # 多人判定延迟补偿：按每位玩家自己的 RTT（mod 写在计分板 net，毫秒）把他的判定箱回退到
 #   「他眼睛看到的位置」再测 looking_at。0=关（回补偿前行为） 1=开
 scoreboard players set judge_lag_comp options 0

@@ -354,6 +354,12 @@ execute unless score audio_align options matches 0..1 run scoreboard players set
 execute unless score music_offset options matches -500..500 run scoreboard players set music_offset options 0
 # ★ 2026-10-17：编辑器流速从 note_speed 拆出（options.editor_note_speed）。老存档无此项 ⇒ 兜底 16（=原默认值）
 execute unless score editor_note_speed options matches 1.. run scoreboard players set editor_note_speed options 16
+# ★ 2026-10-29：时间点改 tpb 的「同步缩放」开关组（面板 4 行 107）。老存档无此项 ⇒ 兜底全开。
+#   （老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，必须在此兜底）
+execute unless score editor_scale_time options matches 0..1 run scoreboard players set editor_scale_time options 1
+execute unless score editor_scale_hold options matches 0..1 run scoreboard players set editor_scale_hold options 1
+execute unless score editor_scale_life options matches 0..1 run scoreboard players set editor_scale_life options 1
+execute unless score editor_scale_event options matches 0..1 run scoreboard players set editor_scale_event options 1
 # ★ 2026-09-26 设置：options.judge_lag_comp（多人判定延迟补偿）—— ⏸ **该功能已搁置**，见 todo.md
 #   老存档 options_initialized 已置 1 ⇒ options/reset_options 不会再跑，故必须在此兜底
 #   （0 = 关闭：判定箱不回退，回到补偿前的行为，单人/排查用）
