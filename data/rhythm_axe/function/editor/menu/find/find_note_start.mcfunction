@@ -18,27 +18,35 @@ execute if score #fn_insel editor matches 1 run execute store result score #sel_
 scoreboard players set #fn_kept editor 0
 execute if score #fn_insel editor matches 1 run execute store result score #fn_kept editor run data get storage rhythm_axe:maps.editor selection
 # ③ 时间窗 [#fn_lo, #fn_hi)（notes 按 time 升序 ⇒ insert_find 二分；无时间条件 = 全表）
+# ★ 2026-11-04 修复「查找选区内」：该模式的宇宙 = **当前已选中音符**，与时间条件无关——
+#   时间条件只决定「命中/不命中」，不能用来缩小扫描范围，否则时间窗外的已选中音符
+#   既不会被判定、也不会被移出选区（反馈里的「保留 N / 移除 M」就算错，黄光也不会熄）。
+#   ⇒ 选区内模式强制走全表窗口 [0, notes 长度)，由叶子按 selected 过滤（未选中直接 return）。
+#   （非选区模式仍用二分缩窗，性能不变。）
 data modify storage rhythm_axe:prop cursor set from storage rhythm_axe:maps.editor history_cursor
 scoreboard players set #fn_lo editor 0
-execute if score #fn_has_t_lo editor matches 1 if score #fn_has_t_hi editor matches 1 run function rhythm_axe:editor/menu/find/find_note_len with storage rhythm_axe:prop
-execute if score #fn_has_t_lo editor matches 1 if score #fn_has_t_hi editor matches 1 run scoreboard players operation #fn_hi editor = #fn_len editor
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 1 if score #fn_has_t_hi editor matches 1 run function rhythm_axe:editor/menu/find/find_note_len with storage rhythm_axe:prop
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 1 if score #fn_has_t_hi editor matches 1 run scoreboard players operation #fn_hi editor = #fn_len editor
+# 选区内模式：全表扫描（上下界 = 数组全长）
+execute if score #fn_insel editor matches 1 run function rhythm_axe:editor/menu/find/find_note_len with storage rhythm_axe:prop
+execute if score #fn_insel editor matches 1 run scoreboard players operation #fn_hi editor = #fn_len editor
 # 有下界（哨兵 2）→ 二分「首个 time ≥ from」（insert_find 语义是「首个 time > new_time」⇒ 减 1 纳入相等）
 # ★★ insert_find 的输出是 **prop.index（storage）**，不是计分板 #index（2026-10-22 踩坑：
 #   误用 scoreboard operation #fn_lo = #index 读到的是无关残留值，窗口被缩成 [0,残留) 导致命中数骤减）
-execute if score #fn_has_t_lo editor matches 2 run execute store result storage rhythm_axe:prop new_time int 1 run scoreboard players get #fn_t_lo editor
-execute if score #fn_has_t_lo editor matches 2 run data modify storage rhythm_axe:prop list_name set value "notes"
-execute if score #fn_has_t_lo editor matches 2 run function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
-execute if score #fn_has_t_lo editor matches 2 run execute store result score #fn_lo editor run data get storage rhythm_axe:prop index 1
-execute if score #fn_has_t_lo editor matches 2 run scoreboard players remove #fn_lo editor 1
-execute if score #fn_has_t_lo editor matches 2 if score #fn_lo editor matches ..-1 run scoreboard players set #fn_lo editor 0
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 run execute store result storage rhythm_axe:prop new_time int 1 run scoreboard players get #fn_t_lo editor
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 run data modify storage rhythm_axe:prop list_name set value "notes"
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 run function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 run execute store result score #fn_lo editor run data get storage rhythm_axe:prop index 1
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 run scoreboard players remove #fn_lo editor 1
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 if score #fn_lo editor matches ..-1 run scoreboard players set #fn_lo editor 0
 # 有上界（哨兵 2）→ 二分「首个 time > to」（开区间即上界）
-execute if score #fn_has_t_hi editor matches 2 run execute store result storage rhythm_axe:prop new_time int 1 run scoreboard players get #fn_t_hi editor
-execute if score #fn_has_t_hi editor matches 2 run data modify storage rhythm_axe:prop list_name set value "notes"
-execute if score #fn_has_t_hi editor matches 2 run function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
-execute if score #fn_has_t_hi editor matches 2 run execute store result score #fn_hi editor run data get storage rhythm_axe:prop index 1
+execute if score #fn_insel editor matches 0 if score #fn_has_t_hi editor matches 2 run execute store result storage rhythm_axe:prop new_time int 1 run scoreboard players get #fn_t_hi editor
+execute if score #fn_insel editor matches 0 if score #fn_has_t_hi editor matches 2 run data modify storage rhythm_axe:prop list_name set value "notes"
+execute if score #fn_insel editor matches 0 if score #fn_has_t_hi editor matches 2 run function rhythm_axe:editor/util/insert_find with storage rhythm_axe:prop
+execute if score #fn_insel editor matches 0 if score #fn_has_t_hi editor matches 2 run execute store result score #fn_hi editor run data get storage rhythm_axe:prop index 1
 # 只写下界时上界 = 数组长度
-execute if score #fn_has_t_lo editor matches 2 if score #fn_has_t_hi editor matches 1 run function rhythm_axe:editor/menu/find/find_note_len with storage rhythm_axe:prop
-execute if score #fn_has_t_lo editor matches 2 if score #fn_has_t_hi editor matches 1 run scoreboard players operation #fn_hi editor = #fn_len editor
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 if score #fn_has_t_hi editor matches 1 run function rhythm_axe:editor/menu/find/find_note_len with storage rhythm_axe:prop
+execute if score #fn_insel editor matches 0 if score #fn_has_t_lo editor matches 2 if score #fn_has_t_hi editor matches 1 run scoreboard players operation #fn_hi editor = #fn_len editor
 # ④ 置 active（consume 顶部守卫读它；扫描结束由 find_note_finish 清）
 data modify storage rhythm_axe:maps.editor find_scan set value {active:1b}
 # ⑤ 计数清零 + 提示 + 本刻先扫第一块（后续块由 scan_drive 自行 schedule）

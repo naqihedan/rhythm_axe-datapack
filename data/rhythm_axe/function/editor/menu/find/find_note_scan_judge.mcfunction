@@ -114,6 +114,10 @@ execute if score #fn_insel editor matches 0 if score #fn_ok editor matches 1 run
 execute if score #fn_insel editor matches 0 if score #fn_ok editor matches 1 run scoreboard players add #sel_count editor 1
 execute if score #fn_insel editor matches 0 if score #fn_ok editor matches 1 run function rhythm_axe:editor/tool/select/select_mark_glow with storage rhythm_axe:prop
 execute if score #fn_insel editor matches 0 if score #fn_ok editor matches 1 run function rhythm_axe:editor/tool/select/time_select_tag with storage rhythm_axe:prop
-# 选区内模式（#fn_insel=1）：命中 → 计数保留；不命中 → 移除 selected（selection 收尾重建）
+# 选区内模式（#fn_insel=1）：命中 → 计数保留；不命中 → 移除 selected + **熄灭实体黄光**（selection 收尾重建）
+# ★ 2026-11-04 修复：原来只 data remove selected，没碰实体 ⇒ 被移出选区的音符世界里仍发黄光
+#   （用户实测：列表只剩 7 个混凝土，被移除的 3 个音符盒依然亮着）。移出选区必须与「移入」对称地熄灯。
 execute if score #fn_insel editor matches 1 if score #fn_ok editor matches 1 run scoreboard players add #fn_hit editor 1
+$execute if score #fn_insel editor matches 1 if score #fn_ok editor matches 0 run execute store result storage rhythm_axe:prop nid int 1 run data get storage rhythm_axe:maps.editor history[$(cursor)].notes[$(i)].id
 $execute if score #fn_insel editor matches 1 if score #fn_ok editor matches 0 run data remove storage rhythm_axe:maps.editor history[$(cursor)].notes[$(i)].selected
+execute if score #fn_insel editor matches 1 if score #fn_ok editor matches 0 run function rhythm_axe:editor/tool/select/select_unmark_glow with storage rhythm_axe:prop

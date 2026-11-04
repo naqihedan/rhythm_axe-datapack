@@ -44,7 +44,11 @@ data modify storage rhythm_axe:prop b4 set value "{\"text\":\"【清空选中并
 data modify storage rhythm_axe:prop b5 set value "{\"text\":\"【粘贴并选中】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"剪贴板为空，先批量复制\"}}"
 data modify storage rhythm_axe:prop b6 set value "{\"text\":\"【批量删除】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
 data modify storage rhythm_axe:prop b7 set value "{\"text\":\"【批量剪切】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
+# b8 = 【查找】(11409, 2026-11-04)：打开查找对话框，`in_selection` 默认勾选 = 在当前选区里再筛一遍
+#   默认灰（无选中）；有选中时可用。位置：五个批量按钮右边（见 sel_note_list_bottom 第一行）
+data modify storage rhythm_axe:prop b8 set value "{\"text\":\"  【查找】\",\"color\":\"gray\",\"hover_event\":{\"action\":\"show_text\",\"value\":\"需要先选中音符\"}}"
 execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop b1 set value "{\"text\":\"【批量编辑】\",\"color\":\"aqua\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11403\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"对选中的音符批量编辑（相对增量）\"}}"
+execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop b8 set value "{\"text\":\"  【查找】\",\"color\":\"light_purple\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11409\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"在【当前已选定】的音符里再筛选（保留命中、移出不命中）\"}}"
 execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop b2 set value "{\"text\":\"【批量复制】\",\"color\":\"green\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11404\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"把选中音符的字段存入剪贴板\"}}"
 execute if score #sel_total editor matches 1.. run data modify storage rhythm_axe:prop b6 set value "{\"text\":\"【批量删除】\",\"color\":\"red\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/trigger editor_click set 11407\"},\"hover_event\":{\"action\":\"show_text\",\"value\":\"直接删除所有选中的音符（不弹二次确认，可撤销）\"}}"
 # 批量剪切 = 复制 + 删除：选中音符进剪贴板的同时从谱面移除（剪贴板保留 → 之后可【批量粘贴】）
@@ -113,7 +117,9 @@ data remove storage rhythm_axe:prop b4
 data remove storage rhythm_axe:prop b5
 data remove storage rhythm_axe:prop b6
 # ★ 2026-09-12 补：b7（批量剪切）与漏清的 b6
+# ★ 2026-11-04 补：b8（查找）
 data remove storage rhythm_axe:prop b7
+data remove storage rhythm_axe:prop b8
 data remove storage rhythm_axe:prop f1
 data remove storage rhythm_axe:prop f2
 data remove storage rhythm_axe:prop f3

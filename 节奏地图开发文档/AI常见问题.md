@@ -103,6 +103,32 @@
   - 哨兵约定 `9/0/1` = 内层未运行 / 拒绝 / 接受。**唯一剩余裂缝**：输入里含**未转义双引号 `"`**（会让外层也失败）——对话框本来就要求引号写 `\"`（见《编辑器.md》）。
   - 清单见《编辑器.md》的《外层安全转发》。⚠️ `dialog_submit_mapid` / `new_submit` 是**真改名/真建谱**，实测一律跳过（改完 `function <id>` 返回「缺少传入参数」即为已加载，用它代替实跑）。
 
+- **★ 报「缺少传入参数 value」= 该提交函数的 `#arg` 被改坏了，不是调用方的问题**（2026-11-04 实测事故）：
+  - 症状：点【查找并选中】→ 聊天栏
+    `已触发[editor_click]（数值已设为10003）` → `正在运行函数 …dialog_submit_find_note`
+    → **`无法实例化函数 …：函数 … 缺少传入参数 value`**，然后**什么都没发生**（无选中、无提示、无报错后续）。
+  - 真因：`editor/menu/find/dialog_submit_find_note.mcfunction` 被**误覆盖成别的 dialog 的单参数模板**
+    （`#arg: value` + `{"value":"$(value)"}`），而它的 `_core` 仍是 **29 参数**版本；
+    `editor_find_note.json` 的模板注入的 29 个键（`"type"`/`"color"`/…/`"sz"`）一个都匹配不上 ⇒ 实例化失败。
+    这是提交 `cf2fb1c`（谱面 offset / 世界装饰）里夹带的一处无关改动；`196e503` 才是正确的 29 参数版。
+  - **铁律**：`dialog_submit_X.mcfunction` 的 `#arg` 列表必须与 `dialog_submit_X_core.mcfunction` 的 `#arg`
+    **逐字相等、同序**；且必须与 `data/<ns>/dialog/*.json` 里 `dynamic/run_command` 模板**注入的键集合一致**。
+  - 排查 3 步（几分钟定位）：
+    1. 看报错里那个函数自己的 `#arg` 行 —— **报错永远指向「被调函数声明了什么」，不是调用方传了什么**；
+    2. 跟它的 `_core` 的 `#arg` 对比（多半就对不上）；
+    3. `git log --oneline -- <文件>` + `git show <commit> -- <文件>`，找是哪次提交改坏的。
+       反例：`git show cf2fb1c -- …/dialog_submit_find_note.mcfunction` 一眼就能看到 29 参数被替换成 `value`。
+  - **自动检查**（`check_all_macros.ps1` 查不出这类错，它只看宏语法）：
+    ```powershell
+    py scripts\check_dialog_templates.py     # 退出码 0 = 通过，1 = 有问题
+    ```
+    它遍历 `data/<ns>/dialog/*.json` 的每个 `dynamic/run_command` 模板，检查
+    ① 目标函数存在 ② 模板注入键 ⊆ `#arg` ③ `#arg` ⊆ 模板注入键（**少传 = 致命**）④ `$(key)` 引用在 `inputs` 里声明；
+    另外校验 22 组两层 `dialog_submit` 的「外层 `#arg` == `_core` `#arg`」且「每个声明键都在转发行被引用」。
+    **改完任何对话框 / 提交函数都要跑它**，这是「按钮点了没反应」的唯一机器可查入口。
+    注意：`#arg` 里声明的键，游戏**允许模板多传**（多余键静默忽略），但**少传一定实例化失败** —— 所以脚本对 extra 也报，
+    因为那通常意味着写错了键名（`type` vs `note_type` 这类）。
+
 - **新增的 `data/<ns>/dialog/*.json` 不会被 `/reload` 加载**（2026-10-01 实测）：
   - 症状：`dialog show @s rhythm_axe:xxx` 报 `无法在注册表"minecraft:dialog"中找到元素"rhythm_axe:xxx"`；**对话框 JSON 本身不会报「解析失败」**（易误判成「我写的 JSON 有问题」）。
   - ⚠️ **引用它的 mcfunction 会直接加载失败**（2026-10-01 补测）：`dialog show @s <id>` 里的 ID 是**加载期**解析的 ⇒ 日志里有

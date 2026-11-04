@@ -82,3 +82,7 @@ scoreboard players reset #fn_has_sy editor
 scoreboard players reset #fn_sy editor
 scoreboard players reset #fn_has_sz2 editor
 scoreboard players reset #fn_sz2 editor
+# ★ 2026-11-04 视觉对账（必须是最后一行：sel_visual_resync → sel_glow_drive 内有 return）
+#   把世界里的黄光/交互实体标记对齐到权威数据 selection。这样即使「移出选区」的某条路径
+#   漏了熄灯（选区内筛选 / 取消选中 / 删除 / 填充收尾…），这里也会一次性纠正。
+function rhythm_axe:editor/menu/note/selected/sel_visual_resync
