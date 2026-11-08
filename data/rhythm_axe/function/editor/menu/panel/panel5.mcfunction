@@ -8,7 +8,7 @@ execute unless score #click_value editor matches 1 unless score #click_value edi
 execute unless score #click_value editor matches 1 unless score #click_value editor matches 10380..10382 unless score #tcol editor matches 3 unless score #tcol editor matches 5 unless score #tcol editor matches 6 unless score #tcol editor matches 7 run return fail
 
 execute if score #click_value editor matches 1 run function rhythm_axe:editor/menu/main
-execute if score #click_value editor matches 10380 run function rhythm_axe:editor/menu/event/panel/event_panel_new_open
+execute if score #click_value editor matches 10380 run function rhythm_axe:editor/menu/event/panel/event_panel_quick_open
 execute if score #click_value editor matches 10381 run function rhythm_axe:editor/menu/event/list/event_list_prev_page
 execute if score #click_value editor matches 10382 run function rhythm_axe:editor/menu/event/list/event_list_next_page
 # 行按钮按列码分发

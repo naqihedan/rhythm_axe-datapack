@@ -210,14 +210,14 @@
 
 # 编辑器按钮（trigger）方面
 
-> 完整规范（触发链 / 编号规则 spec v2 / 号段分配总表 / 新增按钮 checklist）见 `编辑器.md` 的《trigger值》一节。以下是高频踩坑：
+> 完整规范（触发链 / 编号规则 spec v2 / 号段分配总表 / 新增按钮 checklist）见 `编辑器实现.md` 的《trigger值》一节。以下是高频踩坑：
 
 - **新增按钮值不查重** → 与其它面板撞号，同一个值双触发（曾因 `842~855` 撞面板 13 的 `830~851`）。加值前必须 grep 发射点（`editor_click set`）与处理点（`matches`，注意范围会被"吞"）。
 - **加了按钮却忘了同步白名单守卫** → `panelN.mcfunction` 顶部两行 `unless ... matches <号段>`，漏加就提示"该按钮不属于当前面板"、点了没反应。
 - **动态列表行用了绝对行号** → 必须用页内相对值，页码存 `notes_page`/`sel_page`，处理器还原 `页号×每页数 + 页内序`。
 - **旧范围迁移后仍写一条大范围** → 跨多个新行的范围（如 `768..781`）必须按连续段拆成多条 `execute`。
 - **只查 `editor_click set` 就断言“改全了”** → 按钮值还有**三种**隐藏写法：①宏参数注入（`data modify storage rhythm_axe:prop <key> set value N` + 宏内 `editor_click set $(<key>)`，如位置三轴的 `bxm..bzp2`）；②宏拼接（`set 1128$(index)`）；③**计算型**（列表行按钮由记分板运算算出：`scoreboard players set #temp_cursor editor 600` + `*= 100` + `add 1600`，文件里**根本没有** `editor_click set <数字>`）。漏改的后果是守卫生效、按钮发旧号 ⇒ 点了提示“该按钮不属于当前面板”。全局审计：`python scripts\audit_injected_trigger_values.py` + `python scripts\scan_legacy_button_values.py`（后者专抓 ③）。
-- **忘更新文档**：改完 trigger 值要同步 `编辑器.md` 对应面板的表，否则下次照旧表加号必撞。
+- **忘更新文档**：改完 trigger 值要同步 `编辑器实现.md` 对应面板的表，否则下次照旧表加号必撞。
 - **点按钮后「世界里的音符消失 / 列表按钮少一截」，但数据是对的** → 十有八九是**同一条命令链超上限被截断**（日志搜 `Command execution stopped due to limit`）。上限 `maxCommandChainLength`（`gamerule max_command_sequence_length`，写死在 `data/rhythm_axe/function/load.mcfunction`）**2026-09-12 已由 200000 提高到 1000000**——那时谱面涨到 ~580 音符，`refresh`（整表重建视觉）和列表渲染**各自**就接近 20 万条命令，「操作 + refresh + 面板渲染」同刻必然被截断，属于正常操作踩坑，不再当异常。
 - **宏函数「少一个宏参」= 整个函数静默不执行**：`#arg:a,b` 而调用方只写了 `prop.a`（`b` 在计分板里）→ 调用方会失败，连函数第一行 `scoreboard players set ...` 都不跑，表现是「点了没反应、日志里什么都没有」。教训：**能被宏参数化的才放宏参，已经在计分板/数组里的就直接用计分板读**（`editor/util/op_announce` 原来把音符数当宏参，改成读 `#op_count` 就正常了）。
 - **加减（`±`）按钮「点了没反应」先查 delta 中转**：6 个 ± 助手（`map_adjust` / `map_int_adjust` / `map_spawn_adjust` / `map_progress_color` / `note_pos_adjust` / `timing_panel_adjust`）统一用

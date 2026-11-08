@@ -5,7 +5,7 @@ applyTo: "**/data/rhythm_axe/**"
 
 # rhythm_axe 编辑器按钮（trigger 值）规范
 
-> 权威文档：`节奏地图开发文档/编辑器.md` 的《trigger值》一节（完整号段总表 / 列码约定 / 新增按钮 checklist / 常见坑 / 迁移记录）。**动手前先读它**，本文件只是硬约束摘要。
+> 权威文档：`节奏地图开发文档/编辑器实现.md` 的《trigger值》一节（完整号段总表 / 列码约定 / 新增按钮 checklist / 常见坑 / 迁移记录）。**动手前先读它**，本文件只是硬约束摘要。
 
 ## ⚠️ 菜单系统例外（不走 `editor_click`）
 
@@ -46,7 +46,7 @@ applyTo: "**/data/rhythm_axe/**"
 1. **发射点**：渲染该面板的 mcfunction 里按钮的 `click_event` → `/trigger editor_click set <值>`
 2. **守卫**：`editor/menu/panel/panelN.mcfunction` 顶部**两行**白名单 `unless ... matches <号段>`（漏加 ⇒ 点了提示「该按钮不属于当前面板」）
 3. **分支**：同文件里 `execute if score #click_value editor matches <值> run ...`
-4. **文档**：`编辑器.md` 里该面板的 trigger 表
+4. **文档**：`节奏地图开发文档/编辑器实现.md` 里该面板的 trigger 表（《trigger值》一节）
 
 ## 查重（必做，否则会撞号双触发）
 

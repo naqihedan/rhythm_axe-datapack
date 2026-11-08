@@ -63,6 +63,6 @@ execute unless score #event_page editor matches 1.. unless score #event_page edi
 ]
 # 新增 + 返回
 tellraw @s [\
-{"text":"【新增一个事件点】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10380"},"hover_event":{"action":"show_text","value":"在播放头位置新增事件"}},\
+{"text":"【新增一个事件点】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10380"},"hover_event":{"action":"show_text","value":"播放头处无事件点则新建并直接输入指令；已有则直接加/编辑空指令"}},\
 {"text":"  【返回】","color":"dark_aqua","click_event":{"action":"run_command","command":"/trigger editor_click set 1"},"hover_event":{"action":"show_text","value":"返回主菜单"}}\
 ]

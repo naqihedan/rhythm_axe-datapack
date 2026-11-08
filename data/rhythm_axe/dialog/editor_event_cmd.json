@@ -30,7 +30,7 @@
     },
     "action": {
       "type": "run_command",
-      "command": "/function rhythm_axe:editor/menu/dialog/dialog_cancel"
+      "command": "/function rhythm_axe:editor/menu/event/dialog/dialog_cancel_event_cmd"
     }
   },
   "actions": [

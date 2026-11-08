@@ -28,8 +28,8 @@ data remove storage rhythm_axe:prop up_val
 data remove storage rhythm_axe:prop down_val
 data remove storage rhythm_axe:prop copy_val
 data remove storage rhythm_axe:prop paste_val
-# 添加指令
-tellraw @s [{"text":"【添加一个指令】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10402"},"hover_event":{"action":"show_text","value":"在末尾追加一条空指令"}}]
+# 添加指令（追加一条空指令并立即弹出输入框；取消只撤掉这一条）
+tellraw @s [{"text":"【添加一个指令】","color":"green","click_event":{"action":"run_command","command":"/trigger editor_click set 10402"},"hover_event":{"action":"show_text","value":"在末尾追加一条空指令并立即输入（取消则撤掉这一条）"}}]
 # 上一个/下一个事件
 function rhythm_axe:editor/menu/event/panel/event_panel_nav
 # 底部按钮（按模式）
