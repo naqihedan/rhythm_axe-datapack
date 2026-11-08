@@ -1,0 +1,34 @@
+# 把-6 2 31 到 2 0 -5   的所有非白色的染色玻璃板 替换成黄色染色玻璃板
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace orange_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace magenta_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace light_blue_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace yellow_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace lime_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace pink_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace gray_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace light_gray_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace cyan_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace purple_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace blue_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace brown_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace green_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace red_stained_glass_pane
+fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace black_stained_glass_pane
+
+# 把2 -4 -5 到 -6 -4 33 的所有混凝土替换为黄色混凝土
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace white_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace orange_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace magenta_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace light_blue_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace yellow_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace lime_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace pink_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace gray_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace light_gray_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace cyan_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace purple_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace blue_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace brown_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace green_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace red_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace black_concrete

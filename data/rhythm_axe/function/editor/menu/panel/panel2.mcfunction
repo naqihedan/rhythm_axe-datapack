@@ -1,5 +1,5 @@
 # 面板 2：谱面设置。规范v2：值 = 行号×100 + 行内按钮号（行号 100 起）。
-# 文本字段行：标题行100 = 10001 对话框编辑文本 / 10002 生成文本展示实体 / 10003 复制展示实体文字信息；
+# 文本字段行：标题行100 = 10001 对话框编辑文本 / 10002 生成文本展示实体 / 10003 应用展示实体文字信息；
 #   曲师10101/谱面作者10102/音乐10201/mapid10401/结束时间10501；传送行106: 10601 off 10602 on 10603 tp
 # ★ 行103（2026-10-01 改）：10301/10302 预览起点 ∓10 刻、10303/10304 预览时长 ∓1 刻、
 #    10305【使用当前时间】= 把当前音乐位置填进预览起点；10306【截到播放头】= 把起点到播放头的时差填进预览时长
@@ -17,7 +17,7 @@ execute unless score #click_value editor matches 10000..11499 run return fail
 
 # —— 文本输入（每字段一个按钮，列码 01；同一行再挂一个字段时用列码 02，如 10102）——
 execute if score #click_value editor matches 10001 run function rhythm_axe:editor/menu/dialog/dialog_open_title
-# 10002【生成文本展示实体】/ 10003【复制展示实体文字信息】：Axiom 改标题通道（2026-10-01）
+# 10002【生成文本展示实体】/ 10003【应用展示实体文字信息】：Axiom 改标题通道（2026-10-01）
 execute if score #click_value editor matches 10002 run function rhythm_axe:editor/menu/map/ops/map_title_display_spawn
 execute if score #click_value editor matches 10003 run function rhythm_axe:editor/menu/map/ops/map_title_display_copy
 execute if score #click_value editor matches 10101 run function rhythm_axe:editor/menu/dialog/dialog_open_author
