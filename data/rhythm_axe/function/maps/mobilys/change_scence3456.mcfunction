@@ -16,19 +16,7 @@ fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace red_stained_glass_pane
 fill -6 2 31 2 0 -5 yellow_stained_glass_pane replace black_stained_glass_pane
 
 # 把2 -4 -5 到 -6 -4 33 的所有混凝土替换为黄色混凝土
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace white_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace orange_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace magenta_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace light_blue_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace yellow_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace lime_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace pink_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace gray_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace light_gray_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace cyan_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace purple_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace blue_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace brown_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace green_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace red_concrete
-fill 2 -4 -5 -6 -4 33 yellow_concrete replace black_concrete
+fill 2 -4 -5 -6 -4 33 yellow_concrete replace #c:concretes
+#c:concretes 由 fabric-convention-tags-v2（fabric-api 0.161.0+26.2）提供，非原版内容
+# 不过既然都加rhythm axe mod了，fabric-api也必然会加上去，所以直接用这个tag了
+

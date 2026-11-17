@@ -33,19 +33,4 @@ fill 2 -2 -5 -6 -2 33 red_stained_glass replace red_stained_glass
 fill 2 -2 -5 -6 -2 33 red_stained_glass replace black_stained_glass
 
 # 把2 -4 -5 到 -6 -4 33 的所有混凝土替换为红色混凝土
-fill 2 -4 -5 -6 -4 33 red_concrete replace white_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace orange_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace magenta_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace light_blue_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace yellow_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace lime_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace pink_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace gray_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace light_gray_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace cyan_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace purple_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace blue_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace brown_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace green_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace red_concrete
-fill 2 -4 -5 -6 -4 33 red_concrete replace black_concrete
+fill 2 -4 -5 -6 -4 33 red_concrete replace #c:concretes

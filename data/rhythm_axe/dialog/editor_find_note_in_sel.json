@@ -15,12 +15,6 @@
       "contents": {
         "text": "下拉选「全部/不限」、文本留空 = 该条件忽略；范围可只填一端。"
       }
-    },
-    {
-      "type": "minecraft:plain_message",
-      "contents": {
-        "text": "★ 本对话框从「已选定音符列表」打开：「查找选区内」默认勾选（在当前选区内筛选，保留命中、移出不命中）。取消勾选则改为在全谱范围内替换选中。"
-      }
     }
   ],
   "inputs": [
@@ -37,6 +31,14 @@
         { "id": "3", "display": { "text": "混凝土" } },
         { "id": "4", "display": { "text": "染色玻璃" } }
       ]
+    },
+    {
+      "type": "minecraft:boolean",
+      "key": "in_selection",
+      "label": { "text": "在当前选区内筛选" },
+      "initial": true,
+      "on_true": "1",
+      "on_false": "0"
     },
     {
       "type": "minecraft:single_option",
@@ -77,14 +79,6 @@
       "width": 90,
       "label": { "text": "时间到（刻）" },
       "max_length": 10
-    },
-    {
-      "type": "minecraft:boolean",
-      "key": "in_selection",
-      "label": { "text": "查找选区内（勾上 = 在当前选区内筛选，保留命中、移出不命中；选区无数量上限）" },
-      "initial": true,
-      "on_true": "1",
-      "on_false": "0"
     },
     {
       "type": "minecraft:text",
